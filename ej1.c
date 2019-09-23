@@ -3,30 +3,35 @@ Autores:  Alfonso Carvajal
           Victor Garcia
 Grupo:    1401*/
 
-// #include "alfa.h"
+#include "alfa.h"
 
 void escribir_subseccion_data(FILE* fpasm){
-  fprintf(fpasm, "\tsegment .data\n");
-  fprintf(fpasm, "\t;guardamos posicion pila\n\tpila resd 1\n");
+  fprintf(fpasm, "segment .data\n");
+  fprintf(fpasm, "\t;guardamos posicion pila\n");
 }
 void escribir_cabecera_bss(FILE* fpasm){
-  fprintf(fpasm, "\tsegment .bss\n");
+  fprintf(fpasm, "segment .bss\n");
   /*Escribir variables de las tablas de simbolos*/
   fprintf(fpasm, "\tpila resd 1\n");
   fprintf(fpasm, "\t;declaracion de variables sin inicializar\n\t;\n");
 }
 void escribir_inicio_main(FILE* fpasm){
-  fprintf(fpasm, "\tmain:\n");
+  fprintf(fpasm, "main:\n");
   /*guardamos el actual valor del puntero de pila para restaurarlo al final del programa*/
   fprintf(fpasm, "\tmov dword[pila], esp\n");
 }
 void escribir_fin(FILE* fpasm){
   fprintf(fpasm, "\tmov dword esp, [pila]\n");
-  fprintf(fpasm, "\tret\n");
+
+  fprintf(fpasm, "\n\tmov ebx, 0\n");
+  fprintf(fpasm, "\tmov eax, 1\n");
+  fprintf(fpasm, "\tint 80h\n");
+
+  //fprintf(fpasm, "\tret\n");
 }
 
 void escribir_segmento_codigo(FILE* fpasm){
-  fprintf(fpasm, "\tsegment .text\n");
+  fprintf(fpasm, "segment .text\n");
   fprintf(fpasm, "\tglobal main\n");
   /*Habilitar llamadas a funciones de alfalib*/
   fprintf(fpasm, "\t;habilitar funciones de alfalib\n");
@@ -38,7 +43,7 @@ void escribir_segmento_codigo(FILE* fpasm){
 void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
-  fprintf(fpasm, "\tpop dword, eax\n");
+  fprintf(fpasm, "\tpop dword eax\n");
   /*Si es 0 entonces se ha pasado por valor en la pila
   si no, se ha pasado la direccion del registro*/
   if(es_variable_1 == 1){
@@ -46,7 +51,7 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
   }
 
   /*Primera variable*/
-  fprintf(fpasm, "\tpop dword, ebx\n");
+  fprintf(fpasm, "\tpop dword ebx\n");
   /*Si es 0 entonces se ha pasado por valor en la pila
   si no, se ha pasado la direccion del registro*/
   if(es_variable_2 == 1){
@@ -57,20 +62,22 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
   /*Suma: [eax] = [eax] + [ebx]*/
   fprintf(fpasm, "\tadd eax, ebx\n");
 
+  /*La suma de las dos variables es menor que 10 => escribe un 0*/
+  fprintf(fpasm, "\tmov ecx, 0\n");
+
   /*Comparamos [eax] con 10*/
   fprintf(fpasm, "\tcmp eax, 10\n");
-  fprintf(fpasm, "\tjle MENOR\n");
+  fprintf(fpasm, "\tjle fin_if_%d\n", etiqueta);
   /*La suma de las dos variables es mayor que 10 => escribe un 1*/
-  fprintf(fpasm, "\tpush dword 1\n");
+  fprintf(fpasm, "\tmov ecx, 1\n");
   // fprint(fpasm, "\tjmp ENDCMP\n");
-  fprintf(fpasm, "\tjmp fin_if_%d\n", etiqueta);
-  fprint(fpasm, "\tMENOR:\n");
-  /*La suma de las dos variables es menor que 10 => escribe un 0*/
-  fprintf(fpasm, "\tpush dword 0\n");
-  fprintf(fpasm, "\tfin_if_%d:\n", etiqueta);
+
+  fprintf(fpasm, "fin_if_%d:", etiqueta);
+  /*Insertamos el valor de la comparacion: 1 si mayor, 0 si no*/
+  fprintf(fpasm, "\t\tpush dword ecx\n");
   /*Imprime por pantalla el numero que hemos metido a la pila*/
-  fprintf(fpasm, "\tcall print_int\n");
-  fprintf(fpasm, "\tadd esp, 4\n");
-  fprintf(fpasm, "\tcall print_endofline\n");
+  fprintf(fpasm, "\t\tcall print_int\n");
+  fprintf(fpasm, "\t\tadd esp, 4\n");
+  fprintf(fpasm, "\t\tcall print_endofline\n");
 
 }
