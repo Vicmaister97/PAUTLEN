@@ -1,0 +1,37 @@
+Ejercicio de clase 23/09/2019.
+==============================
+
+Realiza una función C, void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta), 
+que imprima un código NASM que ponga un 1 en la pila si la suma de dos
+argumentos pasados como parámetro es mayor que 10 y 0 en caso contrario. Este resultado
+tambien debe ser impreso en el terminal. 
+
+Ejemplos:
+
+Si se pasa a = 8 y b = 4, entonces en la pila residirá un 1.
+Si se pasa a = 5 y b = 3, entonces en la pila residirá un 0.
+
+Escríbela en el fichero ej1.c y ejecuta el programa main.c que se adjunta, que generará el código NASM. 
+Se deben obtener los valores para los funciones que en los comentarios se detallan.
+
+Si todavia no dispones del resto de funciones que se encuentran en el main, no te preocupes. Puedes poner 
+su codigo en el NASM generado para ver si lo has hecho bien. Pero ya que es muy fácil, te recomiendo que lo hagas...
+¡Y así matas dos pájaros de un tiro! Copia dichas funciones a ej1.c.
+
+Compila con:
+
+gcc *.c alfa.h -o ej1
+
+Ejecuta ./ej1 nasm.asm
+
+Y luego usa el script de compilacion subido a Moodle así:
+
+./compile nasm
+
+Obtendras maxima calificacion (*****) si eres capaz de hacer la entrega con todos los ficheros y funciones y funcionan.
+Obtendrás buena calificacion (***) si eres capaz de hacer la funcion C a código NASM y funciona su codigo.
+Obtendrás calificación (**) si entregas la funcion NASM y funciona.
+Se contará cualquier trabajo entregado que no funcione. (*)
+
+Adjunta tu entrega a eduardo.garrido@uam.es con el título de correo [PAUTLEN] Entrega Ejercicio Clase 1 y con la siguiente información:
+-> Tu nombre y el de tu pareja. 
