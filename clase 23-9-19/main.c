@@ -9,7 +9,7 @@ int main(int argc, char ** argv)
 	fd_asm = fopen(argv[1],"w");
 
 	escribir_subseccion_data(fd_asm);
-        escribir_cabecera_bss(fd_asm);
+    escribir_cabecera_bss(fd_asm);
 	escribir_segmento_codigo(fd_asm);
 	escribir_inicio_main(fd_asm);
 

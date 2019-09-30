@@ -1,31 +1,32 @@
-/*Ejercicio ej1.c opcional PAUTLEN 23/09/2019
+/*Práctica1 PAUTLEN
 Autores:  Alfonso Carvajal
           Victor Garcia
 Grupo:    1401*/
 
-#include "alfa.h"
+#include "generacion.h"
 
 void escribir_subseccion_data(FILE* fpasm){
   fprintf(fpasm, "segment .data\n");
-  fprintf(fpasm, "\t;guardamos posicion pila\n");
+  fprintf(fpasm, "\t;declaracion de variables inicializadas\n\t;\n");
+  fprintf(fpasm, "\tmensaje_1 db \"División por cero\", 0");
 }
 void escribir_cabecera_bss(FILE* fpasm){
   fprintf(fpasm, "segment .bss\n");
   /*Escribir variables de las tablas de simbolos*/
-  fprintf(fpasm, "\tpila resd 1\n");
+  fprintf(fpasm, "\t__esp resd 1\n");
   fprintf(fpasm, "\t;declaracion de variables sin inicializar\n\t;\n");
 }
 void escribir_inicio_main(FILE* fpasm){
   fprintf(fpasm, "main:\n");
   /*guardamos el actual valor del puntero de pila para restaurarlo al final del programa*/
-  fprintf(fpasm, "\tmov dword[pila], esp\n");
+  fprintf(fpasm, "\tmov dword __esp, [esp]\n");
 }
 void escribir_fin(FILE* fpasm){
-  fprintf(fpasm, "\tmov dword esp, [pila]\n");
+  fprintf(fpasm, "\tmov dword esp, [__esp]\n");
 
-  fprintf(fpasm, "\n\tmov ebx, 0\n");
+  /*fprintf(fpasm, "\n\tmov ebx, 0\n");
   fprintf(fpasm, "\tmov eax, 1\n");
-  fprintf(fpasm, "\tint 80h\n");
+  fprintf(fpasm, "\tint 80h\n");*/
 
   fprintf(fpasm, "\tret\n");
 }
