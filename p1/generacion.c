@@ -51,7 +51,7 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
     fprintf(fpasm, "\tmov eax, [eax]\n");
   }
 
-  /*Primera variable*/
+  /*Segunda variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
   /*Si es 0 entonces se ha pasado por valor en la pila
   si no, se ha pasado la direccion del registro*/
@@ -80,5 +80,33 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
   fprintf(fpasm, "\t\tcall print_int\n");
   fprintf(fpasm, "\t\tadd esp, 4\n");
   fprintf(fpasm, "\t\tcall print_endofline\n");
+
+}
+
+/* FUNCIONES ARITMÉTICO-LÓGICAS BINARIAS */
+
+/* es_variable_x = 0  valor   = 1   referencia */
+void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  /*Cargamos los operandos de la pila */
+  /*Primera variable*/
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+
+  if(es_variable_1 == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /*Segunda variable*/
+  fprintf(fpasm, "\tpop dword ebx\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable_2 == 1){
+    fprintf(fpasm, "\tmov ebx, [ebx]\n");
+  }
+
+  /*Comparacion*/
+  /*Suma: [eax] = [eax] + [ebx]*/
+  fprintf(fpasm, "\tadd eax, ebx\n");
 
 }
