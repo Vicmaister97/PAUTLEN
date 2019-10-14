@@ -85,7 +85,7 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
 
 /* FUNCIONES ARITMÉTICO-LÓGICAS BINARIAS */
 
-/* es_variable_x = 0  valor   = 1   referencia */
+/* Función que suma 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
 void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
   /*Cargamos los operandos de la pila */
   /*Primera variable*/
@@ -105,8 +105,10 @@ void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
     fprintf(fpasm, "\tmov ebx, [ebx]\n");
   }
 
-  /*Comparacion*/
   /*Suma: [eax] = [eax] + [ebx]*/
   fprintf(fpasm, "\tadd eax, ebx\n");
+
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\t\tpush dword eax\n");
 
 }
