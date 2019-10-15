@@ -38,6 +38,19 @@ int main(int argc, char ** argv)
 	multiplicar(fd_asm, 0,0);
 
 
+	fprintf(fd_asm, "\tpush dword 8\n");
+    fprintf(fd_asm, "\tpush dword 2\n");
+	dividir(fd_asm, 0,0);
+
+	fprintf(fd_asm, "\tpush dword 5\n");
+    fprintf(fd_asm, "\tpush dword 2\n");
+	dividir(fd_asm, 0,0);
+
+	fprintf(fd_asm, "\tpush dword 5\n");
+    fprintf(fd_asm, "\tpush dword 0\n");
+	dividir(fd_asm, 0,0);
+
+
 	//fprintf(fd_asm, "\tadd esp, 4\n");
 
 	escribir_fin(fd_asm);

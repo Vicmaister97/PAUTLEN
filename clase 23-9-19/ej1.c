@@ -8,6 +8,8 @@ Grupo:    1401*/
 void escribir_subseccion_data(FILE* fpasm){
   fprintf(fpasm, "segment .data\n");
   fprintf(fpasm, "\t;guardamos posicion pila\n");
+  fprintf(fpasm, "\tmensaje_1 db \"División por cero\", 0\n");
+
 }
 void escribir_cabecera_bss(FILE* fpasm){
   fprintf(fpasm, "segment .bss\n");
@@ -21,9 +23,15 @@ void escribir_inicio_main(FILE* fpasm){
   fprintf(fpasm, "\tmov dword [pila], esp\n");
 }
 void escribir_fin(FILE* fpasm){
+  fprintf(fpasm, "error_1:\n");
+  fprintf(fpasm, "\tpush dword mensaje_1\n");
+  fprintf(fpasm, "\tcall print_string\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+  fprintf(fpasm, "fin:\n");
   fprintf(fpasm, "\tmov dword esp, [pila]\n");
 
-  
   /*fprintf(fpasm, "\n\tmov ebx, 0\n");
   fprintf(fpasm, "\tmov eax, 1\n");
   fprintf(fpasm, "\tint 80h\n");*/
@@ -137,6 +145,43 @@ void multiplicar(FILE* fpasm, int es_variable_1, int es_variable_2){
 
   /*Mult: [eax] = [eax]*[ebx]*/
   fprintf(fpasm, "\timul ebx\n");
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\tpush dword eax\n");
+
+  /*Imprime por pantalla el resultado que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
+
+/* Función que divide 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
+void dividir(FILE* fpasm, int es_variable_1, int es_variable_2){
+  /*Cargamos los operandos de la pila */
+  /*Divisor*/
+  fprintf(fpasm, "\tpop dword ecx\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+
+  if(es_variable_2 == 1){
+    fprintf(fpasm, "\tmov ecx, [ecx]\n");
+  }
+  fprintf(fpasm, "\tcmp ecx, 0\n");
+  fprintf(fpasm, "\tje error_1\n");
+
+  /*Dividendo*/
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable_1 == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /*Extendemos el dividendo para la división*/
+  fprintf(fpasm, "\tcdq\n");
+  /*Div: [eax] = [edx:eax]/[ecx]*/
+  fprintf(fpasm, "\tidiv ecx\n");
   /*Guardamos resultado en pila*/
   fprintf(fpasm, "\tpush dword eax\n");
 

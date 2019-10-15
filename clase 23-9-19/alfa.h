@@ -15,5 +15,7 @@ void escribir_segmento_codigo(FILE* fpasm);
 void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
 void restar(FILE* fpasm, int es_variable_1, int es_variable_2);
 void multiplicar(FILE* fpasm, int es_variable_1, int es_variable_2);
+void dividir(FILE* fpasm, int es_variable_1, int es_variable_2);
+
 
 #endif

@@ -1,5 +1,6 @@
 segment .data
 	;guardamos posicion pila
+	mensaje_1 db "División por cero", 0
 segment .bss
 	pila resd 1
 	;declaracion de variables sin inicializar
@@ -57,5 +58,47 @@ fin_if_1:
 	call print_int
 	add esp, 4
 	call print_endofline
+	push dword 8
+	push dword 2
+	pop dword ecx
+	cmp ecx, 0
+	je error_1
+	pop dword eax
+	cdq
+	idiv ecx
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	push dword 5
+	push dword 2
+	pop dword ecx
+	cmp ecx, 0
+	je error_1
+	pop dword eax
+	cdq
+	idiv ecx
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	push dword 5
+	push dword 0
+	pop dword ecx
+	cmp ecx, 0
+	je error_1
+	pop dword eax
+	cdq
+	idiv ecx
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+error_1:
+	push dword mensaje_1
+	call print_string
+	add esp, 4
+	call print_endofline
+fin:
 	mov dword esp, [pila]
 	ret
