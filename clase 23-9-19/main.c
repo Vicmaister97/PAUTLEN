@@ -21,17 +21,27 @@ int main(int argc, char ** argv)
 	uno_si_mayor_de_10(fd_asm,0,0,etiqueta);
 	etiqueta++;
 
-	fprintf(fd_asm, "\tadd esp, 4\n");
-	fprintf(fd_asm, "\tpush dword 4\n");
-        fprintf(fd_asm, "\tpush dword 4\n");
+	//fprintf(fd_asm, "\tadd esp, 4\n");
+	fprintf(fd_asm, "\tpush dword 5\n");
+    fprintf(fd_asm, "\tpush dword 3\n");
 
 	//Debe imprimir 0 y devolver un 0.
         uno_si_mayor_de_10(fd_asm,0,0,etiqueta);
 	etiqueta++;
-	fprintf(fd_asm, "\tadd esp, 4\n");
+
+	fprintf(fd_asm, "\tpush dword 5\n");
+    fprintf(fd_asm, "\tpush dword 3\n");
+	restar(fd_asm, 0,0);
+
+	fprintf(fd_asm, "\tpush dword 2\n");
+    fprintf(fd_asm, "\tpush dword 7\n");
+	multiplicar(fd_asm, 0,0);
+
+
+	//fprintf(fd_asm, "\tadd esp, 4\n");
 
 	escribir_fin(fd_asm);
-        fclose(fd_asm);
+    fclose(fd_asm);
 
-        return 0;
+    return 0;
 }

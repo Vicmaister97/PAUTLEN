@@ -18,7 +18,7 @@ void escribir_cabecera_bss(FILE* fpasm){
 void escribir_inicio_main(FILE* fpasm){
   fprintf(fpasm, "main:\n");
   /*guardamos el actual valor del puntero de pila para restaurarlo al final del programa*/
-  fprintf(fpasm, "\tmov dword pila, [esp]\n");
+  fprintf(fpasm, "\tmov dword [pila], esp\n");
 }
 void escribir_fin(FILE* fpasm){
   fprintf(fpasm, "\tmov dword esp, [pila]\n");
@@ -75,10 +75,74 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
 
   fprintf(fpasm, "fin_if_%d:", etiqueta);
   /*Insertamos el valor de la comparacion: 1 si mayor, 0 si no*/
-  fprintf(fpasm, "\t\tpush dword ecx\n");
+  fprintf(fpasm, "\n\tpush dword ecx\n");
   /*Imprime por pantalla el numero que hemos metido a la pila*/
-  fprintf(fpasm, "\t\tcall print_int\n");
-  fprintf(fpasm, "\t\tadd esp, 4\n");
-  fprintf(fpasm, "\t\tcall print_endofline\n");
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
+/* Función que resta 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
+void restar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  /*Cargamos los operandos de la pila */
+  /*Primera variable*/
+  fprintf(fpasm, "\tpop dword ebx\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+
+  if(es_variable_1 == 1){
+    fprintf(fpasm, "\tmov ebx, [ebx]\n");
+  }
+
+  /*Segunda variable*/
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable_2 == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /*Resta: [eax] = [eax] - [ebx]*/
+  fprintf(fpasm, "\tsub eax, ebx\n");
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\tpush dword eax\n");
+
+  /*Imprime por pantalla el numero que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
+/* Función que multiplica 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
+void multiplicar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  /*Cargamos los operandos de la pila */
+  /*Segunda variable*/
+  fprintf(fpasm, "\tpop dword ebx\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+
+  if(es_variable_2 == 1){
+    fprintf(fpasm, "\tmov ebx, [ebx]\n");
+  }
+
+  /*Primera variable*/
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable_1 == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /*Mult: [eax] = [eax]*[ebx]*/
+  fprintf(fpasm, "\timul ebx\n");
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\tpush dword eax\n");
+
+  /*Imprime por pantalla el resultado que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
 
 }

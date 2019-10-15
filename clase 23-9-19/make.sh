@@ -1,5 +1,6 @@
 #!/bin/sh
 gcc *.c alfa.h -o ej1
 ./ej1 nasm.asm
-nasm -g -o $1.o -f elf32 $1.asm
-gcc -m32 -o $1 $1.o alfalib.o
+nasm -g -o nasm.o -f elf32 nasm.asm
+gcc -m32 -o nasm nasm.o alfalib.o
+rm nasm.o ej1

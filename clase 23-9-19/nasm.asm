@@ -10,7 +10,7 @@ segment .text
 	extern scan_int, scan_boolean
 	extern print_int, print_boolean, print_string, print_blank, print_endofline
 main:
-	mov dword pila, [esp]
+	mov dword [pila], esp
 	push dword 6
 	push dword 5
 	pop dword eax
@@ -20,13 +20,13 @@ main:
 	cmp eax, 10
 	jle fin_if_0
 	mov ecx, 1
-fin_if_0:		push dword ecx
-		call print_int
-		add esp, 4
-		call print_endofline
+fin_if_0:
+	push dword ecx
+	call print_int
 	add esp, 4
-	push dword 4
-	push dword 4
+	call print_endofline
+	push dword 5
+	push dword 3
 	pop dword eax
 	pop dword ebx
 	add eax, ebx
@@ -34,10 +34,28 @@ fin_if_0:		push dword ecx
 	cmp eax, 10
 	jle fin_if_1
 	mov ecx, 1
-fin_if_1:		push dword ecx
-		call print_int
-		add esp, 4
-		call print_endofline
+fin_if_1:
+	push dword ecx
+	call print_int
 	add esp, 4
+	call print_endofline
+	push dword 5
+	push dword 3
+	pop dword ebx
+	pop dword eax
+	sub eax, ebx
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	push dword 2
+	push dword 7
+	pop dword ebx
+	pop dword eax
+	imul ebx
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
 	mov dword esp, [pila]
 	ret
