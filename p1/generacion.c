@@ -610,3 +610,107 @@ void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
 }
 
 
+/*######################################################################
+      SEGUNDA PARTE DE LA PRACTICA*/
+
+void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+  /* Extraemos de la pila la expresión del condicional*/
+  fprintf(fpasm, "\tpop eax\n");
+  /* Comprobamos si la expresión es similar a una variable o no*/
+  if (exp_es_variable == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /* Si la expresion es 1, se cumple la condición del IF*/
+  fprintf(fpasm, "\tcmp eax, 1\n");
+  /* Si la expresion NO es 1, es decir NO se cumple, salta al final de la rama THEN, NO entra en el IF*/
+  fprintf(fpasm, "\tjne fin_then_%d\n", etiqueta);
+}
+
+void ifthen_fin(FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "fin_then_%d:\n", etiqueta);
+}
+
+
+void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+  /* Extraemos de la pila la expresión del condicional*/
+  fprintf(fpasm, "\tpop eax\n");
+  /* Comprobamos si la expresión es similar a una variable o no*/
+  if (exp_es_variable == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /* Si la expresion es 1, se cumple la condición del IF*/
+  fprintf(fpasm, "\tcmp eax, 1\n");
+  /* Si la expresion NO es 1, es decir NO se cumple, salta al final de la rama THEN, comienzo del ELSE, NO entra en el IF*/
+  fprintf(fpasm, "\tjne fin_then_%d\n", etiqueta);
+}
+
+void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
+  /* Ha terminado el bloque THEN, salta el bloque ELSE y va al final */
+  fprintf(fpasm, "\tjmp fin_then_else_%d\n", etiqueta);
+  /*  Etiqueta del fin del bloque */
+  fprintf(fpasm, "fin_then_%d:\n", etiqueta);
+}
+
+void ifthenelse_fin( FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "fin_then_else_%d:\n", etiqueta);
+}
+
+
+void while_inicio(FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\tinicio_while_%d:\n", etiqueta);
+}
+
+void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta){
+  /* Extraemos de la pila la expresión del condicional*/
+  fprintf(fpasm, "\tpop eax\n");
+  /* Comprobamos si la expresión es similar a una variable o no*/
+  if (exp_es_variable == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /* Si la expresion es 1, se cumple la condición del WHILE*/
+  fprintf(fpasm, "\tcmp eax, 1\n");
+  /* Si la expresion NO es 1, es decir NO se cumple, salta al final del cuerpo del WHILE, NO entra en el WHILE*/
+  fprintf(fpasm, "\tjne fin_while_%d\n", etiqueta);
+}
+
+void while_fin( FILE * fpasm, int etiqueta){
+  /* Ha terminado el bloque WHILE, salta al inicio de este mismo bloque de nuevo */
+  fprintf(fpasm, "\tjmp inicio_while_%d\n", etiqueta);
+  /*  Etiqueta del fin del bloque */
+  fprintf(fpasm, "fin_while_%d:\n", etiqueta);
+}
+
+
+void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion){
+  // sacamos de la pila la expresion que indexa al vector
+  fprintf(fpasm, "\tpop dword eax\n");
+  // si exp_es_direccion == 1 entonces la expresion es una variable o algo equivalente
+  // y queremos el contenido de lo que esta guardado en esa direccion
+  if(exp_es_direccion == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+  // Si el indice es menor que 0, tiene que dar un error porque no es parte del vector
+  fprintf(fpasm, "\tcmp eax, 0\n");
+  fprintf(fpasm, "\tjl near error_2\n");
+
+  // si el indice es mayor de lo permitido: (tam vector - 1) entonces
+  // tiene que dar un error porque no es parte del vector
+  fprintf(fpasm, "\tcmp eax, %d\n", tam_max);
+  fprintf(fpasm, "\tjge near error_2\n");
+
+  // Si hemos llegado aqui, el indice es correcto y esta en eax
+
+  // La direccion del primer elemento del vector en memoria es a donde apunta el nombre_vector
+  // cargamos esta direccion en edx
+  fprintf(fpasm, "\tmov dword edx, _%s\n", nombre_vector);
+
+  // ahora cargamos en eax la direccion del elemento indexado
+  // esta direccion es el la direccion del inicio del vector + eax*4 (indice x 4 bytes)
+  fprintf(fpasm, "\tlea eax, [edx + eax*4]\n");
+
+  // ahora solo queda meter la direccion del elemento indexado en la pila
+  fprintf(fpasm, "\tpush dword eax\n");
+}
