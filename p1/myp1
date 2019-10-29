@@ -326,3 +326,4 @@ void dividir(FILE* fpasm, int es_variable_1, int es_variable_2){
   fprintf(fpasm, "\tcall print_endofline\n");
 
 }
+

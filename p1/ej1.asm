@@ -1,118 +1,52 @@
 segment .data
-	;declaracion de variables inicializadas
-	;
-	mensaje_1 db "División por cero", 0
-	mensaje_2 db "Indice fuera de rango", 0
+	err_div0 db "Error: dividing by 0",0
+	err_ioutrange db"Error: index out of bounds",0
 segment .bss
-	;declaracion de variables sin inicializar
-	;
 	__esp resd 1
 	_x resd 1
 	_y resd 1
 	_z resd 1
 segment .text
 	global main
-	;habilitar funciones de alfalib
-	extern scan_int, scan_boolean
-	extern print_int, print_boolean, print_string, print_blank, print_endofline
-	;codigo correspondiente a la compilacion del no terminal "funciones" 
-	;
+	extern scan_int, print_int, scan_float, print_float, scan_boolean, print_boolean
+	extern print_endofline, print_blank, print_string
+	extern alfa_malloc, alfa_free, ld_float
 main:
-	mov dword [__esp], esp
-	push dword 8
-	call print_int
-	add esp, 4
-	call print_endofline
+	mov dword [__esp], dword esp
+	mov dword eax, 8
+	push dword eax
 	pop dword eax
-	mov dword [_x] , eax 
-	push dword [_x]
-	call print_int
-	add esp, 4
-	call print_endofline
+	mov dword [_x], eax
 	push dword _y
 	call scan_int
 	add esp, 4
-	push dword [_y]
-	call print_int
-	add esp, 4
-	call print_endofline
-	push dword [_x]
-	call print_int
-	add esp, 4
-	call print_endofline
-	push dword [_y]
-	call print_int
-	add esp, 4
-	call print_endofline
-	pop dword ebx
-	mov ebx, [ebx]
+	mov dword eax, _x
+	push dword eax
+	mov dword eax, _y
+	push dword eax
 	pop dword eax
-	mov eax, [eax]
+	mov dword eax, [eax]
+	pop dword ebx
+	mov dword ebx, [ebx]
 	add eax, ebx
 	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
 	pop dword eax
-	mov dword [_z] , eax 
-	push dword [_z]
-	call print_int
-	add esp, 4
-	call print_endofline
-	push dword [_z]
-	call print_int
-	add esp, 4
-	call print_endofline
-	pop dword eax
-	mov eax, [eax]
+	mov dword eax, [eax]
 	push dword eax
 	call print_int
 	add esp, 4
 	call print_endofline
-	push dword 7
-	call print_int
-	add esp, 4
-	call print_endofline
-	push dword [_y]
-	call print_int
-	add esp, 4
-	call print_endofline
-	pop dword ebx
-	mov ebx, [ebx]
-	pop dword eax
-	add eax, ebx
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	pop dword eax
-	mov dword [_z] , eax 
-	push dword [_z]
-	call print_int
-	add esp, 4
-	call print_endofline
-	push dword [_z]
-	call print_int
-	add esp, 4
-	call print_endofline
-	pop dword eax
-	mov eax, [eax]
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-error_1:
-	push dword mensaje_1
+	jmp endofcode
+etiq_div0:
+	push dword err_div0
 	call print_string
 	add esp, 4
-	mov dword esp, [__esp]
 	call print_endofline
-	jmp fin
-error_2:
-	push dword mensaje_2
+etiq_ibounds:
+	push dword err_ioutrange
 	call print_string
 	add esp, 4
-	mov dword esp, [__esp]
 	call print_endofline
-	jmp fin
-fin:ret
+endofcode:
+	mov dword esp, [__esp]
+	ret

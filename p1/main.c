@@ -22,7 +22,6 @@ int main(int argc, char** argv)
 	/* x=8; */
 	escribir_operando(fd_asm, "8", 0);
 	asignar(fd_asm, "x", 0);
-
 	/* scanf(&y); */
 	leer(fd_asm, "y", ENTERO);
 
@@ -30,18 +29,8 @@ int main(int argc, char** argv)
 	escribir_operando(fd_asm, "x", 1);
 	escribir_operando(fd_asm, "y", 1);
 	sumar(fd_asm, 1, 1);
-	asignar(fd_asm, "z", 0);
-	/* printf(z); */
-	escribir_operando(fd_asm, "z", 1);
 	escribir(fd_asm, 1, ENTERO);
-	/* z = 7 + y */
-	escribir_operando(fd_asm, "7", 0);
-	escribir_operando(fd_asm, "y", 1);
-	sumar(fd_asm, 0, 1);
-	asignar(fd_asm, "z", 0);
-	/* printf(z); */
-	escribir_operando(fd_asm, "z", 1);
-	escribir(fd_asm, 1, ENTERO);
+	
 	escribir_fin(fd_asm);
 	fclose(fd_asm);
 	return 0;
