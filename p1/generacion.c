@@ -611,6 +611,7 @@ void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
 
 
 /*######################################################################
+  ######################################################################
       SEGUNDA PARTE DE LA PRACTICA*/
 
 void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
@@ -715,8 +716,65 @@ void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, in
   fprintf(fpasm, "\tpush dword eax\n");
 }
 
+/* FUNCIONES */
+void declararFuncion(FILE * fpasm, char * nombre_funcion, int num_var_loc){
+  // etiqueta del inicio de la funcion es "_" seguido por el nombre de la funcion y ":"
+  fprintf(fpasm, "\t_%s:\n", nombre_funcion);
+  // guardar en la pila el registro ebp --> puntero base para localizar en la pila
+  // los args y variables locales de la funcion
+  fprintf(fpasm, "\tpush ebp\n");
+  // copiamos en ebp el valor de puntero de pila (esp) para poder gestionar
+  // acceso a los parametros y variables locales
+  fprintf(fpasm, "\tmov ebp, esp\n");
+  // reservamos espacio en la pila para las variables locales de la funcion
+  // cada variable local son 4 bytes
+  fprintf(fpasm, "\tsub esp, %d\n", 4*num_var_loc);
 
-/*#############FONSSSSSSSSSSSSSSSSS#############*/
+}
+
+void retornarFuncion(FILE * fpasm, int es_variable){
+  fprintf(fpasm, "\tpop dword eax\n");
+  // si es_variable == 1 entonces lo que esta en la cima de la pila es una variable o algo equivalente
+  // y queremos el contenido de lo que esta guardado en esa direccion
+  // el valor de retorno de la funcion se deja en eax
+  if(es_variable == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+  // restauramos el puntero de la pila
+  fprintf(fpasm, "\tmov esp, ebp\n");
+  // sacamos ebp de la pila
+  fprintf(fpasm, "\tpop dword ebp\n");
+  // volvemos al programa llamante y saca de la pila la direccion de retorno
+  fprintf(fpasm, "\tret\n");
+}
+
+
+void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
+  int aux_ebp;
+  // cada argumento ocupa 4 bytes, por eso se multiplica por 4
+  // 1er argumento se corresponde con la posicion 0
+  aux_ebp = 4 * (1 + (num_total_parametros - pos_parametro));
+  // calculamos la direccion efectiva del parametro y la cargamos en eax
+  // al encontrarnos dentro de la funcion, ebp contiene el valor de puntero a pila (esp)
+  // donde se encuentran todos los parametros
+  fprintf(fpasm, "\tlea eax, [ebp + %d]\n", aux_ebp);
+  // insertamos en la pila eax, que contiene la direccion efectiva del parametro
+  fprintf(fpasm, "\tpush dword eax\n");
+}
+
+void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
+  int aux_ebp;
+  // cada argumento ocupa 4 bytes, por eso se multiplica por 4
+  // 1er argumento se corresponde con la posicion 1
+  aux_ebp = 4 * posicion_variable_local;
+  // calculamos la direccion efectiva del parametro y la cargamos en eax
+  // al encontrarnos dentro de la funcion, ebp contiene el valor de puntero a pila (esp)
+  // donde se encuentran todos los argumentos
+  fprintf(fpasm, "\tlea eax, [ebp - %d]\n", aux_ebp);
+  // insertamos en la pila eax, que contiene la direccion efectiva del parametro
+  fprintf(fpasm, "\tpush dword eax\n");
+}
+
 void asignarDestinoEnPila(FILE* fpasm, int es_variable){
   /* Comenzamos extrayendo de la pila el destino donde realizaremos la asignacion*/
   fprintf(fpasm,"\tpop dword ebx\n");
@@ -732,7 +790,7 @@ void asignarDestinoEnPila(FILE* fpasm, int es_variable){
   fprintf(fpasm, "\tmov dword [ebx], eax\n");
 }
 
-void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
+void operandoEnPilaAArgumento(FILE * fpasm, int es_variable){
   /* Comprobamos si el valor leido es una variable*/
   if (es_variable == 1){
     /* Extramos de la pila el operando que está como variable*/
@@ -747,14 +805,14 @@ void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
 }
 
 
-void limpiarPila(FILE * fd_asm, int num_argumentos){
+void limpiarPila(FILE * fpasm, int num_argumentos){
   /* Movemos el puntero de la pila para descartar los argumentos introducidos al llamar a la función*/
   /* Puesto que todos nuestros datos ocupan 32bytes, guardamos y leemos los datos en la pila con add esp 4, moviendonos de 4 en 4.
       Por ello, avanzamos la pila 4*num_argumentos*/
   fprintf(fpasm, "\tadd esp, %d\n", 4*num_argumentos);
 }
 
-void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
+void llamarFuncion(FILE * fpasm, char * nombre_funcion, int num_argumentos){
   /* Asumimos que los argumentos de la función ya están en la pila según el convenio fijado en el material de la asignatura */
   /* Llamamos a la rutina correspondiente*/
   fprintf(fpasm, "\tcall %s\n", nombre_funcion);

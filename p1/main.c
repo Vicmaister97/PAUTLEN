@@ -32,7 +32,7 @@ int main(int argc, char** argv)
   //auxArg = arg; Asignacion de parametro a variable local. Solo hay un parametro.
   escribirParametro(fd_asm,0,1);
   escribirVariableLocal(fd_asm,1);
-  arDestinoEnPila(fd_asm,1);
+  asignarDestinoEnPila(fd_asm,1);
   //2*arg.
   escribir_operando(fd_asm,"2",0);
   escribirParametro(fd_asm,0,1);

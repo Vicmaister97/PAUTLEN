@@ -7,53 +7,58 @@ segment .bss
 	;declaracion de variables sin inicializar
 	;
 	__esp resd 1
-	_m resd 1
+	_z resd 1
 segment .text
 	global main
 	;habilitar funciones de alfalib
 	extern scan_int, scan_boolean
 	extern print_int, print_boolean, print_string, print_blank, print_endofline
-	;codigo correspondiente a la compilacion del no terminal "funciones" 
-	;
-main:
-	mov dword [__esp], esp
-	mov dword eax, 0
+	_doble:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	lea eax, [ebp + 8]
 	push dword eax
-	pop dword eax
-	mov dword [_m], eax 
-	mov dword eax, _m
-	push dword eax
-	mov dword eax, 5
+	lea eax, [ebp - 4]
 	push dword eax
 	pop dword ebx
 	pop dword eax
 	mov eax, [eax]
-	mov ecx, 1
-	cmp eax, ebx
-	jg fin_menorigual_1
-	mov ecx, 0
-fin_menorigual_1:
-	push dword ecx
-	pop eax
-	cmp eax, 1
-	jne fin_then_1
+	mov dword [ebx], eax
+	mov dword eax, 2
+	push dword eax
+	lea eax, [ebp + 8]
+	push dword eax
+	pop dword ebx
+	mov dword ebx, [ebx]
+	pop dword eax
+	imul ebx
+	push dword eax
+	pop dword eax
+	mov esp, ebp
+	pop dword ebp
+	ret
+	;codigo correspondiente a la compilacion del no terminal "funciones" 
+	;
+main:
+	mov dword [__esp], esp
 	mov dword eax, 2
 	push dword eax
 	pop dword eax
+	mov dword [_z], eax 
+	mov dword eax, _z
 	push dword eax
-	call print_int
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call _doble
 	add esp, 4
-	call print_endofline
-	jmp fin_then_else_1
-fin_then_1:
-	mov dword eax, 3
 	push dword eax
 	pop dword eax
 	push dword eax
 	call print_int
 	add esp, 4
 	call print_endofline
-fin_then_else_1:
 	jmp fin
 error_1:
 	push dword mensaje_1
