@@ -91,6 +91,38 @@ void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int e
 
 }
 
+/* Función que suma 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
+void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  /*Cargamos los operandos de la pila */
+  /*Segunda variable*/
+  fprintf(fpasm, "\tpop dword ebx\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+
+  if(es_variable_2 == 1){
+    fprintf(fpasm, "\tmov dword ebx, [ebx]\n");
+  }
+
+  /*Primera variable*/
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable_1 == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /*Suma: [eax] = [eax] + [ebx]*/
+  fprintf(fpasm, "\tadd eax, ebx\n");
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\tpush dword eax\n");
+
+  /*Imprime por pantalla el resultado que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
 /* Función que resta 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
 void restar(FILE* fpasm, int es_variable_1, int es_variable_2){
   /*Cargamos los operandos de la pila */

@@ -25,7 +25,6 @@ void escribir_subseccion_data(FILE* fpasm);
    En este punto, al menos, debes ser capaz de detectar la división por 0.
 */
 
-// ########## FALTAAAAAAAA #####################
 void declarar_variable(FILE* fpasm, char * nombre,  int tipo,  int tamano);
 /*
    Para ser invocada en la sección .bss cada vez que se quiera declarar una variable:
@@ -44,7 +43,6 @@ void escribir_inicio_main(FILE* fpasm);
    En este punto se debe escribir, al menos, la etiqueta main y la sentencia que guarda el puntero de pila en su variable (se recomienda usar __esp).
 */
 
-// ########### FALTAAAAAAA TODOOOOSSSSSS ################
 void escribir_fin(FILE* fpasm);
 /*
    Al final del programa se escribe:

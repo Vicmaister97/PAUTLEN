@@ -26,17 +26,12 @@ fin_if_0:
 	call print_int
 	add esp, 4
 	call print_endofline
-	push dword 5
+	push dword 11
 	push dword 3
-	pop dword eax
 	pop dword ebx
+	pop dword eax
 	add eax, ebx
-	mov ecx, 0
-	cmp eax, 10
-	jle fin_if_1
-	mov ecx, 1
-fin_if_1:
-	push dword ecx
+	push dword eax
 	call print_int
 	add esp, 4
 	call print_endofline

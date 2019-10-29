@@ -22,12 +22,11 @@ int main(int argc, char ** argv)
 	etiqueta++;
 
 	//fprintf(fd_asm, "\tadd esp, 4\n");
-	fprintf(fd_asm, "\tpush dword 5\n");
+	fprintf(fd_asm, "\tpush dword 11\n");
     fprintf(fd_asm, "\tpush dword 3\n");
 
 	//Debe imprimir 0 y devolver un 0.
-        uno_si_mayor_de_10(fd_asm,0,0,etiqueta);
-	etiqueta++;
+    sumar(fd_asm,0,0);
 
 	fprintf(fd_asm, "\tpush dword 5\n");
     fprintf(fd_asm, "\tpush dword 3\n");
