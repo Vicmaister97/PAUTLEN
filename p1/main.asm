@@ -7,8 +7,7 @@ segment .bss
 	;declaracion de variables sin inicializar
 	;
 	__esp resd 1
-	_b1 resd 1
-	_x resd 1
+	_m resd 1
 segment .text
 	global main
 	;habilitar funciones de alfalib
@@ -18,148 +17,43 @@ segment .text
 	;
 main:
 	mov dword [__esp], esp
-	push dword _b1
-	call scan_boolean
-	add esp, 4
-	push dword _x
-	call scan_int
-	add esp, 4
-	mov dword eax, _x
+	mov dword eax, 0
 	push dword eax
-	mov dword eax, 3
+	pop dword eax
+	mov dword [_m], eax 
+	mov dword eax, _m
+	push dword eax
+	mov dword eax, 5
 	push dword eax
 	pop dword ebx
 	pop dword eax
 	mov eax, [eax]
 	mov ecx, 1
 	cmp eax, ebx
-	jg fin_menorigual_0
-	mov ecx, 0
-fin_menorigual_0:
-	push dword ecx
-	pop dword eax
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
-	mov dword eax, _x
-	push dword eax
-	mov dword eax, 3
-	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov eax, [eax]
-	mov ecx, 1
-	cmp eax, ebx
-	jge fin_menorigual_1
+	jg fin_menorigual_1
 	mov ecx, 0
 fin_menorigual_1:
 	push dword ecx
+	pop eax
+	cmp eax, 1
+	jne fin_then_1
+	mov dword eax, 2
+	push dword eax
 	pop dword eax
 	push dword eax
-	call print_boolean
+	call print_int
 	add esp, 4
 	call print_endofline
-	mov dword eax, _x
-	push dword eax
+	jmp fin_then_else_1
+fin_then_1:
 	mov dword eax, 3
 	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov eax, [eax]
-	mov ecx, 1
-	cmp eax, ebx
-	jl fin_menorigual_2
-	mov ecx, 0
-fin_menorigual_2:
-	push dword ecx
 	pop dword eax
 	push dword eax
-	call print_boolean
+	call print_int
 	add esp, 4
 	call print_endofline
-	mov dword eax, _x
-	push dword eax
-	mov dword eax, 3
-	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov eax, [eax]
-	mov ecx, 1
-	cmp eax, ebx
-	jle fin_menorigual_3
-	mov ecx, 0
-fin_menorigual_3:
-	push dword ecx
-	pop dword eax
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
-	mov dword eax, _x
-	push dword eax
-	mov dword eax, 3
-	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov eax, [eax]
-	mov ecx, 1
-	cmp eax, ebx
-	je fin_igual_4
-	mov ecx, 0
-fin_igual_4:
-	push dword ecx
-	pop dword eax
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
-	mov dword eax, _x
-	push dword eax
-	mov dword eax, 3
-	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov eax, [eax]
-	mov ecx, 1
-	cmp eax, ebx
-	jne fin_dist_5
-	mov ecx, 0
-fin_dist_5:
-	push dword ecx
-	pop dword eax
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
-	mov dword eax, _b1
-	push dword eax
-	mov dword eax, 0
-	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov dword eax, [eax]
-	and eax, ebx
-	push dword eax
-	pop dword eax
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
-	mov dword eax, _b1
-	push dword eax
-	mov dword eax, 1
-	push dword eax
-	pop dword ebx
-	pop dword eax
-	mov dword eax, [eax]
-	or eax, ebx
-	push dword eax
-	pop dword eax
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
+fin_then_else_1:
 	jmp fin
 error_1:
 	push dword mensaje_1
