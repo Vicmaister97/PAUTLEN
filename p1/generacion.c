@@ -4,21 +4,9 @@ Autores:  Alfonso Carvajal
 Grupo:    1401*/
 
 #include "generacion.h"
+#include "alfa.h"
 
-/*
-   Declaración (con directiva db) de las variables que contienen el texto de los mensajes para la identificación de errores en tiempo de ejecución.
-   En este punto, al menos, debes ser capaz de detectar la división por 0.
-*/
-void escribir_subseccion_data(FILE* fpasm){
-  fprintf(fpasm, "segment .data\n");
-  fprintf(fpasm, "\t;declaracion de variables inicializadas\n\t;\n");
-  fprintf(fpasm, "\tmensaje_1 db \"División por cero\", 0\n");
-}
 
-/*
-   Código para el principio de la sección .bss.
-   Con seguridad sabes que deberás reservar una variable entera para guardar el puntero de pila extendido (esp). Se te sugiere el nombre __esp para esta variable.
-*/
 void escribir_cabecera_bss(FILE* fpasm){
   fprintf(fpasm, "segment .bss\n");
   fprintf(fpasm, "\t;declaracion de variables sin inicializar\n\t;\n");
@@ -27,42 +15,26 @@ void escribir_cabecera_bss(FILE* fpasm){
 
 }
 
-/* 
-   En este punto se debe escribir, al menos, la etiqueta main y la sentencia que guarda el puntero de pila en su variable (se recomienda usar __esp).
-*/
-void escribir_inicio_main(FILE* fpasm){
-  fprintf(fpasm, "main:\n");
-  /*guardamos el actual valor del puntero de pila para restaurarlo al final del programa*/
-  fprintf(fpasm, "\tmov dword [__esp], esp\n");
+
+void escribir_subseccion_data(FILE* fpasm){
+  fprintf(fpasm, "segment .data\n");
+  fprintf(fpasm, "\t;declaracion de variables inicializadas\n\t;\n");
+  fprintf(fpasm, "\tmensaje_1 db \"División por cero\", 0\n");
+  fprintf(fpasm, "\tmensaje_2 db \"Indice fuera de rango\", 0\n");
 }
 
-/*
-   Al final del programa se escribe:
-El código NASM para salir de manera controlada cuando se detecta un error en tiempo de ejecución (cada error saltará a una etiqueta situada en esta zona en la que se imprimirá el correspondiente mensaje y se saltará a la zona de finalización del programa).
-En el final del programa se debe:
-         ·Restaurar el valor del puntero de pila (a partir de su variable __esp)
-         ·Salir del programa (ret).
-*/
-void escribir_fin(FILE* fpasm){
-  fprintf(fpasm, "error_1:\n");
-  fprintf(fpasm, "\tpush dword mensaje_1\n");
-  fprintf(fpasm, "\tcall print_string\n");
-  fprintf(fpasm, "\tadd esp, 4\n");
-  fprintf(fpasm, "\tcall print_endofline\n");
-  
-  fprintf(fpasmp, "fin:\n");
-  fprintf(fpasm, "\tmov dword esp, [__esp]\n");
 
-  /*fprintf(fpasm, "\n\tmov ebx, 0\n");
-  fprintf(fpasm, "\tmov eax, 1\n");
-  fprintf(fpasm, "\tint 80h\n");*/
+void declarar_variable(FILE* fpasm, char * nombre,  int tipo,  int tamano){
+  /* Si declaramos un ENTERO*/
+  /*if (tipo == 0){
 
-  fprintf(fpasm, "\tret\n");
+  }*/
+  // Declaramos la variable "nombre" con resd "tamano"
+  fprintf(fpasm, "\t_%s resd %d\n", nombre, tamano);
+
 }
 
-/*
-   Para escribir el comienzo del segmento .text, básicamente se indica que se exporta la etiqueta main y que se usarán las funciones declaradas en la librería alfalib.o
-*/
+
 void escribir_segmento_codigo(FILE* fpasm){
   fprintf(fpasm, "segment .text\n");
   fprintf(fpasm, "\tglobal main\n");
@@ -70,6 +42,81 @@ void escribir_segmento_codigo(FILE* fpasm){
   fprintf(fpasm, "\t;habilitar funciones de alfalib\n");
   fprintf(fpasm, "\textern scan_int, scan_boolean\n");
   fprintf(fpasm, "\textern print_int, print_boolean, print_string, print_blank, print_endofline\n");
+}
+
+
+void escribir_inicio_main(FILE* fpasm){
+  fprintf(fpasm, "\t;codigo correspondiente a la compilacion del no terminal \"funciones\" \n\t;\n");
+  fprintf(fpasm, "main:\n");
+  /*guardamos el actual valor del puntero de pila para restaurarlo al final del programa*/
+  fprintf(fpasm, "\tmov dword [__esp], esp\n");
+}
+
+
+void escribir_fin(FILE* fpasm){
+  fprintf(fpasm, "error_1:\n");
+  fprintf(fpasm, "\tpush dword mensaje_1\n");
+  fprintf(fpasm, "\tcall print_string\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tmov dword esp, [__esp]\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+  fprintf(fpasm, "\tjmp fin\n");
+
+  fprintf(fpasm, "error_2:\n");
+  fprintf(fpasm, "\tpush dword mensaje_2\n");
+  fprintf(fpasm, "\tcall print_string\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tmov dword esp, [__esp]\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+  fprintf(fpasm, "\tjmp fin\n");
+  
+  fprintf(fpasm, "fin:ret\n");
+
+  /*fprintf(fpasm, "\n\tmov ebx, 0\n");
+  fprintf(fpasm, "\tmov eax, 1\n");
+  fprintf(fpasm, "\tint 80h\n");*/
+
+}
+
+
+void escribir_operando(FILE* fpasm, char* nombre, int es_variable){
+  /* Si el operando es un valor*/
+  if (es_variable == 0){
+    fprintf(fpasm, "\tpush dword %s\n", nombre);
+  }
+  /* Si el operando es una variable*/
+  else{
+    fprintf(fpasm, "\tpush dword [_%s]\n", nombre);
+  }
+
+    //TRICK1
+  /*Imprime por pantalla el resultado que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
+void asignar(FILE* fpasm, char* nombre, int es_variable){
+  /*Cargar contenido de la pila */
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /* Asignar a "nombre" el valor leido de la pila (contenido eax)*/
+  fprintf(fpasm, "\tmov dword [_%s] , eax \n", nombre);
+
+  //TRICK1
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\tpush dword [_%s]\n", nombre);
+  /*Imprime por pantalla el resultado que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
 }
 
 
@@ -245,6 +292,58 @@ void dividir(FILE* fpasm, int es_variable_1, int es_variable_2){
 
   /*Imprime por pantalla el resultado que hemos metido a la pila*/
   fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
+
+/* FUNCIONES DE ESCRITURA Y LECTURA */
+void leer(FILE* fpasm, char* nombre, int tipo){
+  /* Guardamos en la pila el nombre de la variable a leer*/
+  fprintf(fpasm, "\tpush dword _%s\n", nombre);
+  /* Lee una variable de tipo ENTERO*/
+  if (tipo == 0){
+    fprintf(fpasm, "\tcall scan_int\n");
+  }
+  /* Lee ua variable de tipo BOOLEAN*/
+  else{
+    fprintf(fpasm, "\tcall scan_boolean\n");
+  }
+
+  fprintf(fpasm, "\tadd esp, 4\n");
+
+  //TRICK1
+  /*Guardamos resultado en pila*/
+  fprintf(fpasm, "\tpush dword [_%s]\n", nombre);
+  /*Imprime por pantalla el resultado que hemos metido a la pila*/
+  fprintf(fpasm, "\tcall print_int\n");
+  fprintf(fpasm, "\tadd esp, 4\n");
+  fprintf(fpasm, "\tcall print_endofline\n");
+
+}
+
+
+void escribir(FILE* fpasm, int es_variable, int tipo){
+  /*Cargar contenido a imprimir de la pila */
+  fprintf(fpasm, "\tpop dword eax\n");
+  /*Si es 0 entonces se ha pasado por valor en la pila
+  si no, se ha pasado la direccion del registro*/
+  if(es_variable == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /* Asignar a "nombre" el valor leido de la pila (contenido eax)*/
+  fprintf(fpasm, "\tpush dword eax\n");
+  /* Lee una variable de tipo ENTERO*/
+  if (tipo == 0){
+    fprintf(fpasm, "\tcall print_int\n");
+  }
+  /* Lee ua variable de tipo BOOLEAN*/
+  else{
+    fprintf(fpasm, "\tcall print_boolean\n");
+  }
+
   fprintf(fpasm, "\tadd esp, 4\n");
   fprintf(fpasm, "\tcall print_endofline\n");
 
