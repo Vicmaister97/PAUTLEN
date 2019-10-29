@@ -610,3 +610,75 @@ void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
 }
 
 
+/*######################################################################
+      SEGUNDA PARTE DE LA PRACTICA*/
+
+void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+  /* Extraemos de la pila la expresión del condicional*/
+  fprintf(fpasm, "\tpop eax\n");
+  /* Comprobamos si la expresión es similar a una variable o no*/
+  if (exp_es_variable == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /* Si la expresion es 1, se cumple la condición del IF*/
+  fprintf(fpasm, "\tcmp eax, 1\n");
+  /* Si la expresion NO es 1, es decir NO se cumple, salta al final de la rama THEN, NO entra en el IF*/
+  fprintf(fpasm, "\tjne fin_then_%d\n", etiqueta);
+}
+
+void ifthen_fin(FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "fin_then_%d:\n", etiqueta);
+}
+
+
+void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+  /* Extraemos de la pila la expresión del condicional*/
+  fprintf(fpasm, "\tpop eax\n");
+  /* Comprobamos si la expresión es similar a una variable o no*/
+  if (exp_es_variable == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /* Si la expresion es 1, se cumple la condición del IF*/
+  fprintf(fpasm, "\tcmp eax, 1\n");
+  /* Si la expresion NO es 1, es decir NO se cumple, salta al final de la rama THEN, comienzo del ELSE, NO entra en el IF*/
+  fprintf(fpasm, "\tjne fin_then_%d\n", etiqueta);
+}
+
+void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
+  /* Ha terminado el bloque THEN, salta el bloque ELSE y va al final */
+  fprintf(fpasm, "\tjmp fin_then_else_%d:\n", etiqueta);
+  /*  Etiqueta del fin del bloque */
+  fprintf(fpasm, "fin_then_%d:\n", etiqueta);
+}
+
+void ifthenelse_fin( FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "fin_then_else_%d:\n", etiqueta);
+}
+
+
+void while_inicio(FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\tinicio_while_%d\n", etiqueta);
+}
+
+void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta){
+  /* Extraemos de la pila la expresión del condicional*/
+  fprintf(fpasm, "\tpop eax\n");
+  /* Comprobamos si la expresión es similar a una variable o no*/
+  if (exp_es_variable == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  /* Si la expresion es 1, se cumple la condición del WHILE*/
+  fprintf(fpasm, "\tcmp eax, 1\n");
+  /* Si la expresion NO es 1, es decir NO se cumple, salta al final del cuerpo del WHILE, NO entra en el WHILE*/
+  fprintf(fpasm, "\tjne fin_while_%d\n", etiqueta);
+}
+
+void while_fin( FILE * fpasm, int etiqueta){
+  /* Ha terminado el bloque WHILE, salta al inicio de este mismo bloque de nuevo */
+  fprintf(fpasm, "\tjmp inicio_while_%d\n", etiqueta);
+  /*  Etiqueta del fin del bloque */
+  fprintf(fpasm, "fin_while_%d:\n", etiqueta);
+}
