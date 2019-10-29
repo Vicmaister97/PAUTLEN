@@ -99,12 +99,12 @@ void no(FILE* fpasm, int es_variable, int cuantos_no);
 /* 
    Todas estas funciones reciben como argumento si los elementos a comparar son o no variables. El resultado de las operaciones, que siempre será un booleano (“1” si se cumple la comparación y “0” si no se cumple), se deja en la pila como en el resto de operaciones. Se deben usar etiquetas para poder gestionar los saltos necesarios para implementar las comparaciones.
 */
-void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
-void distinto(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
-void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
-void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
-void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
-void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
+void igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
+void distinto(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
+void menor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
+void mayor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
+void menor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
+void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta);
 
 /* FUNCIONES DE ESCRITURA Y LECTURA */
 /*

@@ -408,7 +408,7 @@ void no(FILE* fpasm, int es_variable, int cuantos_no){
 
 /* FUNCIONES COMPARATIVAS */
 
-void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
+void igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -441,7 +441,7 @@ void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 
 }
 
-void distinto(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
+void distinto(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -475,7 +475,7 @@ void distinto(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 
 }
 
-void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
+void menor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -509,7 +509,7 @@ void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 
 }
 
-void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
+void mayor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -540,10 +540,9 @@ void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
   fprintf(fpasm, "fin_menorigual_%d:", etiqueta);
   /*Insertamos el valor de la comparacion: 1 si iguales, 0 si no*/
   fprintf(fpasm, "\n\tpush dword ecx\n");
-
 }
 
-void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
+void menor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -574,11 +573,10 @@ void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
   fprintf(fpasm, "fin_menorigual_%d:", etiqueta);
   /*Insertamos el valor de la comparacion: 1 si iguales, 0 si no*/
   fprintf(fpasm, "\n\tpush dword ecx\n");
-
 }
 
 
-void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
+void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -609,5 +607,6 @@ void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
   fprintf(fpasm, "fin_menorigual_%d:", etiqueta);
   /*Insertamos el valor de la comparacion: 1 si iguales, 0 si no*/
   fprintf(fpasm, "\n\tpush dword ecx\n");
-
 }
+
+

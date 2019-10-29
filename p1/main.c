@@ -4,52 +4,65 @@
 int main(int argc, char** argv)
 {
 	FILE * salida;
-	if (argc != 2){
-		fprintf (stdout, "ERROR POCOS ARGUMENTOS\n");
-		return -1;
-	}
-	salida = fopen(argv[1],"w");
-	escribir_subseccion_data(salida);
-	escribir_cabecera_bss(salida);
-	declarar_variable(salida, "x", ENTERO, 1);
-	declarar_variable(salida,"y",ENTERO,1);
-	declarar_variable(salida,"z",ENTERO,1);
-	declarar_variable(salida,"j",ENTERO,1);
-	escribir_segmento_codigo(salida);
-	escribir_inicio_main(salida);
-	/* scanf x; */
-	leer(salida,"x",ENTERO);
-	/* scanf z; */
-	leer(salida,"z",ENTERO);
-	/* j = - x; */
-	escribir_operando(salida,"x",1);
-	cambiar_signo(salida,1);
-	asignar(salida,"j",0);
-	/* printf j; */
-	escribir_operando(salida,"j",1);
-	escribir(salida,1,ENTERO);
-	/* printf x-z; */
-	escribir_operando(salida,"x",1);
-	escribir_operando(salida,"z",1);
-	restar(salida,1,1);
-	escribir(salida,0,ENTERO);
-	/* y=x/2;*/
-	escribir_operando(salida,"x",1);
-	escribir_operando(salida,"2",0);
-	dividir(salida,1,0);
-	asignar(salida,"y",0);
-	
-	/* printf y; */
-	escribir_operando(salida,"y",1);
-	escribir(salida,1,ENTERO);
-	/*printf x*y;*/
-	escribir_operando(salida,"x",1);
-	escribir_operando(salida,"y",1);
-	multiplicar(salida,1,1);
-	escribir(salida,0,ENTERO);
-	escribir_fin(salida);
-	fclose(salida);
-	return 0;
+  int etiqueta = 0;
+  if (argc != 2) {
+    fprintf (stdout, "ERROR POCOS ARGUMENTOS\n");
+    return -1;
+  }
+  salida = fopen(argv[1],"w");
+  escribir_subseccion_data(salida);
+  escribir_cabecera_bss(salida);
+  declarar_variable(salida, "b1", BOOLEANO, 1);
+  declarar_variable(salida, "x", ENTERO, 1);
+  escribir_segmento_codigo(salida);
+  escribir_inicio_main(salida);
+  /* scanf b1; */
+  leer(salida,"b1",BOOLEANO);
+  /* scanf x; */
+  leer(salida,"x",ENTERO);
+  /* printf (x > 3); */
+  escribir_operando(salida,"x",1);
+  escribir_operando(salida,"3",0);
+  mayor(salida,1,0,etiqueta++);
+  escribir(salida,0,BOOLEANO);
+  /* printf (x >= 3); */
+  escribir_operando(salida,"x",1);
+  escribir_operando(salida,"3",0);
+  mayor_igual(salida,1,0,etiqueta++);
+  escribir(salida,0,BOOLEANO);
+  /* printf (x < 3); */
+  escribir_operando(salida,"x",1);
+  escribir_operando(salida,"3",0);
+  menor(salida,1,0,etiqueta++);
+  escribir(salida,0,BOOLEANO);
+  /* printf (x <= 3); */
+  escribir_operando(salida,"x",1);
+  escribir_operando(salida,"3",0);
+  menor_igual(salida,1,0,etiqueta++);
+  escribir(salida,0,BOOLEANO);
+  /* printf (x == 3); */
+  escribir_operando(salida,"x",1);
+  escribir_operando(salida,"3",0);
+  igual(salida,1,0,etiqueta++);
+  escribir(salida,0,BOOLEANO);
+  /* printf (x != 3); */
+  escribir_operando(salida,"x",1);
+  escribir_operando(salida,"3",0);
+  distinto(salida,1,0,etiqueta++);
+  escribir(salida,0,BOOLEANO);
+  /* printf b1&&false; */
+  escribir_operando(salida,"b1",1);
+  escribir_operando(salida,"0",0);
+  y(salida,1,0);
+  escribir(salida,0,BOOLEANO);
+  /* printf b1||true; */
+  escribir_operando(salida,"b1",1);
+  escribir_operando(salida,"1",0);
+  o(salida,1,0);
+  escribir(salida,0,BOOLEANO);
+  escribir_fin(salida);
+  fclose(salida);
+  return 0;
 
 
 }

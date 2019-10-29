@@ -7,10 +7,8 @@ segment .bss
 	;declaracion de variables sin inicializar
 	;
 	__esp resd 1
+	_b1 resd 1
 	_x resd 1
-	_y resd 1
-	_z resd 1
-	_j resd 1
 segment .text
 	global main
 	;habilitar funciones de alfalib
@@ -20,78 +18,146 @@ segment .text
 	;
 main:
 	mov dword [__esp], esp
+	push dword _b1
+	call scan_boolean
+	add esp, 4
 	push dword _x
 	call scan_int
 	add esp, 4
-	push dword _z
-	call scan_int
-	add esp, 4
 	mov dword eax, _x
 	push dword eax
-	pop dword eax
-	mov dword eax, [eax]
-	neg eax
-	push dword eax
-	pop dword eax
-	mov dword [_j], eax 
-	mov dword eax, _j
-	push dword eax
-	pop dword eax
-	mov dword eax, [eax]
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	mov dword eax, _x
-	push dword eax
-	mov dword eax, _z
+	mov dword eax, 3
 	push dword eax
 	pop dword ebx
-	mov dword ebx, [ebx]
 	pop dword eax
-	mov dword eax, [eax]
-	sub eax, ebx
-	push dword eax
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	jg fin_menorigual_0
+	mov ecx, 0
+fin_menorigual_0:
+	push dword ecx
 	pop dword eax
 	push dword eax
-	call print_int
+	call print_boolean
 	add esp, 4
 	call print_endofline
 	mov dword eax, _x
 	push dword eax
-	mov dword eax, 2
-	push dword eax
-	pop dword ecx
-	cmp ecx, 0
-	je error_1
-	pop dword eax
-	mov dword eax, [eax]
-	cdq
-	idiv ecx
-	push dword eax
-	pop dword eax
-	mov dword [_y], eax 
-	mov dword eax, _y
-	push dword eax
-	pop dword eax
-	mov dword eax, [eax]
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	mov dword eax, _x
-	push dword eax
-	mov dword eax, _y
+	mov dword eax, 3
 	push dword eax
 	pop dword ebx
-	mov dword ebx, [ebx]
+	pop dword eax
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	jge fin_menorigual_1
+	mov ecx, 0
+fin_menorigual_1:
+	push dword ecx
+	pop dword eax
+	push dword eax
+	call print_boolean
+	add esp, 4
+	call print_endofline
+	mov dword eax, _x
+	push dword eax
+	mov dword eax, 3
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	jl fin_menorigual_2
+	mov ecx, 0
+fin_menorigual_2:
+	push dword ecx
+	pop dword eax
+	push dword eax
+	call print_boolean
+	add esp, 4
+	call print_endofline
+	mov dword eax, _x
+	push dword eax
+	mov dword eax, 3
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	jle fin_menorigual_3
+	mov ecx, 0
+fin_menorigual_3:
+	push dword ecx
+	pop dword eax
+	push dword eax
+	call print_boolean
+	add esp, 4
+	call print_endofline
+	mov dword eax, _x
+	push dword eax
+	mov dword eax, 3
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	je fin_igual_4
+	mov ecx, 0
+fin_igual_4:
+	push dword ecx
+	pop dword eax
+	push dword eax
+	call print_boolean
+	add esp, 4
+	call print_endofline
+	mov dword eax, _x
+	push dword eax
+	mov dword eax, 3
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	jne fin_dist_5
+	mov ecx, 0
+fin_dist_5:
+	push dword ecx
+	pop dword eax
+	push dword eax
+	call print_boolean
+	add esp, 4
+	call print_endofline
+	mov dword eax, _b1
+	push dword eax
+	mov dword eax, 0
+	push dword eax
+	pop dword ebx
 	pop dword eax
 	mov dword eax, [eax]
-	imul ebx
+	and eax, ebx
 	push dword eax
 	pop dword eax
 	push dword eax
-	call print_int
+	call print_boolean
+	add esp, 4
+	call print_endofline
+	mov dword eax, _b1
+	push dword eax
+	mov dword eax, 1
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov dword eax, [eax]
+	or eax, ebx
+	push dword eax
+	pop dword eax
+	push dword eax
+	call print_boolean
 	add esp, 4
 	call print_endofline
 	jmp fin
