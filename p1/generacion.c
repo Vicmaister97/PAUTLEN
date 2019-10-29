@@ -714,3 +714,52 @@ void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, in
   // ahora solo queda meter la direccion del elemento indexado en la pila
   fprintf(fpasm, "\tpush dword eax\n");
 }
+
+
+/*#############FONSSSSSSSSSSSSSSSSS#############*/
+void asignarDestinoEnPila(FILE* fpasm, int es_variable){
+  /* Comenzamos extrayendo de la pila el destino donde realizaremos la asignacion*/
+  fprintf(fpasm,"\tpop dword ebx\n");
+  /* Acto seguido, extraemos el valor a asignar*/
+  fprintf(fpasm,"\tpop dword eax\n");
+  /* Comprobamos si el valor leido es una variable*/
+  if (es_variable == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /* Finalmente, guardamos el valor leido en el destino correspondiente
+  [ebx] = eax*/
+  fprintf(fpasm, "\tmov dword [ebx], eax\n");
+}
+
+void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
+  /* Comprobamos si el valor leido es una variable*/
+  if (es_variable == 1){
+    /* Extramos de la pila el operando que está como variable*/
+    fprintf(fpasm,"\tpop dword eax\n");
+    /* Guardamos el valor de la variable */
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+    /* Metemos en la pila el valor del operando */
+    fprintf(fpasm,"\tpush dword eax\n");
+  }
+
+  /* EN CASO DE NO SER UNA VARIABLE, YA ESTÁ GUARDADO EL VALOR DEL OPERANDO*/
+}
+
+
+void limpiarPila(FILE * fd_asm, int num_argumentos){
+  /* Movemos el puntero de la pila para descartar los argumentos introducidos al llamar a la función*/
+  /* Puesto que todos nuestros datos ocupan 32bytes, guardamos y leemos los datos en la pila con add esp 4, moviendonos de 4 en 4.
+      Por ello, avanzamos la pila 4*num_argumentos*/
+  fprintf(fpasm, "\tadd esp, %d\n", 4*num_argumentos);
+}
+
+void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
+  /* Asumimos que los argumentos de la función ya están en la pila según el convenio fijado en el material de la asignatura */
+  /* Llamamos a la rutina correspondiente*/
+  fprintf(fpasm, "\tcall %s\n", nombre_funcion);
+  /* Después de finalizar la función, limpiamos de la pila sus argumentos */
+  limpiarPila(fpasm, num_argumentos);
+  /* Dejamos en la cima de la pila el retorno de la función (SIEMPRE EN EAX SEGÚN CONVENIO) tras haberla limpiado de sus argumentos*/
+  fprintf(fpasm, "\tpush dword eax\n");
+}

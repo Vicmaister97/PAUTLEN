@@ -1,8 +1,12 @@
 #ifndef GENERACION_H
 #define GENERACION_H
 
-#include <stdio.h>
+/*Práctica1 PAUTLEN
+Autores:  Alfonso Carvajal
+          Victor Garcia
+Grupo:    1401*/
 
+#include <stdio.h>
 
 /* Declaraciones de tipos de datos del compilador */
 #define ENTERO	0
@@ -246,7 +250,6 @@ es_variable
    Es 0 en caso contrario (constante u otro tipo de expresión)
 */
 void asignarDestinoEnPila(FILE* fpasm, int es_variable);
-/*########################### MIRAR APUNTES EXTRA!!! #############################*/
 
 
 /*Como habrás visto en el material, nuestro convenio de llamadas a las funciones asume que

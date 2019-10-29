@@ -2,6 +2,11 @@
 #include "generacion.h"
 #include "alfa.h"
 
+/*Práctica1 PAUTLEN
+Autores:  Alfonso Carvajal
+          Victor Garcia
+Grupo:    1401*/
+
 int main(int argc, char** argv)
 {
 	if (argc != 2) {
@@ -16,36 +21,35 @@ int main(int argc, char** argv)
   fd_asm = fopen(argv[1],"w");
   escribir_subseccion_data(fd_asm);
   escribir_cabecera_bss(fd_asm);
-  //int m;
-  declarar_variable(fd_asm,"m", 1, 1);
+  //int z;
+  declarar_variable(fd_asm,"z", 1, 1);
   escribir_segmento_codigo(fd_asm);
-  escribir_inicio_main(fd_asm);
-  //m=0;
-  escribir_operando(fd_asm,"0",0);
-  asignar(fd_asm,"m",0);
-  //Gestion de etiquetas para abrir el ambito del if. Esta sera la etiqueta que tenga.
-  getiqueta++;
-  cima_etiquetas++;
-  etiquetas[cima_etiquetas]=getiqueta;
-  etiqueta = getiqueta;
-  //Condición del if. Salto a fin si, si la condicion se da.
-  escribir_operando(fd_asm,"m",1);
-  escribir_operando(fd_asm,"5",0);
-  mayor(fd_asm,1,0,etiqueta);
-  ifthenelse_inicio(fd_asm, 0, etiqueta);
-  //printf 2
+  //Declaramos la funcion. Vamos a imprimir su etiqueta y decir que tiene una variable local.
+  //function int doble(int arg)
+  //{
+  //int auxArg;
+  declararFuncion(fd_asm,"doble",1);
+  //auxArg = arg; Asignacion de parametro a variable local. Solo hay un parametro.
+  escribirParametro(fd_asm,0,1);
+  escribirVariableLocal(fd_asm,1);
+  arDestinoEnPila(fd_asm,1);
+  //2*arg.
   escribir_operando(fd_asm,"2",0);
+  escribirParametro(fd_asm,0,1);
+  multiplicar(fd_asm,0,1);
+  //Retornamos de la funcion con lo que esta encima de la pila.
+  retornarFuncion(fd_asm,0);
+  escribir_inicio_main(fd_asm);
+  //z=2
+  escribir_operando(fd_asm,"2",0);
+  asignar(fd_asm,"z",0);
+  escribir_operando(fd_asm,"z",1);
+  // printf doble(z)
+  //Llamamos a la funcion que tiene 1 argumento. Estamos dando un salto a la etiqueta. Primero apilamos el parametro.
+  operandoEnPilaAArgumento(fd_asm,1);
+  llamarFuncion(fd_asm,"_doble",1);
+  //Imprimimos el resultado de la funcion.
   escribir(fd_asm,0,ENTERO);
-  //Salto a fin sino al terminar el if, impresion de la etiqueta fin_si. Recogemos la etiqueta.
-  etiqueta = etiquetas[cima_etiquetas];
-  ifthenelse_fin_then(fd_asm, etiqueta);
-  //printf 3
-  escribir_operando(fd_asm,"3",0);
-  escribir(fd_asm,0,ENTERO);
-  //Fin del condicional if. Imprimimos la etiqueta de ambito del fin del condicional y restamos el contador.
-  etiqueta = etiquetas[cima_etiquetas];
-  ifthenelse_fin(fd_asm, etiqueta);
-  cima_etiquetas--;
   escribir_fin(fd_asm);
   fclose(fd_asm);
 
