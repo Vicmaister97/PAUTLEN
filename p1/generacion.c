@@ -54,6 +54,7 @@ void escribir_inicio_main(FILE* fpasm){
 
 
 void escribir_fin(FILE* fpasm){
+  fprintf(fpasm, "\t; inicio de la funcion escribir_fin\n");
   fprintf(fpasm, "\tjmp fin\n");
   fprintf(fpasm, "error_1:\n");
   fprintf(fpasm, "\tpush dword mensaje_1\n");
@@ -70,7 +71,7 @@ void escribir_fin(FILE* fpasm){
   fprintf(fpasm, "\tmov dword esp, [__esp]\n");
   fprintf(fpasm, "\tcall print_endofline\n");
   fprintf(fpasm, "\tjmp fin\n");
-  
+
   fprintf(fpasm, "fin:\n");
   fprintf(fpasm, "\tmov dword esp, [__esp]\n");
 
@@ -83,6 +84,7 @@ void escribir_fin(FILE* fpasm){
 
 
 void escribir_operando(FILE* fpasm, char* nombre, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion escribir_operando\n");
   /* Si el operando es un valor*/
   if (es_variable == 0){
     fprintf(fpasm, "\tmov dword eax, %s\n", nombre);
@@ -97,6 +99,7 @@ void escribir_operando(FILE* fpasm, char* nombre, int es_variable){
 }
 
 void asignar(FILE* fpasm, char* nombre, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion asignar\n");
   /*Cargar contenido de la pila */
   fprintf(fpasm, "\tpop dword eax\n");
   /*Si es 0 entonces se ha pasado por valor en la pila
@@ -110,53 +113,9 @@ void asignar(FILE* fpasm, char* nombre, int es_variable){
 
 }
 
-
-void uno_si_mayor_de_10(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
-  /*Cargar contenido de la pila */
-  /*Primera variable*/
-  fprintf(fpasm, "\tpop dword eax\n");
-  /*Si es 0 entonces se ha pasado por valor en la pila
-  si no, se ha pasado la direccion del registro*/
-  if(es_variable_1 == 1){
-    fprintf(fpasm, "\tmov eax, [eax]\n");
-  }
-
-  /*Segunda variable*/
-  fprintf(fpasm, "\tpop dword ebx\n");
-  /*Si es 0 entonces se ha pasado por valor en la pila
-  si no, se ha pasado la direccion del registro*/
-  if(es_variable_2 == 1){
-    fprintf(fpasm, "\tmov ebx, [ebx]\n");
-  }
-
-  /*Comparacion*/
-  /*Suma: [eax] = [eax] + [ebx]*/
-  fprintf(fpasm, "\tadd eax, ebx\n");
-
-  /*La suma de las dos variables es menor que 10 => escribe un 0*/
-  fprintf(fpasm, "\tmov ecx, 0\n");
-
-  /*Comparamos [eax] con 10*/
-  fprintf(fpasm, "\tcmp eax, 10\n");
-  /*Si es menor de 10, escribe el 0*/
-  fprintf(fpasm, "\tjle fin_if_%d\n", etiqueta);
-  /*La suma de las dos variables es mayor que 10 => escribe un 1*/
-  fprintf(fpasm, "\tmov ecx, 1\n");
-  // fprint(fpasm, "\tjmp ENDCMP\n");
-
-  fprintf(fpasm, "fin_if_%d:", etiqueta);
-  /*Insertamos el valor de la comparacion: 1 si mayor, 0 si no*/
-  fprintf(fpasm, "\n\tpush dword ecx\n");
-  /*Imprime por pantalla el numero que hemos metido a la pila*/
-  fprintf(fpasm, "\tcall print_int\n");
-  fprintf(fpasm, "\tadd esp, 4\n");
-  fprintf(fpasm, "\tcall print_endofline\n");
-
-}
-
-
 /* FUNCIONES DE ESCRITURA Y LECTURA */
 void leer(FILE* fpasm, char* nombre, int tipo){
+  fprintf(fpasm, "\t; inicio de la funcion leer\n");
   /* Guardamos en la pila el nombre de la variable a leer*/
   fprintf(fpasm, "\tpush dword _%s\n", nombre);
   /* Lee una variable de tipo ENTERO*/
@@ -174,6 +133,7 @@ void leer(FILE* fpasm, char* nombre, int tipo){
 
 
 void escribir(FILE* fpasm, int es_variable, int tipo){
+  fprintf(fpasm, "\t; inicio de la funcion escribir\n");
   /*Cargar contenido a imprimir de la pila */
   fprintf(fpasm, "\tpop dword eax\n");
   /*Si es 0 entonces se ha pasado por valor en la pila
@@ -202,6 +162,7 @@ void escribir(FILE* fpasm, int es_variable, int tipo){
 
 /* Función que suma 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
 void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  fprintf(fpasm, "\t; inicio de la funcion sumar\n");
   /*Cargamos los operandos de la pila */
   /*Segunda variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -229,6 +190,7 @@ void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
 
 /* Función que resta 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
 void restar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  fprintf(fpasm, "\t; inicio de la funcion restar\n");
   /*Cargamos los operandos de la pila */
   /*Segunda variable, es la que se encuentra en el tope de la pila*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -256,6 +218,7 @@ void restar(FILE* fpasm, int es_variable_1, int es_variable_2){
 
 /* Función que multiplica 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
 void multiplicar(FILE* fpasm, int es_variable_1, int es_variable_2){
+  fprintf(fpasm, "\t; inicio de la funcion multiplicar\n");
   /*Cargamos los operandos de la pila */
   /*Segunda variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -283,6 +246,7 @@ void multiplicar(FILE* fpasm, int es_variable_1, int es_variable_2){
 
 /* Función que divide 2 operandos.  es_variable_x = 0 valor   = 1 referencia */
 void dividir(FILE* fpasm, int es_variable_1, int es_variable_2){
+  fprintf(fpasm, "\t; inicio de la funcion dividir\n");
   /*Cargamos los operandos de la pila */
   /*Divisor*/
   fprintf(fpasm, "\tpop dword ecx\n");
@@ -313,6 +277,7 @@ void dividir(FILE* fpasm, int es_variable_1, int es_variable_2){
 
 
 void o(FILE* fpasm, int es_variable_1, int es_variable_2){
+  fprintf(fpasm, "\t; inicio de la funcion o\n");
   /*Cargamos los operandos de la pila */
   /*Segunda variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -339,6 +304,7 @@ void o(FILE* fpasm, int es_variable_1, int es_variable_2){
 
 
 void y(FILE* fpasm, int es_variable_1, int es_variable_2){
+  fprintf(fpasm, "\t; inicio de la funcion y\n");
   /*Cargamos los operandos de la pila */
   /*Segunda variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -365,6 +331,7 @@ void y(FILE* fpasm, int es_variable_1, int es_variable_2){
 
 
 void cambiar_signo(FILE* fpasm, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion cambiar_signo\n");
   /*Cargamos el operando de la pila */
   fprintf(fpasm, "\tpop dword eax\n");
   /*Si es 0 entonces se ha pasado por valor en la pila
@@ -381,6 +348,7 @@ void cambiar_signo(FILE* fpasm, int es_variable){
 }
 
 void no(FILE* fpasm, int es_variable, int cuantos_no){
+  fprintf(fpasm, "\t; inicio de la funcion no\n");
   /* Cargamos el operando de la pila */
   fprintf(fpasm, "\tpop dword eax\n");
   /* Si es una variable */
@@ -409,6 +377,7 @@ void no(FILE* fpasm, int es_variable, int cuantos_no){
 /* FUNCIONES COMPARATIVAS */
 
 void igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion igual\n");
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -442,6 +411,7 @@ void igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
 }
 
 void distinto(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion distinto\n");
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -476,6 +446,7 @@ void distinto(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
 }
 
 void menor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion menor_igual\n");
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -510,6 +481,7 @@ void menor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta
 }
 
 void mayor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion mayor_igual\n");
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -543,6 +515,7 @@ void mayor_igual(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta
 }
 
 void menor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion menor\n");
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -577,6 +550,7 @@ void menor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
 
 
 void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion mayor\n");
   /*Cargar contenido de la pila */
   /*Primera variable*/
   fprintf(fpasm, "\tpop dword ebx\n");
@@ -615,6 +589,7 @@ void mayor(FILE* fpasm, int es_variable_1, int es_variable_2, int etiqueta){
       SEGUNDA PARTE DE LA PRACTICA*/
 
 void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion ifthen_inicio\n");
   /* Extraemos de la pila la expresión del condicional*/
   fprintf(fpasm, "\tpop eax\n");
   /* Comprobamos si la expresión es similar a una variable o no*/
@@ -629,11 +604,13 @@ void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
 }
 
 void ifthen_fin(FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion ifthen_fin\n");
   fprintf(fpasm, "fin_then_%d:\n", etiqueta);
 }
 
 
 void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion ifthenelse_inicio\n");
   /* Extraemos de la pila la expresión del condicional*/
   fprintf(fpasm, "\tpop eax\n");
   /* Comprobamos si la expresión es similar a una variable o no*/
@@ -648,6 +625,7 @@ void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
 }
 
 void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion ifthenelse_fin_then\n");
   /* Ha terminado el bloque THEN, salta el bloque ELSE y va al final */
   fprintf(fpasm, "\tjmp fin_then_else_%d\n", etiqueta);
   /*  Etiqueta del fin del bloque */
@@ -655,15 +633,18 @@ void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
 }
 
 void ifthenelse_fin( FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion ifthenelse_fin\n");
   fprintf(fpasm, "fin_then_else_%d:\n", etiqueta);
 }
 
 
 void while_inicio(FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion while_inicio\n");
   fprintf(fpasm, "\tinicio_while_%d:\n", etiqueta);
 }
 
 void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion while_exp_pila\n");
   /* Extraemos de la pila la expresión del condicional*/
   fprintf(fpasm, "\tpop eax\n");
   /* Comprobamos si la expresión es similar a una variable o no*/
@@ -678,6 +659,7 @@ void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta){
 }
 
 void while_fin( FILE * fpasm, int etiqueta){
+  fprintf(fpasm, "\t; inicio de la funcion while_fin\n");
   /* Ha terminado el bloque WHILE, salta al inicio de este mismo bloque de nuevo */
   fprintf(fpasm, "\tjmp inicio_while_%d\n", etiqueta);
   /*  Etiqueta del fin del bloque */
@@ -686,6 +668,7 @@ void while_fin( FILE * fpasm, int etiqueta){
 
 
 void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion){
+  fprintf(fpasm, "\t; inicio de la funcion escribir_elemento_vector\n");
   // sacamos de la pila la expresion que indexa al vector
   fprintf(fpasm, "\tpop dword eax\n");
   // si exp_es_direccion == 1 entonces la expresion es una variable o algo equivalente
@@ -718,6 +701,7 @@ void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, in
 
 /* FUNCIONES */
 void declararFuncion(FILE * fpasm, char * nombre_funcion, int num_var_loc){
+  fprintf(fpasm, "\t; inicio de la funcion declararFuncion\n");
   // etiqueta del inicio de la funcion es "_" seguido por el nombre de la funcion y ":"
   fprintf(fpasm, "\t_%s:\n", nombre_funcion);
   // guardar en la pila el registro ebp --> puntero base para localizar en la pila
@@ -733,6 +717,7 @@ void declararFuncion(FILE * fpasm, char * nombre_funcion, int num_var_loc){
 }
 
 void retornarFuncion(FILE * fpasm, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion retornarFuncion\n");
   fprintf(fpasm, "\tpop dword eax\n");
   // si es_variable == 1 entonces lo que esta en la cima de la pila es una variable o algo equivalente
   // y queremos el contenido de lo que esta guardado en esa direccion
@@ -750,6 +735,7 @@ void retornarFuncion(FILE * fpasm, int es_variable){
 
 
 void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
+  fprintf(fpasm, "\t; inicio de la funcion escribirParametro\n");
   int aux_ebp;
   // cada argumento ocupa 4 bytes, por eso se multiplica por 4
   // 1er argumento se corresponde con la posicion 0
@@ -763,6 +749,7 @@ void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros)
 }
 
 void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
+  fprintf(fpasm, "\t; inicio de la funcion escribirVariableLocal\n");
   int aux_ebp;
   // cada argumento ocupa 4 bytes, por eso se multiplica por 4
   // 1er argumento se corresponde con la posicion 1
@@ -776,6 +763,7 @@ void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 }
 
 void asignarDestinoEnPila(FILE* fpasm, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion asignarDestinoEnPila\n");
   /* Comenzamos extrayendo de la pila el destino donde realizaremos la asignacion*/
   fprintf(fpasm,"\tpop dword ebx\n");
   /* Acto seguido, extraemos el valor a asignar*/
@@ -791,6 +779,7 @@ void asignarDestinoEnPila(FILE* fpasm, int es_variable){
 }
 
 void operandoEnPilaAArgumento(FILE * fpasm, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion operandoEnPilaAArgumento\n");
   /* Comprobamos si el valor leido es una variable*/
   if (es_variable == 1){
     /* Extramos de la pila el operando que está como variable*/
@@ -806,6 +795,7 @@ void operandoEnPilaAArgumento(FILE * fpasm, int es_variable){
 
 
 void limpiarPila(FILE * fpasm, int num_argumentos){
+  fprintf(fpasm, "\t; inicio de la funcion limpiarPila\n");
   /* Movemos el puntero de la pila para descartar los argumentos introducidos al llamar a la función*/
   /* Puesto que todos nuestros datos ocupan 32bytes, guardamos y leemos los datos en la pila con add esp 4, moviendonos de 4 en 4.
       Por ello, avanzamos la pila 4*num_argumentos*/
@@ -813,6 +803,7 @@ void limpiarPila(FILE * fpasm, int num_argumentos){
 }
 
 void llamarFuncion(FILE * fpasm, char * nombre_funcion, int num_argumentos){
+  fprintf(fpasm, "\t; inicio de la funcion llamarFuncion\n");
   /* Asumimos que los argumentos de la función ya están en la pila según el convenio fijado en el material de la asignatura */
   /* Llamamos a la rutina correspondiente*/
   fprintf(fpasm, "\tcall %s\n", nombre_funcion);
