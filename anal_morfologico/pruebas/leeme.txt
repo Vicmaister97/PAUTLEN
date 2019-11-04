@@ -1,0 +1,31 @@
+El fichero entrada1.txt no contiene ningún error morfológico y el analisis morfológico genera el fichero salida1.txt
+
+
+
+Los ficheros de prueba que contienen errores (entrada2.txt y entrada3.txt), además de generar un fichero de salida,
+muestran un mensaje por stderr según se indica continuación:
+
+entrada2.txt
+============
+
+Genera el fichero de salida salida2.txt y muestra por stderr el siguiente mensaje:
+
+
+****Error en [lin 9, col 5]: identificador demasiado largo (x0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789)
+
+
+entrada3.txt
+============
+
+Genera el fichero de salida salida3.txt y muestra por stderr el siguiente mensaje:
+
+
+****Error en [lin 9, col 5]: simbolo no permitido (&)
+
+
+
+La aparición de cualquier símbolo no permitido funcionaría de manera similar al comportamiento de la entrada3.
+
+
+
+
