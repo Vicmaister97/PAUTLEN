@@ -25,7 +25,8 @@ FILE* yyout;
 /** Buffer usado para almacenamiento temporal de cadenas de texto **/
 char* buffer;
 
-int line = 1;
+/*int line = 1;*/
+//\n                                           { /** LLevamos cuenta de la linea leida **/	line++; }*/
 
 %}
 
@@ -49,11 +50,10 @@ LETRA	[a-zA-Z]
 main                                         {buffer = "TOK_MAIN"; return TOK_MAIN;}
 "\{"                                         {buffer = "TOK_PARENTESISIZQUIERDO"; return TOK_PARENTESISIZQUIERDO;}
 
-\n                                           { /** LLevamos cuenta de la linea leida **/	line++; }
 [ \t\n//]+                                 { /** accion vacia: se ignoran los espacios y tabuladores **/ }
 .                                            { /** REPRESENTA CUALQUIER CARACTER MENOS SALTO DE LINEA: token desconocido, se produce un mensaje de error **/
-						if (yyleng<100){ fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)", line, yyleng, yytext); }
-						else{ fprintf(stderr,  "****Error en [lin %d, col %d]: identificador demasiado largo (%s)", line, yyleng, yytext); }
+						if (yyleng<100){ fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)\n", yylineno, yyleng, yytext); }
+						else{ fprintf(stderr,  "****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n", yylineno, yyleng, yytext); }
 						}
 
 %%
