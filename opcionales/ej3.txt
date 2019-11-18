@@ -1,0 +1,57 @@
+Ejercicio de clase 21/10/2019 - PAUTLEN 1402.
+=============================================
+
+Implementa el programa en C que por medio de las funciones incluidas en generacion.c realice las instrucciones indicadas en el siguiente código de alto nivel:
+
+main
+{
+  int x;
+  int t;
+  int m;
+
+
+  function int triple(int a) {
+    int tmp;
+    tmp = a;
+    return tmp * 3;
+  }
+
+  function int mitad(int a) {
+    int tmp;
+    tmp = a;
+    return tmp / 2;
+  }
+
+  scanf x;
+
+  t = triple(x);
+  m = mitad(t);
+
+  printf t;
+  printf m;
+
+  printf t * m;
+}
+
+Ejemplos de ejecución:
+
+ [INPUT] 5
+[OUTPUT] 15
+[OUTPUT] 7
+[OUTPUT] 105
+------------ FIN
+
+ [INPUT] 12
+[OUTPUT] 36
+[OUTPUT] 18
+[OUTPUT] 648
+------------ FIN
+
+Completa el programa ej3.c que se adjunta junto a tu librería generacion.c para generar el código NASM que realice esta tarea.
+
+Obtendrás máxima calificacion (****) si eres capaz de hacer la entrega con todo funcionando correctamente.
+Obtendrás buena calificacion (**) si eres capaz de crear el programa en lenguaje NASM y funciona.
+Se contará cualquier trabajo entregado que no funcione (*).
+
+Adjunta tu entrega a pablo.gomeza@uam.es con el título de correo "[PAUTLEN-1402] Opcional 3 P1" y con la siguiente información:
+-> Tu nombre y el de tu pareja.
