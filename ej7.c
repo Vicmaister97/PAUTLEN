@@ -1,9 +1,15 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "generacion.h"
-int main (int argc, char ** argv){
-  if (argc != 2) {
+#include "alfa.h"
+
+/*Práctica1 PAUTLEN
+Autores:  Alfonso Carvajal
+          Victor Garcia
+Grupo:    1401*/
+
+int main(int argc, char** argv)
+{
+	if (argc != 2) {
     fprintf (stdout, "ERROR POCOS ARGUMENTOS\n");
     return -1;
   }
@@ -21,13 +27,12 @@ int main (int argc, char ** argv){
   //Declaramos la funcion. Vamos a imprimir su etiqueta y decir que tiene una variable local.
   //function int doble(int arg)
   //{
-  //
-  int auxArg;
+  //int auxArg;
   declararFuncion(fd_asm,"doble",1);
   //auxArg = arg; Asignacion de parametro a variable local. Solo hay un parametro.
   escribirParametro(fd_asm,0,1);
   escribirVariableLocal(fd_asm,1);
-  arDestinoEnPila(fd_asm,1);
+  asignarDestinoEnPila(fd_asm,1);
   //2*arg.
   escribir_operando(fd_asm,"2",0);
   escribirParametro(fd_asm,0,1);
@@ -40,12 +45,12 @@ int main (int argc, char ** argv){
   asignar(fd_asm,"z",0);
   escribir_operando(fd_asm,"z",1);
   // printf doble(z)
-  //Llamamos a la funcion que tiene 1 argumento. Estamos dando un salto a la
-  etiqueta. Primero apilamos el parametro.
+  //Llamamos a la funcion que tiene 1 argumento. Estamos dando un salto a la etiqueta. Primero apilamos el parametro.
   operandoEnPilaAArgumento(fd_asm,1);
   llamarFuncion(fd_asm,"_doble",1);
   //Imprimimos el resultado de la funcion.
   escribir(fd_asm,0,ENTERO);
   escribir_fin(fd_asm);
   fclose(fd_asm);
+
 }

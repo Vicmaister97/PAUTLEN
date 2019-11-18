@@ -22,8 +22,7 @@ int main (int argc, char ** argv){
   //m=0;
   escribir_operando(fd_asm,"0",0);
   asignar(fd_asm,"m",0);
-  //Gestion de etiquetas para abrir el ambito del if. Esta sera la etiqueta
-  que tenga.
+  //Gestion de etiquetas para abrir el ambito del if. Esta sera la etiqueta que tenga.
   getiqueta++;
   cima_etiquetas++;
   etiquetas[cima_etiquetas]=getiqueta;
@@ -36,15 +35,13 @@ int main (int argc, char ** argv){
   //printf 2
   escribir_operando(fd_asm,"2",0);
   escribir(fd_asm,0,ENTERO);
-  //Salto a fin sino al terminar el if, impresion de la etiqueta fin_si.
-  Recogemos la etiqueta.
+  //Salto a fin sino al terminar el if, impresion de la etiqueta fin_si. Recogemos la etiqueta.
   etiqueta = etiquetas[cima_etiquetas];
   ifthenelse_fin_then(fd_asm, etiqueta);
   //printf 3
   escribir_operando(fd_asm,"3",0);
   escribir(fd_asm,0,ENTERO);
-  //Fin del condicional if. Imprimimos la etiqueta de ambito del fin del
-  condicional y restamos el contador.
+  //Fin del condicional if. Imprimimos la etiqueta de ambito del fin del condicional y restamos el contador.
   etiqueta = etiquetas[cima_etiquetas];
   ifthenelse_fin(fd_asm, etiqueta);
   cima_etiquetas--;

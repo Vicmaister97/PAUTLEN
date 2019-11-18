@@ -7,7 +7,7 @@ int main (int argc, char ** argv){
     fprintf (stdout, "ERROR POCOS ARGUMENTOS\n");
     return -1;
   }
-  t etiqueta = 0;
+  int etiqueta = 0;
   int getiqueta = 0;
   int etiquetas[MAX_ETIQUETAS];
   int cima_etiquetas=-1;
