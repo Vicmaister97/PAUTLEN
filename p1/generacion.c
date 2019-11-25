@@ -806,7 +806,7 @@ void llamarFuncion(FILE * fpasm, char * nombre_funcion, int num_argumentos){
   fprintf(fpasm, "\t; inicio de la funcion llamarFuncion\n");
   /* Asumimos que los argumentos de la función ya están en la pila según el convenio fijado en el material de la asignatura */
   /* Llamamos a la rutina correspondiente*/
-  fprintf(fpasm, "\tcall_%s\n", nombre_funcion);
+  fprintf(fpasm, "\tcall %s\n", nombre_funcion);
   /* Después de finalizar la función, limpiamos de la pila sus argumentos */
   limpiarPila(fpasm, num_argumentos);
   /* Dejamos en la cima de la pila el retorno de la función (SIEMPRE EN EAX SEGÚN CONVENIO) tras haberla limpiado de sus argumentos*/
