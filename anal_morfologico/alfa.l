@@ -16,13 +16,14 @@
 #include "tokens.h"
 
 #define MAXIDLENGTH 100
+void yyerror(char *msg);
 
 /** Ficheros de entrada y salida del analizador morfológico **/
 /** extern?? **/
 FILE* yyin;
 FILE* yyout;
 
-int line = 1;
+/*int line = 1;*/
 
 %}
 
@@ -30,7 +31,7 @@ int line = 1;
 *** La siguiente directiva indica que no se va a implementar la función ’yywrap’
 *** evita que se tenga que enlazar con -lf, o que se tenga que implementar ’yywrap’
 **/
-%option noyywrap
+%option noyywrap;
 
 /** Obliga a mantener el número de línea analizada en la variable global yylineno **/
 %option yylineno;
@@ -48,77 +49,59 @@ LETRA	[a-zA-Z]
 /*----- Sección de Reglas ----------------*/
 /** Además de la accion asociada se guarda el token en yytext como char* y su longitud en yyleng **/
 main                                         {buffer = "TOK_MAIN"; return TOK_MAIN;}
-"\{"                                         return LEFT_KEY;
-"\}"                                         return RIGHT_KEY;
-"\["                                         return LEFT_BRACKET;
-"\]"                                         return RIGHT_BRACKET;
-";"                                          return SEMICOLON;
-"\("                                         return LEFT_PARENTHESIS;
-"\)"                                         return RIGHT_PARENTHESIS;
-","                                          return COMA;
-"="                                          return ASSIGN;
-"if"                                         return IF;
-"then"                                       return THEN;
-"else"                                       return ELSE;
-"while"                                      return WHILE;
-"return"                                     return RETURN;
-"for"                                        return FOR;
-":="                                         return ASSIGN_FOR;
-"to"                                         return TO;
-"do"                                         return DO;
-"out"                                        return OUT;
-"in"                                         return IN;
-"initVar"                                    return INITVAR;
-"endVar"                                     return ENDVAR;
-"\+\+"                                       return PLUSPLUS;
-"@"                                          return AT;
-"\$"                                         return DOLLAR;
-!                                            {return NEG;}
-#                                            return COUNT;
-\?                                           return QUEST;
-\+                                           {return SYMBOL_OP;}
-\-                                           {return SYMBOL_OP;}
-"--"                                         return MINUSMINUS;
-\*                                           {return BINARY_OP;}
-\/                                           {return BINARY_OP;}
-%                                            return BINARY_LIST_OP_I;
-\*\*                                         return BINARY_LIST_OP_L;
-">"                                          {return RELATION_OP;}
-"<="                                         {return RELATION_OP;}
-"<"                                          {return RELATION_OP;}
-">="                                         {return RELATION_OP;}
-"=="                                         {return EQUALS_OP;}
-"<>"                                         {return EQUALS_OP;}
-"and"                                        return AND_OP;
-"or"                                         return OR_OP;
-"xor"                                        return XOR_OP;
-"<<"                                         return LIST_OP;
-">>"                                         return LIST_OP;
-"list_of"                                    return LIST_OF;
-"int"                                        {return BASIC_TYPES;}
-"double"                                     {return BASIC_TYPES;}
-"boolean"                                    {return BASIC_TYPES;}
-"char"                                       {return BASIC_TYPES;}
-"true"                                       {return CONST_BOOLEAN;}
-"false"                                      {return CONST_BOOLEAN;}
-[0-9]+                                       {return CONST_INT;}
-[0-9]*\.[0-9]+                               {return CONST_DOUBLE;}
-\"[^\"]\"                                    {return CONST_CHAR;}
-\"[^\"]*\"                                   {return CADENA;}
-[_a-zA-Z][_a-zA-Z0-9]*                       {return ID;}
+"\{"                                         {buffer = "TOK_LLAVEIZQUIERDA"; return TOK_LLAVEIZQUIERDA;}
+"\}"                                         {buffer = "TOK_LLAVEDERECHA"; return TOK_LLAVEDERECHA;}
+"\["                                         {buffer = "TOK_CORCHETEIZQUIERDO"; return TOK_CORCHETEIZQUIERDO;}
+"\]"                                         {buffer = "TOK_CORCHETEDERECHO"; return TOK_CORCHETEDERECHO;}
+";"                                          {buffer = "TOK_PUNTOYCOMA"; return TOK_PUNTOYCOMA;}
+"\("                                         {buffer = "TOK_PARENTESISIZQUIERDO"; return TOK_PARENTESISIZQUIERDO;}
+"\)"                                         {buffer = "TOK_PARENTESISDERECHO"; return TOK_PARENTESISDERECHO;}
+","                                          {buffer = "TOK_COMA"; return TOK_COMA;}
+"="                                          {buffer = "TOK_ASIGNACION"; return TOK_ASIGNACION;}
+"if"                                         {buffer = "TOK_IF"; return TOK_IF;}
+"else"                                       {buffer = "TOK_ELSE"; return TOK_ELSE;}
+"while"                                      {buffer = "TOK_WHILE"; return TOK_WHILE;}
+"return"                                     {buffer = "TOK_RETURN"; return TOK_RETURN;}
+!                                            {buffer = "TOK_NOT"; return TOK_NOT;}
+\+                                           {buffer = "TOK_MAS"; return TOK_MAS;}
+\-                                           {buffer = "TOK_MENOS"; return TOK_MENOS;}
+\*                                           {buffer = "TOK_ASTERISCO"; return TOK_ASTERISCO;}
+\/                                           {buffer = "TOK_DIVISION"; return TOK_DIVISION;}
+">"                                          {buffer = "TOK_MAYOR"; return TOK_MAYOR;}
+"<="                                         {buffer = "TOK_MENORIGUAL"; return TOK_MENORIGUAL;}
+"<"                                          {buffer = "TOK_MENOR"; return TOK_MENOR;}
+">="                                         {buffer = "TOK_MAYORIGUAL"; return TOK_MAYORIGUAL;}
+"=="                                         {buffer = "TOK_IGUAL"; return TOK_IGUAL;}
+"!="                                         {buffer = "TOK_DISTINTO"; return TOK_DISTINTO;}
+"&&"                                         {buffer = "TOK_AND"; return TOK_AND;}
+"or"                                         {buffer = "TOK_OR"; return TOK_OR;}
+"int"                                        {buffer = "TOK_INT"; return TOK_INT;}
+"boolean"                                    {buffer = "TOK_BOOLEAN"; return TOK_BOOLEAN;}
+"true"                                       {buffer = "TOK_TRUE"; return TOK_TRUE;}
+"false"                                      {buffer = "TOK_FALSE"; return TOK_FALSE;}
+{DIGITO}+                                    {buffer = "TOK_CONSTANTE_ENTERA"; return TOK_CONSTANTE_ENTERA;}
+"scanf"                                      {buffer = "TOK_SCANF"; return TOK_SCANF;}
+"printf"                                     {buffer = "TOK_PRINTF"; return TOK_PRINTF;}
+"array"                                      {buffer = "TOK_ARRAY"; return TOK_ARRAY;}
+"function"                                   {buffer = "TOK_FUNCTION"; return TOK_FUNCTION;}
+{LETRA} ({DIGITO} |{LETRA})*                 {if (yyleng > 100){
+																							yyerror(" identificador demasiado largo");
+																							return TOK_ERROR;}
+																							else{buffer = "TOK_IDENTIFICADOR";
+																								return TOK_IDENTIFICADOR;}}
 
-\n                                           { /** LLevamos cuenta de la linea leida **/	line++; }
+
 [ \t\n"//"]+                                 { /** accion vacia: se ignoran los espacios y tabuladores **/ }
 .                                            { /** REPRESENTA CUALQUIER CARACTER MENOS SALTO DE LINEA: token desconocido, se produce un mensaje de error **/
-						if (yyleng<100){ strcpy(buffer, "****Error en [lin %d, col %d]: simbolo no permitido (%s)", line, yyleng, yytext); }
-						else{ strcpy(buffer, "****Error en [lin %d, col %d]: identificador demasiado largo (%s)", line, yyleng, yytext); }
-						yyerror(buffer); }
-
+																							 yyerror("simbolo no permitido"); return TOK_ERROR;}
 %%
 
 
 /*----- Sección de Procedimientos --------*/
-
+void yyerror (char *msg)
+{
+  fprintf(stderr,"****Error en [lin %d, col %d]: %s (%s)\n", yylineno, yyleng, msg, yytext);
+}
 
 int main (int argc, char *argv[]){
 	int tok;
@@ -140,7 +123,8 @@ int main (int argc, char *argv[]){
 			printf("Leyendo fichero '%s'\n",argv[1]);
 			tok = yylex();
 			while (tok != 0){	// Hasta que no llegue al final del fichero
-				fprintf(yyout, "%s\t%d\t%s", yytext, tok, yyext);
+				fprintf(yyout, "%s\t%d\t%s", buffer, tok, yytext);
+				tok=yylex();
 			}
 			printf("FINALIZADO ANALISIS MORFOLÓGICO!!");
 			fclose(yyin);

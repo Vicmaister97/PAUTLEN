@@ -6,7 +6,7 @@ Descripcion: Definicion de tokens para el lenguaje ALFA
 #define _TOKENS_H
 
 
-/* Palabras reservadas */ 
+/* Palabras reservadas */
 #define TOK_MAIN                100
 #define TOK_INT                 101
 #define TOK_BOOLEAN             102
@@ -48,7 +48,7 @@ Descripcion: Definicion de tokens para el lenguaje ALFA
 /* Identificadores  */
 #define TOK_IDENTIFICADOR       300
 
-/* Constantes */ 
+/* Constantes */
 
 #define TOK_CONSTANTE_ENTERA    400
 #define TOK_TRUE                401
