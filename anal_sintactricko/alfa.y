@@ -1,13 +1,24 @@
+/*********************************************************
+**
+** Fichero: ALFA.Y
+** Autores: Alfonso Carvajal, Víctor García.
+** Función: Archivo YACC para implementar el compilador de la
+**          asignatura Proyecto de Procesadores de Lenguajes.
+**
+*********************************************************/
+
 %{
 #include <stdio.h>
-...
+#include <stdlib.h>
+#include <string.h>
+#include "tokens.h"
 %}
 
 %union
-{
-  char* cadena;
-  int numero;
-}
+  {
+    char* cadena;
+    int numero;
+  }
 
 %token TOK_MAIN
 %token TOK_INT
@@ -45,10 +56,10 @@
 %token TOK_MAYOR
 
 
-%left TOK_IDENTIFICADOR
+%token <cadena> TOK_IDENTIFICADOR
 
 
-%left TOK_CONSTANTE_ENTERA
+%token <numero> TOK_CONSTANTE_ENTERA
 %token TOK_TRUE
 %token TOK_FALSE
 
