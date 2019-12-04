@@ -1,0 +1,30 @@
+main
+{
+// Declaraciones
+
+    int x, resultado;
+
+// Funciones
+	function int factorial (int n)
+	{
+		if ( (n == 0) )
+		{
+			return 1;
+		}
+		else
+		{
+			return n * factorial ( n - 1);
+		}
+	}
+
+// Sentencias
+
+	scanf x;
+
+	resultado = factorial (x);
+
+	printf resultado;
+}
+
+
+

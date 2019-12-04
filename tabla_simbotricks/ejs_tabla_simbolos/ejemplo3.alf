@@ -1,0 +1,22 @@
+main
+{
+
+	boolean i;
+	int j;
+	
+
+	function int doble (int arg)
+	{
+		return arg*2;
+	}
+
+	function boolean doble (int arg; int dosPorArg)
+	{
+		return (dosPorArg == 2*arg);
+	}
+
+	j=20;
+
+  	printf doble(j);
+
+}

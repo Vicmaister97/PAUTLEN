@@ -1,0 +1,24 @@
+main
+{
+// Declaraciones
+
+    int x, y, resultado;
+
+// Funciones
+	function int suma (int suma; int suma2)
+	{
+		return suma + suma2;
+	}
+
+// Sentencias
+
+	scanf x;
+	scanf y;
+
+	resultado = suma (x,y);
+
+	printf resultado;
+}
+
+
+

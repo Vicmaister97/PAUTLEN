@@ -1,0 +1,20 @@
+main
+{
+
+	int i, j;
+	
+
+	function int suma (int arg1; int arg2)
+	{
+		boolean aux;
+		int aux;
+
+		return arg1 + arg2;
+	}
+
+	j=20;
+	i=10;
+
+  	printf suma(j,i);
+
+}

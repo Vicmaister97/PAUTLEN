@@ -1,0 +1,13 @@
+main
+{
+
+	int num1, num2;
+	
+
+	
+	scanf num1;
+	scanf num2;
+
+  	printf num1 + num2;
+
+}
