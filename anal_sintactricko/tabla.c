@@ -11,35 +11,40 @@
 
 #include "tabla.h"
 
-SIMBOLO TGLOBAL[MAX_ITEMS];       // Tabla hash que almacena los símbolos de ámbito global
-SIMBOLO TLOCAL[MAX_ITEMS];       // Tabla hash que almacena los símbolos de ámbito local
+struct HASH_TABLE *TGLOBAL;       // Tabla hash que almacena los símbolos de ámbito global
+struct HASH_TABLE *TLOCAL;       // Tabla hash que almacena los símbolos de ámbito local
+
+// newHashTable
 
 int ambito = 0;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
 
-//int line = 1;                   // Línea del fichero que se está analizando
-//long int TOPE = 0 ;             // Tope de la pila, indica en cada momento la siguiente posición en la pila TS para insertar una entrada
-int decVar = 0;                 /* Indica si las variables se están utilizando (decVar=0), si se están declarando (decVar=1)
-                                    o si se llaman desde una expresión (decVar=2)*/
-int decParam = 0;               // Indica el inicio de una declaración de parámetros formales o argumentos de una función con 1 y el final con un 0(valor predeterminado)
-int esFunc = 0;                 /* Indica el comienzo de una función con 1 si es cabecera de la función
-                                    y con 0 si ya es el bloque de la función*/
-tipoDato TipoTmp = NO_ASSIG;    // Tipo de dato actual para asignarlo a las entradas de la TS
-int nParams = 0;
-int checkparam = 0;
-int checkFunct = 0;
-int currentFunction = -1;       // Indica la posición (índice) en la TS de la función actual
-
-// SUBPROG???
-
-/* Guarda el type o tipo de dato del atributo leido*/
-void getType(atributos value){
-
-    TipoTmp = value.type;
-}
 
 /*********************
 * METODOS DE MODIFICACIÓN DE LA TABLA DE SÍMBOLOS (TS) *
 **********************/
+
+int DeclararGlobal(char *id, int desc_id){
+    struct SIMBOLO *newS;
+    newS = newSimbolo(id, desc_id);
+
+    return insertarSimbolo (TGLOBAL, newS)          // Devuelve TRUE si no es una redeclaración de una variable global
+                                                    // y ha podido insertarlo o FALSE en caso contrario
+    
+    /*if (buscarSimbolo(TGLOBAL, id) == NULL){        // Si no es una redeclaración de una variable global
+        struct SIMBOLO *newS;
+        newS = newSimbolo(id, desc_id);
+        return TRUE;
+    }
+    else return FALSE;*/
+}
+
+int DeclararLocal(char *id, int desc_id){
+    struct SIMBOLO *newS;
+    newS = newSimbolo(id, desc_id);
+
+    return insertarSimbolo (TLOCAL, newS)          // Devuelve TRUE si no es una redeclaración de una variable global
+                                                    // y ha podido insertarlo o FALSE en caso contrario
+}
 
 /* Inserta una entrada en la tabla de símbolos (TS). Devuelve 1 si funciona correctamente, -1 en caso de error */
 int TS_AddEntry(entradaTS entrada){
