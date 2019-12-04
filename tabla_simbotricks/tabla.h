@@ -27,9 +27,33 @@ typedef struct {
     int num_var_locales;                /* número de variables locales si función */
 } SIMBOLO;
 
+struct SIMBOLO *newSimbolo(char *identificador, TIPO t, CATEGORIA c);
+void setValor(struct SIMBOLO *s, int v);
+void setLongitud(struct SIMBOLO *s, int l);
+void setNum_parametros(struct SIMBOLO *s, int n);
+void setPosicion(struct SIMBOLO *s, int p);
+void setNum_var_locales(struct SIMBOLO *s, int n);
+
+void freeSimbolo(struct SIMBOLO *s);
+
 /* Aclaración: como los campos valor, longitud, num_parametros, posicion y num_var_locales
 son opcionales dependiendo de si el símbolo es variable (escalar o vector), parámetro o función,
 se pueden concentrar todos estos campos en sólo dos campos de tipo int (por ejemplo, info1 e info2)
 y gestionar en cada caso al guardar y recuperar los valores el dato que corresponde */
+
+typedef struct {
+  struct SIMBOLO **hash_array;
+  int num_items;
+  int max_items;
+} HASH_TABLE;
+
+struct HASH_TABLE *newHashTable(int max_items);
+
+void freeHashTable(struct HASH_TABLE *h);
+
+int insertarSimbolo(struct HASH_TABLE *h, struct SIMBOLO s);
+
+struct SIMBOLO *buscarSimbolo(struct HASH_TABLE *h, char *identificador);
+
 
 #endif
