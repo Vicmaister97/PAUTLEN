@@ -38,8 +38,6 @@ char* buffer;
 /** Obliga a mantener el número de línea analizada en la variable global yylineno **/
 %option yylineno
 
-
-
 DIGITO [0-9]
 LETRA	[a-zA-Z]
 

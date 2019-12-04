@@ -67,8 +67,8 @@ extern int yydebug;
     TOK_ASIGNACION = 277,
     TOK_MAS = 278,
     TOK_MENOS = 279,
-    TOK_DIVISION = 280,
-    TOK_ASTERISCO = 281,
+    TOK_ASTERISCO = 280,
+    TOK_DIVISION = 281,
     TOK_AND = 282,
     TOK_OR = 283,
     TOK_NOT = 284,
@@ -81,8 +81,7 @@ extern int yydebug;
     TOK_IDENTIFICADOR = 291,
     TOK_CONSTANTE_ENTERA = 292,
     TOK_TRUE = 293,
-    TOK_FALSE = 294,
-    TOK_ERROR = 295
+    TOK_FALSE = 294
   };
 #endif
 /* Tokens.  */
@@ -108,8 +107,8 @@ extern int yydebug;
 #define TOK_ASIGNACION 277
 #define TOK_MAS 278
 #define TOK_MENOS 279
-#define TOK_DIVISION 280
-#define TOK_ASTERISCO 281
+#define TOK_ASTERISCO 280
+#define TOK_DIVISION 281
 #define TOK_AND 282
 #define TOK_OR 283
 #define TOK_NOT 284
@@ -123,19 +122,18 @@ extern int yydebug;
 #define TOK_CONSTANTE_ENTERA 292
 #define TOK_TRUE 293
 #define TOK_FALSE 294
-#define TOK_ERROR 295
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 7 "alfa.y" /* yacc.c:1909  */
+#line 28 "alfa.y" /* yacc.c:1909  */
 
   char* cadena;
   int numero;
 
-#line 139 "y.tab.h" /* yacc.c:1909  */
+#line 137 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
