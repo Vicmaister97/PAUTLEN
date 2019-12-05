@@ -79,4 +79,15 @@ void printLista(listaSimbolo *l);
 void printHashTable(HASH_TABLE *h);
 
 
+/******************************************
+** TABLA SIMBOLOS
+******************************************/
+
+int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, int desc_id);
+int DeclararLocal(HASH_TABLE *TLOCAL, char *id, int desc_id);
+SIMBOLO *UsoGlobal(HASH_TABLE *TGLOBAL, char *id);
+SIMBOLO *UsoLocal(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL,  char *id);
+int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_id);
+
+
 #endif

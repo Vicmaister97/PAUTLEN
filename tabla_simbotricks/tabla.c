@@ -100,48 +100,48 @@ void freeSimbolo(SIMBOLO *s){
 }
 
 char *getIdentificador(SIMBOLO *s){
-  if(s)
-    return s->identificador;
+  if(s) return s->identificador;
+  return NULL;
 }
 
 CATEGORIA_SIMBOLO CategoriaSimbolo(SIMBOLO *s){
-  if(s)
-    return s->cat_simbolo;
+  if(s) return s->cat_simbolo;
+  return FALSE;
 }
 
 TIPO getTipo(SIMBOLO *s){
-  if(s)
-    return s->tipo;
+  if(s) return s->tipo;
+  return FALSE;
 }
 
 CATEGORIA getCategoria(SIMBOLO *s){
-  if(s)
-    return s->categoria;
+  if(s) return s->categoria;
+  return FALSE;
 }
 
 int getValor(SIMBOLO *s){
-  if(s)
-    return s->valor;
+  if(s) return s->valor;
+  return FALSE;
 }
 
 int getLongitud(SIMBOLO *s){
-  if(s)
-    return s->longitud;
+  if(s) return s->longitud;
+  return FALSE;
 }
 
 int getNum_parametros(SIMBOLO *s){
-  if(s)
-    return s->num_parametros;
+  if(s) return s->num_parametros;
+  return FALSE;
 }
 
 int getPosicion(SIMBOLO *s){
-  if(s)
-    return s->posicion;
+  if(s) return s->posicion;
+  return FALSE;
 }
 
 int getNum_var_locales(SIMBOLO *s){
-  if(s)
-    return s->num_var_locales;
+  if(s) return s->num_var_locales;
+  return FALSE;
 }
 
 
@@ -152,6 +152,7 @@ listaSimbolo *newListaSimbolo(){
     return NULL;
   l->lista = NULL;
   l->len = 0;
+  return l;
 }
 void insertaSimboloLista(listaSimbolo *l, SIMBOLO *s){
   if(l == NULL || s == NULL)
@@ -230,7 +231,7 @@ int hashCode(char *s){
 }
 
 int insertarSimbolo(HASH_TABLE *h, SIMBOLO *s){
-  int i, hash;
+  int hash;
   listaSimbolo *hash_item;
   if(h == NULL || s == NULL)
     return ERR;
@@ -360,7 +361,7 @@ int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_
         if (insertarSimbolo(TGLOBAL, newS) == FALSE) return FALSE;      // NO deberia fallar
 
         // Inicializamos la tabla local para el ámbito de esta función
-        TLOCAL = newHashTable():
+        TLOCAL = newHashTable();
 
         // Insertamos la funcion en la tabla local
         if (insertarSimbolo(TLOCAL, newS) == FALSE) return FALSE;      // NO deberia fallar
