@@ -257,6 +257,7 @@ SIMBOLO *buscarSimbolo(HASH_TABLE *h, char *s){
   hash = hashCode(s);
   hash_item = *(h->hash_array + hash);
   pos = isSimboloEnLista(hash_item, s);
+
   if(pos != FALSE)
     return *(hash_item->lista + pos);
 
@@ -354,17 +355,18 @@ int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_
         return FALSE;
     }
     else{
-        SIMBOLO *newS;
+        SIMBOLO *newS, *newS2;
         newS = newSimbolo(id, desc_id);
+        newS2 = newSimbolo(id, desc_id);
 
         // Insertamos la funcion en la tabla global
         if (insertarSimbolo(TGLOBAL, newS) == FALSE) return FALSE;      // NO deberia fallar
 
         // Inicializamos la tabla local para el ámbito de esta función
-        TLOCAL = newHashTable();
+        //TLOCAL = newHashTable();
 
         // Insertamos la funcion en la tabla local
-        if (insertarSimbolo(TLOCAL, newS) == FALSE) return FALSE;      // NO deberia fallar
+        if (insertarSimbolo(TLOCAL, newS2) == FALSE) return FALSE;      // NO deberia fallar
 
         return TRUE;
     }

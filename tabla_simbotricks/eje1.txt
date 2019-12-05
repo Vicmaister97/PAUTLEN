@@ -1,13 +1,13 @@
-i   1
-j   2
-suma    -1
-arg1    3
-arg2    4
-aux 5
-aux 5
+i	1
+j	2
+suma	-10
+arg1	3
+arg2	4
+aux	5
+aux	5
 arg1
 arg2
-cierre  -999
+cierre	-999
 j
 i
 suma

@@ -24,7 +24,7 @@ int main (int argc, char *argv[]){
     char linea[MAX_LINE];
     FILE *yyin;
     FILE *yyout;
-    int i;
+    int i, j;
 
   if (argc == 3){
     yyin = fopen(argv[1], "r");
@@ -43,12 +43,15 @@ int main (int argc, char *argv[]){
     // Procesamos linea a linea el fichero de entrada
     while (fgets(linea, MAX_LINE, (FILE*) yyin)) {
         char cadena[MAX_LINE];
-        char cadena2[MAX_LINE];
         
         for (i=0; i<MAX_LINE; i++){
+
             if (linea[i] == '\0'){       // Si encontramos antes del tabulador el final de linea, se trata de una busqueda del identificador
-                strncpy (cadena, linea, i);         // Copiamos el identificador
+
+                memset(cadena, 0, MAX_LINE);
+                strncpy (cadena, linea, i-1);         // Copiamos el identificador
                 if (ambito == 0){
+                    //printHashTable(TGLOBAL);
                     SIMBOLO *ret = UsoGlobal(TGLOBAL, cadena);
                     if (ret == NULL){                           // Si se busca en global pero no lo encuentra
                         fprintf(yyout, "%s %d\n", cadena, -1);
@@ -71,10 +74,9 @@ int main (int argc, char *argv[]){
                     }
                 }
             }
-            if (linea[i] == '\t'){        // Hemos llegado al separador entre el identificador y el entero opcional
-                int jump = i + 1;
-                char *ps = linea + jump;   // Nos situamos después del tabulador
+            if ( (linea[i] == '\t') || (linea[i] == ' ') ){        // Hemos llegado al separador entre el identificador y el entero opcional
 
+                memset(cadena, 0, MAX_LINE);
                 strncpy (cadena, linea, i);           // Copiamos el identificador
                 //cadena[i+1]="\0";
 
@@ -85,11 +87,23 @@ int main (int argc, char *argv[]){
                     break;
                 }
                 else{                                   // Si no, tiene el entero opcional
-                    strncpy (cadena2, ps, strlen(linea) - jump);
-                    int num = atoi(cadena2);
+                    int jump = i+1;
+                    for(j=0; j<MAX_LINE; j++){
+                        if ( (linea[jump] != '\t') || (linea[jump] != ' ') ){       // Leemos hasta el primer caracter del numero
+                            break;
+                        }
+                        else{
+                            jump++;
+                        }
+                    }
 
-                    if (num<-1){                         // Si es negativo, comienza un nuevo ámbito 
+                    char *ps = linea + jump;   // Nos situamos después del tabulador
+                    
+                    int num = atoi(ps);
+
+                    if (num<=-1){                         // Si es negativo, comienza un nuevo ámbito 
                         ambito = 1;                      // ámbito local
+                        TLOCAL = newHashTable();
                         if (DeclararFuncion(TGLOBAL, TLOCAL, cadena, num) == TRUE){   // Exito, devolvemos el id de la funcion 
                             fprintf(yyout, "%s\n", cadena);
                             break;
@@ -102,13 +116,13 @@ int main (int argc, char *argv[]){
                                 break;
                             }
                             else{
-                                fprintf(yyout, "PENEEEEE\n");
                                 fprintf(yyout, "%s\n", cadena);
                                 break;
                             }
                         }
                         else{                           // Ambito local
                             if (DeclararLocal(TLOCAL, cadena, num) == FALSE){     // redeclaración variable local
+                                
                                 fprintf(yyout, "%d %s\n", -1, cadena);
                                 break;
                             }
