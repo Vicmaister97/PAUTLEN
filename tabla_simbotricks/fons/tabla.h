@@ -26,12 +26,25 @@ typedef struct _SIMBOLO SIMBOLO;
 typedef struct _listaSimbolo listaSimbolo;
 typedef struct _HASH_TABLE HASH_TABLE;
 
-SIMBOLO *newSimbolo(char *identificador, TIPO t, CATEGORIA c);
+SIMBOLO *newSimbolo(char *identificador, int valor);
+void setCategoriaSimbolo(SIMBOLO *s, CATEGORIA_SIMBOLO c);
+void setTipo(SIMBOLO *s, TIPO t);
+void setCategoria(SIMBOLO *s, CATEGORIA c);
 void setValor(SIMBOLO *s, int v);
 void setLongitud(SIMBOLO *s, int l);
 void setNum_parametros(SIMBOLO *s, int n);
 void setPosicion(SIMBOLO *s, int p);
 void setNum_var_locales(SIMBOLO *s, int n);
+
+char *getIdentificador(SIMBOLO *s);
+CATEGORIA_SIMBOLO CategoriaSimbolo(SIMBOLO *s);
+TIPO getTipo(SIMBOLO *s);
+CATEGORIA getCategoria(SIMBOLO *s);
+int getValor(SIMBOLO *s);
+int getLongitud(SIMBOLO *s);
+int getNum_parametros(SIMBOLO *s);
+int getPosicion(SIMBOLO *s);
+int getNum_var_locales(SIMBOLO *s);
 
 void freeSimbolo(SIMBOLO *s);
 

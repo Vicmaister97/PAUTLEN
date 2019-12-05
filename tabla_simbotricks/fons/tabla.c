@@ -25,16 +25,30 @@ struct _HASH_TABLE{
   int num_items;
 };
 
-SIMBOLO *newSimbolo(char *identificador, TIPO t, CATEGORIA c){
+SIMBOLO *newSimbolo(char *identificador, int valor){
   SIMBOLO *s;
   s = (SIMBOLO *)malloc(sizeof(SIMBOLO));
   if(s == NULL)
     return NULL;
   s->identificador = (char *)malloc(sizeof(identificador));
   strcpy(s->identificador, identificador);
-  s->tipo = t;
-  s->cat_simbolo = c;
+  s->valor = valor;
   return s;
+}
+
+void setCategoriaSimbolo(SIMBOLO *s, CATEGORIA_SIMBOLO c){
+  if(s)
+    s->cat_simbolo = c;
+}
+
+void setTipo(SIMBOLO *s, TIPO t){
+  if(s)
+    s->tipo = t;
+}
+
+void setCategoria(SIMBOLO *s, CATEGORIA c){
+  if(s)
+    s->categoria = c;
 }
 
 void setValor(SIMBOLO *s, int v){
@@ -68,6 +82,51 @@ void freeSimbolo(SIMBOLO *s){
       free(s->identificador);
     free(s);
   }
+}
+
+char *getIdentificador(SIMBOLO *s){
+  if(s)
+    return s->identificador;
+}
+
+CATEGORIA_SIMBOLO CategoriaSimbolo(SIMBOLO *s){
+  if(s)
+    return s->cat_simbolo;
+}
+
+TIPO getTipo(SIMBOLO *s){
+  if(s)
+    return s->tipo;
+}
+
+CATEGORIA getCategoria(SIMBOLO *s){
+  if(s)
+    return s->categoria;
+}
+
+int getValor(SIMBOLO *s){
+  if(s)
+    return s->valor;
+}
+
+int getLongitud(SIMBOLO *s){
+  if(s)
+    return s->longitud;
+}
+
+int getNum_parametros(SIMBOLO *s){
+  if(s)
+    return s->num_parametros;
+}
+
+int getPosicion(SIMBOLO *s){
+  if(s)
+    return s->posicion;
+}
+
+int getNum_var_locales(SIMBOLO *s){
+  if(s)
+    return s->num_var_locales;
 }
 
 
@@ -202,7 +261,7 @@ void printLista(listaSimbolo *l){
     else{
       printf("ITEM: ");
       for(i=0; i<len; i++){
-        printf("%d ", i);
+        printf(" %d--> ", i);
         printSimbolo(*(l->lista + i));
       }
     }
