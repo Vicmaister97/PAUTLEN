@@ -40,6 +40,9 @@ struct _HASH_TABLE{
   int num_items;
 };
 
+int ambito = 0;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
+int inic_global = 0;            // Controla que el ambito no cambie al crear la tabla global
+
 SIMBOLO *newSimbolo(char *identificador, int valor){
   SIMBOLO *s;
   s = (SIMBOLO *)malloc(sizeof(SIMBOLO));
@@ -189,6 +192,14 @@ void freeListaSimbolo(listaSimbolo *l){
 HASH_TABLE *newHashTable(){
   HASH_TABLE *h;
   int i;
+
+  if (inic_global == 0){      // Se trata de la creación de la tabla GLOBAL
+    inic_global = 1;
+  }
+  else{
+    ambito = 1;                      // ámbito local
+  }
+
   h = (HASH_TABLE *)malloc(sizeof(HASH_TABLE));
   if(h == NULL)
     return NULL;
@@ -206,6 +217,8 @@ HASH_TABLE *newHashTable(){
 
 void freeHashTable(HASH_TABLE *h){
   int i;
+  ambito = 0;                         // Volvemos al ámbito global
+
   if(h){
     if(h->hash_array){
       for(i=0; i<MAX_HASH; i++)
@@ -307,14 +320,7 @@ int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, int desc_id){
     newS = newSimbolo(id, desc_id);
 
     return insertarSimbolo(TGLOBAL, newS);         // Devuelve TRUE si no es una redeclaración de una variable global
-                                                    // y ha podido insertarlo o FALSE en caso contrario
-    
-    /*if (buscarSimbolo(TGLOBAL, id) == NULL){        // Si no es una redeclaración de una variable global
-        SIMBOLO *newS;
-        newS = newSimbolo(id, desc_id);
-        return TRUE;
-    }
-    else return FALSE;*/
+                                                   // y ha podido insertarlo o FALSE en caso contrario
 }
 
 // Declarar una variable o parámetro(de una función) de ámbito local
@@ -362,7 +368,7 @@ int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_
         // Insertamos la funcion en la tabla global
         if (insertarSimbolo(TGLOBAL, newS) == FALSE) return FALSE;      // NO deberia fallar
 
-        // Inicializamos la tabla local para el ámbito de esta función
+        // YA HEMOS INICIALIZADO la tabla local para el ámbito de esta función
         //TLOCAL = newHashTable();
 
         // Insertamos la funcion en la tabla local

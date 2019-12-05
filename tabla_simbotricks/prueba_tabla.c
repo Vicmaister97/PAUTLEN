@@ -19,8 +19,6 @@ int main (int argc, char *argv[]){
     HASH_TABLE *TGLOBAL = newHashTable();       // Tabla hash que almacena los símbolos de ámbito global
     HASH_TABLE *TLOCAL = NULL;                  // Tabla hash que almacena los símbolos de ámbito local
 
-
-    int ambito = 0;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
     char linea[MAX_LINE];
     FILE *yyin;
     FILE *yyout;
@@ -45,6 +43,73 @@ int main (int argc, char *argv[]){
         char cadena[MAX_LINE];
         
         for (i=0; i<MAX_LINE; i++){
+
+            if ( (linea[i] == '\t') || (linea[i] == ' ') ){        // Hemos llegado al separador entre el identificador y el entero opcional
+
+                memset(cadena, 0, MAX_LINE);
+                strncpy (cadena, linea, i);           // Copiamos el identificador
+                //cadena[i+1]="\0";
+
+                if (strcmp(cadena, "cierre") == 0){     // Si es el cierre de un ámbito
+                    freeHashTable(TLOCAL);              // Borramos la tabla local
+                    fprintf(yyout, "%s\n", "cierre");
+                    break;
+                }
+                else{                                   // Si no, tiene el entero opcional
+                    int jump = i+1;
+                    for(j=0; j<MAX_LINE; j++){
+                        if ( (linea[jump] != '\t') || (linea[jump] != ' ') ){       // Leemos hasta el primer caracter del numero
+                            break;
+                        }
+                        else{
+                            jump++;
+                        }
+                    }
+
+                    char *ps = linea + jump;   // Nos situamos después del tabulador
+                    
+                    int num = atoi(ps);
+                    if (num == 0){
+                        linea[i] = '\0';
+                        continue;   // Sobran espacios al final, está tratando de buscar el identificador
+                    }
+
+                    else{
+                        if (num<=-1){                         // Si es negativo, comienza un nuevo ámbito 
+                            TLOCAL = newHashTable();
+                            if (DeclararFuncion(TGLOBAL, TLOCAL, cadena, num) == TRUE){   // Exito, devolvemos el id de la funcion 
+                                fprintf(yyout, "%s\n", cadena);
+                                break;
+                            }
+                        }
+                        else{                               // Declaracion de variable, inserta el símbolo
+                            if (ambito == 0){
+                                if (DeclararGlobal(TGLOBAL, cadena, num) == FALSE){     // redeclaración variable global
+                                    fprintf(yyout, "%d %s\n", -1, cadena);
+                                    break;
+                                }
+                                else{
+                                    fprintf(yyout, "%s\n", cadena);
+                                    break;
+                                }
+                            }
+                            else{                           // Ambito local
+                                if (DeclararLocal(TLOCAL, cadena, num) == FALSE){     // redeclaración variable local
+                                    
+                                    fprintf(yyout, "%d %s\n", -1, cadena);
+                                    break;
+                                }
+                                else{
+                                    fprintf(yyout, "%s\n", cadena);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
 
             if (linea[i] == '\0'){       // Si encontramos antes del tabulador el final de linea, se trata de una busqueda del identificador
 
@@ -74,76 +139,14 @@ int main (int argc, char *argv[]){
                     }
                 }
             }
-            if ( (linea[i] == '\t') || (linea[i] == ' ') ){        // Hemos llegado al separador entre el identificador y el entero opcional
 
-                memset(cadena, 0, MAX_LINE);
-                strncpy (cadena, linea, i);           // Copiamos el identificador
-                //cadena[i+1]="\0";
-
-                if (strcmp(cadena, "cierre") == 0){     // Si es el cierre de un ámbito
-                    ambito = 0;                         // Volvemos al ámbito global
-                    freeHashTable(TLOCAL);              // Borramos la tabla local
-                    fprintf(yyout, "%s\n", "cierre");
-                    break;
-                }
-                else{                                   // Si no, tiene el entero opcional
-                    int jump = i+1;
-                    for(j=0; j<MAX_LINE; j++){
-                        if ( (linea[jump] != '\t') || (linea[jump] != ' ') ){       // Leemos hasta el primer caracter del numero
-                            break;
-                        }
-                        else{
-                            jump++;
-                        }
-                    }
-
-                    char *ps = linea + jump;   // Nos situamos después del tabulador
-                    
-                    int num = atoi(ps);
-
-                    if (num<=-1){                         // Si es negativo, comienza un nuevo ámbito 
-                        ambito = 1;                      // ámbito local
-                        TLOCAL = newHashTable();
-                        if (DeclararFuncion(TGLOBAL, TLOCAL, cadena, num) == TRUE){   // Exito, devolvemos el id de la funcion 
-                            fprintf(yyout, "%s\n", cadena);
-                            break;
-                        }
-                    }
-                    else{                               // Declaracion de variable, inserta el símbolo
-                        if (ambito == 0){
-                            if (DeclararGlobal(TGLOBAL, cadena, num) == FALSE){     // redeclaración variable global
-                                fprintf(yyout, "%d %s\n", -1, cadena);
-                                break;
-                            }
-                            else{
-                                fprintf(yyout, "%s\n", cadena);
-                                break;
-                            }
-                        }
-                        else{                           // Ambito local
-                            if (DeclararLocal(TLOCAL, cadena, num) == FALSE){     // redeclaración variable local
-                                
-                                fprintf(yyout, "%d %s\n", -1, cadena);
-                                break;
-                            }
-                            else{
-                                fprintf(yyout, "%s\n", cadena);
-                                break;
-                            }
-                        }
-                    }
-
-                }
-
-            }
         }
     }
 
-    printf("FINALIZADO ANALISIS TABLA DE SIMBOLOS!!!!\n");
-
     fclose(yyin);
     fclose(yyout);
-    exit(0);
+    // BORRAMOS TABLAS??
+    exit(1);
     
   }
 

@@ -31,6 +31,10 @@ typedef struct _SIMBOLO SIMBOLO;
 typedef struct _listaSimbolo listaSimbolo;
 typedef struct _HASH_TABLE HASH_TABLE;
 
+extern int ambito;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
+extern int inic_global;            // Controla que el ambito no cambie al crear la tabla global
+
+
 SIMBOLO *newSimbolo(char *identificador, int valor);
 void setCategoriaSimbolo(SIMBOLO *s, CATEGORIA_SIMBOLO c);
 void setTipo(SIMBOLO *s, TIPO t);
