@@ -48,7 +48,7 @@ SIMBOLO *newSimbolo(char *identificador, int valor){
   s = (SIMBOLO *)malloc(sizeof(SIMBOLO));
   if(s == NULL)
     return NULL;
-  s->identificador = (char *)malloc(sizeof(identificador));
+  s->identificador = (char *)malloc(strlen(identificador) + 1);
   strcpy(s->identificador, identificador);
   s->valor = valor;
   return s;
@@ -253,8 +253,10 @@ int insertarSimbolo(HASH_TABLE *h, SIMBOLO *s){
   hash_item = *(h->hash_array + hash);
   /*Si tiene un item hay que ver si el que vamos a meter ya existe*/
   if(0 < hash_item->len)
-    if(isSimboloEnLista(hash_item, s->identificador) != FALSE)
+    if(isSimboloEnLista(hash_item, s->identificador) != FALSE){
+      freeSimbolo(s);
       return ERR;
+    }
 
   insertaSimboloLista(hash_item, s);
   return TRUE;

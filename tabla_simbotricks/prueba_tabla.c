@@ -145,7 +145,7 @@ int main (int argc, char *argv[]){
 
     fclose(yyin);
     fclose(yyout);
-    // BORRAMOS TABLAS??
+    freeHashTable(TGLOBAL);
     exit(1);
     
   }
