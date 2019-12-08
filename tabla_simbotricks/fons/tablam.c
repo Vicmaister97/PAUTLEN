@@ -1,22 +1,7 @@
-/*********************************************************
-**
-** Fichero: tabla.c
-** Autores: Víctor García, Alfonso Carvajal
-** Contenido: Implementa la tabla de símbolos y su funcionalidad
-**            para el compilador a realizar en la asignatura de 
-**            Proyecto de Autómatas y Lenguajes
-**
-*********************************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "tabla.h"
-
-
-/*******************************************************
-* METODOS DE LA TABLA HASH *
-*******************************************************/
 
 struct _SIMBOLO{
     char *identificador;                /* identificador */
@@ -39,9 +24,6 @@ struct _HASH_TABLE{
   listaSimbolo **hash_array;
   int num_items;
 };
-
-int ambito = 0;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
-int inic_global = 0;            // Controla que el ambito no cambie al crear la tabla global
 
 SIMBOLO *newSimbolo(char *identificador, int valor){
   SIMBOLO *s;
@@ -103,48 +85,48 @@ void freeSimbolo(SIMBOLO *s){
 }
 
 char *getIdentificador(SIMBOLO *s){
-  if(s) return s->identificador;
-  return NULL;
+  if(s)
+    return s->identificador;
 }
 
 CATEGORIA_SIMBOLO CategoriaSimbolo(SIMBOLO *s){
-  if(s) return s->cat_simbolo;
-  return FALSE;
+  if(s)
+    return s->cat_simbolo;
 }
 
 TIPO getTipo(SIMBOLO *s){
-  if(s) return s->tipo;
-  return FALSE;
+  if(s)
+    return s->tipo;
 }
 
 CATEGORIA getCategoria(SIMBOLO *s){
-  if(s) return s->categoria;
-  return FALSE;
+  if(s)
+    return s->categoria;
 }
 
 int getValor(SIMBOLO *s){
-  if(s) return s->valor;
-  return FALSE;
+  if(s)
+    return s->valor;
 }
 
 int getLongitud(SIMBOLO *s){
-  if(s) return s->longitud;
-  return FALSE;
+  if(s)
+    return s->longitud;
 }
 
 int getNum_parametros(SIMBOLO *s){
-  if(s) return s->num_parametros;
-  return FALSE;
+  if(s)
+    return s->num_parametros;
 }
 
 int getPosicion(SIMBOLO *s){
-  if(s) return s->posicion;
-  return FALSE;
+  if(s)
+    return s->posicion;
 }
 
 int getNum_var_locales(SIMBOLO *s){
-  if(s) return s->num_var_locales;
-  return FALSE;
+  if(s)
+    return s->num_var_locales;
 }
 
 
@@ -155,7 +137,6 @@ listaSimbolo *newListaSimbolo(){
     return NULL;
   l->lista = NULL;
   l->len = 0;
-  return l;
 }
 void insertaSimboloLista(listaSimbolo *l, SIMBOLO *s){
   if(l == NULL || s == NULL)
@@ -192,14 +173,6 @@ void freeListaSimbolo(listaSimbolo *l){
 HASH_TABLE *newHashTable(){
   HASH_TABLE *h;
   int i;
-
-  if (inic_global == 0){      // Se trata de la creación de la tabla GLOBAL
-    inic_global = 1;
-  }
-  else{
-    ambito = 1;                      // ámbito local
-  }
-
   h = (HASH_TABLE *)malloc(sizeof(HASH_TABLE));
   if(h == NULL)
     return NULL;
@@ -217,8 +190,6 @@ HASH_TABLE *newHashTable(){
 
 void freeHashTable(HASH_TABLE *h){
   int i;
-  ambito = 0;                         // Volvemos al ámbito global
-
   if(h){
     if(h->hash_array){
       for(i=0; i<MAX_HASH; i++)
@@ -244,7 +215,7 @@ int hashCode(char *s){
 }
 
 int insertarSimbolo(HASH_TABLE *h, SIMBOLO *s){
-  int hash;
+  int i, hash;
   listaSimbolo *hash_item;
   if(h == NULL || s == NULL)
     return ERR;
@@ -270,7 +241,6 @@ SIMBOLO *buscarSimbolo(HASH_TABLE *h, char *s){
   hash = hashCode(s);
   hash_item = *(h->hash_array + hash);
   pos = isSimboloEnLista(hash_item, s);
-
   if(pos != FALSE)
     return *(hash_item->lista + pos);
 
@@ -307,73 +277,4 @@ void printHashTable(HASH_TABLE *h){
       printf("\n");
     }
   }
-}
-
-
-/*******************************************************
-* METODOS DE MODIFICACIÓN DE LA TABLA DE SÍMBOLOS (TS) *
-*******************************************************/
-
-// Declarar una variable de ámbito global
-int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, int desc_id){
-    SIMBOLO *newS;
-    newS = newSimbolo(id, desc_id);
-
-    return insertarSimbolo(TGLOBAL, newS);         // Devuelve TRUE si no es una redeclaración de una variable global
-                                                   // y ha podido insertarlo o FALSE en caso contrario
-}
-
-// Declarar una variable o parámetro(de una función) de ámbito local
-int DeclararLocal(HASH_TABLE *TLOCAL, char *id, int desc_id){
-    SIMBOLO *newS;
-    newS = newSimbolo(id, desc_id);
-
-    return insertarSimbolo(TLOCAL, newS);          // Devuelve TRUE si no es una redeclaración de una variable local
-                                                    // y ha podido insertarlo o FALSE en caso contrario
-}
-
-// Comprueba si se puede usar la variable en un ámbito global
-SIMBOLO *UsoGlobal(HASH_TABLE *TGLOBAL, char *id){
-
-    SIMBOLO *simbol;
-    simbol = buscarSimbolo(TGLOBAL, id);
-    if (simbol == NULL){                         // Si el símbolo no pertenece al ámbito global
-        return NULL;
-    }
-    else return simbol;
-}
-
-// Comprueba si se puede usar la variable en un ámbito local
-SIMBOLO *UsoLocal(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL,  char *id){
-    SIMBOLO *simbol;
-    simbol = buscarSimbolo(TLOCAL, id);
-    if (simbol == NULL){                        // Si el símbolo no pertenece al ámbito local
-        simbol = buscarSimbolo(TGLOBAL, id);
-        if (simbol == NULL) return NULL;        // Si el símbolo no pertenece tampoco al ámbito global
-        else return simbol;
-    }
-    else return simbol;
-}
-
-// Declara una función con su correspondiente cambio de ámbito
-int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_id){
-    if (buscarSimbolo(TGLOBAL, id) != NULL) {   // Si ya existe esa función
-        return FALSE;
-    }
-    else{
-        SIMBOLO *newS, *newS2;
-        newS = newSimbolo(id, desc_id);
-        newS2 = newSimbolo(id, desc_id);
-
-        // Insertamos la funcion en la tabla global
-        if (insertarSimbolo(TGLOBAL, newS) == FALSE) return FALSE;      // NO deberia fallar
-
-        // YA HEMOS INICIALIZADO la tabla local para el ámbito de esta función
-        //TLOCAL = newHashTable();
-
-        // Insertamos la funcion en la tabla local
-        if (insertarSimbolo(TLOCAL, newS2) == FALSE) return FALSE;      // NO deberia fallar
-
-        return TRUE;
-    }
 }

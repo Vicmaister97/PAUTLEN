@@ -146,18 +146,8 @@ int main (int argc, char *argv[]){
 
     fclose(yyin);
     fclose(yyout);
-    // BORRAMOS TABLAS??
-    
-    if (TLOCAL){
-        printf("BORRADO LOCAL\n");
-        freeHashTable(TLOCAL);              // Borramos la tabla local
-    }
-    if (TGLOBAL){
-        printf("BORRADO GLOBAL\n");
-        freeHashTable(TGLOBAL);              // Borramos la tabla local
 
-    }
-   
+    freeHashTable(TGLOBAL);
     exit(1);
     
   }

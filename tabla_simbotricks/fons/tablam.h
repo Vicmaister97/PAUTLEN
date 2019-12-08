@@ -1,12 +1,7 @@
-/*********************************************************
-**
-** Fichero: tabla.h
-** Autores: Víctor García, Alfonso Carvajal
-** Contenido: Definiciones de la tabla de símbolos y su funcionalidad
-**            para el compilador a realizar en la asignatura de 
-**            Proyecto de Autómatas y Lenguajes
-**
-*********************************************************/
+/******************************************************
+Nombre: tabla.h
+Descripcion: Definicion de simbolos para la tabla de simbolos
+******************************************************/
 #ifndef _TABLA_H
 #define _TABLA_H
 
@@ -30,10 +25,6 @@ typedef enum { ESCALAR, VECTOR } CATEGORIA;
 typedef struct _SIMBOLO SIMBOLO;
 typedef struct _listaSimbolo listaSimbolo;
 typedef struct _HASH_TABLE HASH_TABLE;
-
-extern int ambito;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
-extern int inic_global;            // Controla que el ambito no cambie al crear la tabla global
-
 
 SIMBOLO *newSimbolo(char *identificador, int valor);
 void setCategoriaSimbolo(SIMBOLO *s, CATEGORIA_SIMBOLO c);
@@ -64,6 +55,8 @@ y gestionar en cada caso al guardar y recuperar los valores el dato que correspo
 
 
 
+
+
 listaSimbolo *newListaSimbolo();
 void freeListaSimbolo(listaSimbolo *l);
 void insertaSimboloLista(listaSimbolo *l, SIMBOLO *s);
@@ -81,17 +74,6 @@ SIMBOLO *buscarSimbolo(HASH_TABLE *h, char *identificador);
 void printSimbolo(SIMBOLO *s);
 void printLista(listaSimbolo *l);
 void printHashTable(HASH_TABLE *h);
-
-
-/******************************************
-** TABLA SIMBOLOS
-******************************************/
-
-int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, int desc_id);
-int DeclararLocal(HASH_TABLE *TLOCAL, char *id, int desc_id);
-SIMBOLO *UsoGlobal(HASH_TABLE *TGLOBAL, char *id);
-SIMBOLO *UsoLocal(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL,  char *id);
-int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_id);
 
 
 #endif
