@@ -51,6 +51,7 @@ int main (int argc, char *argv[]){
                 //cadena[i+1]="\0";
 
                 if (strcmp(cadena, "cierre") == 0){     // Si es el cierre de un ámbito
+                    
                     freeHashTable(TLOCAL);              // Borramos la tabla local
                     fprintf(yyout, "%s\n", "cierre");
                     break;
@@ -146,6 +147,17 @@ int main (int argc, char *argv[]){
     fclose(yyin);
     fclose(yyout);
     // BORRAMOS TABLAS??
+    
+    if (TLOCAL){
+        printf("BORRADO LOCAL\n");
+        freeHashTable(TLOCAL);              // Borramos la tabla local
+    }
+    if (TGLOBAL){
+        printf("BORRADO GLOBAL\n");
+        freeHashTable(TGLOBAL);              // Borramos la tabla local
+
+    }
+   
     exit(1);
     
   }
