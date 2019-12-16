@@ -219,6 +219,7 @@ int main (int argc, char *argv[]){
 
     fclose(yyin);
     fclose(yyout);
+    exit(1);
     
   }
 

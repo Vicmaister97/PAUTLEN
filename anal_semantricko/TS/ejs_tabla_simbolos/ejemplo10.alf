@@ -1,0 +1,22 @@
+main {
+
+// Declaraciones
+	int x;
+
+// Funciones
+
+	function int doble (int num)
+	{	
+		int dos;
+
+
+		dos = 2;
+
+		return dos * num;
+	}
+
+	scanf x;
+
+	printf doble(x);
+
+}

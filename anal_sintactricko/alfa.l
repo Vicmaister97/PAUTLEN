@@ -1,8 +1,8 @@
 /*********************************************************
 **
-** Fichero: alfa.l
+** Fichero: ALFA.L
 ** Autores: Víctor García, Alfonso Carvajal
-** Contenido: Implementa el analizador morfológico para el compilador
+** Contenido: Implementa el analizador sintáctico para el compilador
 **      a realizar en la asignatura de Proyecto de Autómatas y Lenguajes
 **
 *********************************************************/
