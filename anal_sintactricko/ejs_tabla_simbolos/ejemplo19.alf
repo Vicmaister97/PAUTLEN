@@ -1,0 +1,8 @@
+main
+{
+    array int[5] lista;
+
+    lista[0] = 1;
+
+    //printf lista[0];
+}

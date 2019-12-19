@@ -1,0 +1,23 @@
+main
+{
+
+	boolean i;
+	int j,k;
+	
+
+	function int doble (int arg)
+	{
+		return arg*2;
+	}
+
+	function boolean esdoble (int arg; int dosPorArg)
+	{
+		return (dosPorArg == doble(arg));
+	}
+
+	scanf j;
+	scanf k;
+
+  	printf esdoble(j,k);
+
+}
