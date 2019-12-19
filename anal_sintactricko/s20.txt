@@ -1,0 +1,103 @@
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	array
+;D:	int
+;R10:	<tipo> ::= int
+;D:	[
+;D:	5
+;R104:	<constante_entera> ::= <numero>
+;D:	]
+;R15:	<clase_vector> ::= array <tipo> [ constante_entera ]
+;R7:	<clase> ::= <clase_vector>
+;D:	lista
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	x
+;R2:	<declaraciones> ::= <declaracion>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+;R21:	<funciones> ::= 
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	8
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	if
+;D:	(
+;D:	(
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	==
+;R80:	<exp> ::= <identificador>
+;D:	8
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	)
+;R93:	<comparacion> ::= <exp> == <exp>
+;R83:	<exp> ::= ( <comparacion> )
+;D:	)
+;D:	{
+;D:	lista
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	[
+;D:	0
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	]
+;R48:	<elemento_vector> ::= <identificador> [ <exp> ]
+;D:	=
+;D:	5
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R44:	<asignacion> ::= <elemento_vector> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;D:	else
+;D:	{
+;D:	lista
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	[
+;D:	0
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	]
+;R48:	<elemento_vector> ::= <identificador> [ <exp> ]
+;D:	=
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R80:	<exp> ::= <identificador>
+;R44:	<asignacion> ::= <elemento_vector> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R51:	<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }
+;R40:	<bloque> ::= <condicional>
+;R33:	<sentencia> ::= <bloque>
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }

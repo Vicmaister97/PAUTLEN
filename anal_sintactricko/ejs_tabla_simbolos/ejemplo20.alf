@@ -1,0 +1,15 @@
+main
+{
+    int x;
+    array int[5] lista;
+    x = 8;
+
+    if ( (x == 8) )
+		{
+			lista[0] = 5;
+		}
+		else
+		{
+			lista[0] = x;
+		}
+}

@@ -1,0 +1,28 @@
+main
+{
+// Declaraciones
+
+    int x, resultado;
+    array int[5] nums;
+
+// Funciones
+	function int myfun (int n)
+	{
+		if ( (n == 0) )
+		{
+      nums[0] = 8;
+			return 1;
+		}
+		else
+		{
+      nums[0] = n;
+      return 0;
+		}
+	}
+
+// Sentencias
+
+	resultado = myfun (x);
+
+	printf resultado;
+}
