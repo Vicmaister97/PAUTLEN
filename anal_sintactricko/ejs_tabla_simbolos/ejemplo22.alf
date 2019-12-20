@@ -1,0 +1,11 @@
+main
+{
+    int x;
+    boolean key;
+    key = true;
+
+    if ( (key == false) )
+		{
+			x = 5;
+		}
+}

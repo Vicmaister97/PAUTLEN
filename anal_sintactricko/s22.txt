@@ -1,0 +1,70 @@
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	boolean
+;R11:	<tipo> ::= boolean
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	key
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	key
+;R2:	<declaraciones> ::= <declaracion>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+;R21:	<funciones> ::= 
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	true
+;R102:	<constante_logica> ::= true
+;R99:	<constante> ::= <constante_logica>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	if
+;D:	(
+;D:	(
+;D:	key
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	==
+;R80:	<exp> ::= <identificador>
+;D:	false
+;R103:	<constante_logica> ::= false
+;R99:	<constante> ::= <constante_logica>
+;R81:	<exp> ::= <constante>
+;D:	)
+;R93:	<comparacion> ::= <exp> == <exp>
+;R83:	<exp> ::= ( <comparacion> )
+;D:	)
+;D:	{
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	5
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;D:	}
+;R50:	<condicional> ::= if ( <exp> ) { <sentencias> }
+;R40:	<bloque> ::= <condicional>
+;R33:	<sentencia> ::= <bloque>
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }
