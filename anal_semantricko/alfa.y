@@ -11,9 +11,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "alfa.h"
+#include "tabla.h"
+
+
+HASH_TABLE *TGLOBAL;
+HASH_TABLE *TLOCAL;
+
 
 extern void errorMorfo (char *msg);
 void yyerror(char *msg);
+void errorSemantico (char *msg);
 
 extern FILE* yyin;
 extern FILE* yyout;
@@ -26,8 +34,7 @@ int yylex();
 
 %union
 {
-  char* cadena;
-  int numero;
+  tipo_atributos atributos;
 }
 
 %token TOK_MAIN
@@ -64,8 +71,10 @@ int yylex();
 %token TOK_MAYOR
 
 
-%token <cadena> TOK_IDENTIFICADOR
-%token <numero> TOK_CONSTANTE_ENTERA
+/* Tokens con valor semántico */
+
+%token <atributos> TOK_IDENTIFICADOR
+%token <atributos> TOK_CONSTANTE_ENTERA
 
 %token TOK_TRUE
 %token TOK_FALSE
@@ -78,11 +87,24 @@ int yylex();
 %right TOK_NOT
 
 
+/* Simbolos no terminales con valor semántico */
+
+%type <atributos> exp
+%type <atributos> comparacion
+
+
 %%
 
 
-programa: TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones funciones sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
+programa: inicioTabla TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones funciones sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
         ;
+
+inicioTabla:{
+              /* Acciones de inicialización de la tabla de símbolos */
+              TGLOBAL = newHashTable();       // Tabla hash que almacena los símbolos de ámbito global
+            }
+
+
 declaraciones:  declaracion {fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");}
              |  declaracion declaraciones {fprintf(yyout, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");}
              ;
@@ -183,7 +205,27 @@ constante_logica:  TOK_TRUE {fprintf(yyout, ";R102:\t<constante_logica> ::= true
                 ;
 constante_entera:  TOK_CONSTANTE_ENTERA {fprintf(yyout, ";R104:\t<constante_entera> ::= <numero>\n");}
                 ;
-identificador:  TOK_IDENTIFICADOR {fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");}
+identificador:  TOK_IDENTIFICADOR {
+                                  if (ambito == 0){
+                                      if (DeclararGlobal(TGLOBAL, $1.lexema, $1.tipo) == FALSE){     // redeclaración variable global
+                                          errorSemantico("Identificador $1.lexema duplicado");
+                                          return;
+                                      }
+                                      else{
+                                          // AQUI VA GENERACION DE CODIGO JEJEJE
+                                      }
+                                  }
+                                  else{                           // Ambito local
+                                      if (DeclararLocal(TLOCAL, $1.lexema, $1.tipo) == FALSE){     // redeclaración variable local
+                                          errorSemantico("Identificador $1.lexema duplicado");
+                                          return;
+                                      }
+                                      else{
+                                          // AQUI VA GENERACION DE CODIGO JEJEJE
+                                      }
+                                  }
+
+                                  fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");}
              ;
 
 %%
@@ -198,6 +240,11 @@ void yyerror (char *msg)
   else{               /** Si hubo un error morfologico, restaura el valor de la variable de control **/
     is_morpho = 0;
   }
+}
+
+void errorSemantico (char *msg)
+{
+  fprintf(stderr,"****Error semantico en lin %d: %s\n", yylineno, msg);
 }
 
 int main (int argc, char *argv[]){

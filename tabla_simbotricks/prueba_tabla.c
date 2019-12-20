@@ -112,7 +112,8 @@ int main (int argc, char *argv[]){
 
             }
 
-            if (linea[i] == '\0'){       // Si encontramos antes del tabulador el final de linea, se trata de una busqueda del identificador
+            if (linea[i] == '\0'){       // Si encontramos antes del tabulador el final de linea,
+                                         // se trata de una busqueda del identificador
 
                 memset(cadena, 0, MAX_LINE);
                 strncpy (cadena, linea, i-1);         // Copiamos el identificador

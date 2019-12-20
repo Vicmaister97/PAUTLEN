@@ -7,10 +7,10 @@ flex $1.l
 bison -d -y -v $1.y 
 
 #Compile all the code.
-gcc -Wall -o pruebaSintactico lex.yy.c y.tab.c y.tab.h
+gcc -Wall -o pruebaSemantico lex.yy.c y.tab.c y.tab.h
 
 #Execute the compiler.
-./pruebaSintactico entrada_sin_$2.txt misalida_sin_$2.txt
+./pruebaSemantico entrada_sem_$2.txt misalida_sem_$2.txt
 
 #Verify if we have done it well.
-diff -bB salida_sin_$2.txt misalida_sin_$2.txt
+diff -bB salida_sem_$2.txt misalida_sem_$2.txt

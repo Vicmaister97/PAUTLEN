@@ -1,15 +1,20 @@
-i	1 
-j	2
-suma	-10 
-arg1	3
+i	5 
+j	7
+j   2
+suma    -10 
+arg1    3
 arg2	4
 aux	5
 aux	5 
+i   13
+j
 arg1
 arg2
 cierre	-999 
 j   
-i   
+i  
+arg2 
+t
 suma
 j
 i
