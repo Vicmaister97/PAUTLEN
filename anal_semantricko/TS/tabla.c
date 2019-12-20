@@ -3,7 +3,7 @@
 ** Fichero: tabla.c
 ** Autores: Víctor García, Alfonso Carvajal
 ** Contenido: Implementa la tabla de símbolos y su funcionalidad
-**            para el compilador a realizar en la asignatura de 
+**            para el compilador a realizar en la asignatura de
 **            Proyecto de Autómatas y Lenguajes
 **
 *********************************************************/
@@ -24,6 +24,7 @@ struct _SIMBOLO{
     TIPO tipo;                          /* tipo */
     CATEGORIA categoria;                /* categoria de la variable */
     int valor;                          /* valor si escalar */
+    int ini;                            /* variable para comprobar si ha sido inicializada una variable (true/false)*/
     int longitud;                       /* longitud si vector */
     int num_parametros;                 /* número de parámetros si función */
     int posicion;                       /* posición en llamada a función si parámetro, posición de declaración si variable local de función */
@@ -43,14 +44,13 @@ struct _HASH_TABLE{
 int ambito = 0;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
 int inic_global = 0;            // Controla que el ambito no cambie al crear la tabla global
 
-SIMBOLO *newSimbolo(char *identificador, int valor){
+SIMBOLO *newSimbolo(char *identificador){
   SIMBOLO *s;
   s = (SIMBOLO *)malloc(sizeof(SIMBOLO));
   if(s == NULL)
     return NULL;
   s->identificador = (char *)malloc(strlen(identificador) + 1);
   strcpy(s->identificador, identificador);
-  s->valor = valor;
   return s;
 }
 
@@ -70,8 +70,15 @@ void setCategoria(SIMBOLO *s, CATEGORIA c){
 }
 
 void setValor(SIMBOLO *s, int v){
-  if(s != NULL)
+  if(s != NULL){
     s->valor = v;
+    s->ini = TRUE;
+  }
+}
+
+void setIni(SIMBOLO *s, int ini){
+  if(s != NULL)
+    s->ini = ini;
 }
 
 void setLongitud(SIMBOLO *s, int l){
@@ -124,6 +131,11 @@ CATEGORIA getCategoria(SIMBOLO *s){
 
 int getValor(SIMBOLO *s){
   if(s) return s->valor;
+  return FALSE;
+}
+
+void isIni(SIMBOLO *s){
+  if(s) return s->ini;
   return FALSE;
 }
 
@@ -317,18 +329,31 @@ void printHashTable(HASH_TABLE *h){
 *******************************************************/
 
 // Declarar una variable de ámbito global
-int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, int desc_id){
+int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini){
     SIMBOLO *newS;
-    newS = newSimbolo(id, desc_id);
+    newS = newSimbolo(id);
+    setCategoriaSimbolo(newS, cat_s);
+    setTipo(newS, t);
+    setCategoria(newS, c);
+    if(ini == TRUE)
+      setValor(newS, valor);
 
     return insertarSimbolo(TGLOBAL, newS);         // Devuelve TRUE si no es una redeclaración de una variable global
                                                    // y ha podido insertarlo o FALSE en caso contrario
 }
 
 // Declarar una variable o parámetro(de una función) de ámbito local
-int DeclararLocal(HASH_TABLE *TLOCAL, char *id, int desc_id){
+int DeclararLocal(HASH_TABLE *TLOCAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini, int longitud, int pos){
     SIMBOLO *newS;
-    newS = newSimbolo(id, desc_id);
+    newS = newSimbolo(id);
+    setCategoriaSimbolo(newS, cat_s);
+    setTipo(newS, t);
+    setCategoria(newS, c);
+    if(ini == TRUE)
+      setValor(newS, valor);
+    if(longitud != FALSE)
+      setLongitud(newS, longitud);
+    setPosicion(newS, pos);
 
     return insertarSimbolo(TLOCAL, newS);          // Devuelve TRUE si no es una redeclaración de una variable local
                                                     // y ha podido insertarlo o FALSE en caso contrario
@@ -358,14 +383,24 @@ SIMBOLO *UsoLocal(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL,  char *id){
 }
 
 // Declara una función con su correspondiente cambio de ámbito
-int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_id){
+int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, int n_params, int num_var_loc){
     if (buscarSimbolo(TGLOBAL, id) != NULL) {   // Si ya existe esa función
         return FALSE;
     }
     else{
         SIMBOLO *newS, *newS2;
-        newS = newSimbolo(id, desc_id);
-        newS2 = newSimbolo(id, desc_id);
+        newS = newSimbolo(id);
+        setCategoriaSimbolo(newS, cat_s);
+        setTipo(newS, t);
+        setNum_parametros(newS, n_params);
+        setNum_var_locales(newS, num_var_loc);
+
+        newS2 = newSimbolo(id);
+        setCategoriaSimbolo(newS2, cat_s);
+        setTipo(newS2, t);
+        setNum_parametros(newS2, n_params);
+        setNum_var_locales(newS2, num_var_loc);
+
 
         // Insertamos la funcion en la tabla global
         if (insertarSimbolo(TGLOBAL, newS) == FALSE) return FALSE;      // NO deberia fallar

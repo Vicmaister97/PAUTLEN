@@ -3,7 +3,7 @@
 ** Fichero: tabla.h
 ** Autores: Víctor García, Alfonso Carvajal
 ** Contenido: Definiciones de la tabla de símbolos y su funcionalidad
-**            para el compilador a realizar en la asignatura de 
+**            para el compilador a realizar en la asignatura de
 **            Proyecto de Autómatas y Lenguajes
 **
 *********************************************************/
@@ -35,11 +35,12 @@ extern int ambito;                 // Indica si el ambito del programa es global
 extern int inic_global;            // Controla que el ambito no cambie al crear la tabla global
 
 
-SIMBOLO *newSimbolo(char *identificador, int valor);
+SIMBOLO *newSimbolo(char *identificador);
 void setCategoriaSimbolo(SIMBOLO *s, CATEGORIA_SIMBOLO c);
 void setTipo(SIMBOLO *s, TIPO t);
 void setCategoria(SIMBOLO *s, CATEGORIA c);
 void setValor(SIMBOLO *s, int v);
+void setIni(SIMBOLO *s, int ini);
 void setLongitud(SIMBOLO *s, int l);
 void setNum_parametros(SIMBOLO *s, int n);
 void setPosicion(SIMBOLO *s, int p);
@@ -50,12 +51,27 @@ CATEGORIA_SIMBOLO CategoriaSimbolo(SIMBOLO *s);
 TIPO getTipo(SIMBOLO *s);
 CATEGORIA getCategoria(SIMBOLO *s);
 int getValor(SIMBOLO *s);
+void isIni(SIMBOLO *s);
 int getLongitud(SIMBOLO *s);
 int getNum_parametros(SIMBOLO *s);
 int getPosicion(SIMBOLO *s);
 int getNum_var_locales(SIMBOLO *s);
 
 void freeSimbolo(SIMBOLO *s);
+
+
+struct _SIMBOLO{
+    char *identificador;                /* identificador */
+    CATEGORIA_SIMBOLO cat_simbolo;      /* categoría del simbolo */
+    TIPO tipo;                          /* tipo */
+    CATEGORIA categoria;                /* categoria de la variable */
+    int valor;                          /* valor si escalar */
+    int ini;                            /* variable para comprobar si ha sido inicializada una variable (true/false)*/
+    int longitud;                       /* longitud si vector */
+    int num_parametros;                 /* número de parámetros si función */
+    int posicion;                       /* posición en llamada a función si parámetro, posición de declaración si variable local de función */
+    int num_var_locales;                /* número de variables locales si función */
+};
 
 /* Aclaración: como los campos valor, longitud, num_parametros, posicion y num_var_locales
 son opcionales dependiendo de si el símbolo es variable (escalar o vector), parámetro o función,
@@ -87,11 +103,11 @@ void printHashTable(HASH_TABLE *h);
 ** TABLA SIMBOLOS
 ******************************************/
 
-int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, int desc_id);
-int DeclararLocal(HASH_TABLE *TLOCAL, char *id, int desc_id);
+int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini);
+int DeclararLocal(HASH_TABLE *TLOCAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini, int longitud, int pos);
 SIMBOLO *UsoGlobal(HASH_TABLE *TGLOBAL, char *id);
 SIMBOLO *UsoLocal(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL,  char *id);
-int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, int desc_id);
+int DeclararFuncion(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL, char *id, CATEGORIA_SIMBOLO cat_s,  TIPO t, int n_params, int num_var_loc);
 
 
 #endif
