@@ -101,9 +101,27 @@ void setNum_var_locales(SIMBOLO *s, int n){
     s->num_var_locales = n;
 }
 
+SIMBOLO *copySIMBOLO(SIMBOLO *s){
+  SIMBOLO *newS;
+  if(s == NULL)
+    return NULL;
+  newS = newSimbolo(getIdentificador(s));
+  setCategoriaSimbolo(newS, s->cat_simbolo);
+  setTipo(newS, s->tipo);
+  setCategoria(newS, s->categoria);
+  setValor(newS, s->valor);
+  setIni(newS, s->ini);
+  setLongitud(newS, s->longitud);
+  setNum_parametros(newS, s->num_parametros);
+  setPosicion(newS, s->posicion);
+  setNum_var_locales(newS, s->num_var_locales);
+  return newS;
+
+}
+
 void freeSimbolo(SIMBOLO *s){
-  if(s){
-    if(s->identificador)
+  if(s != NULL){
+    if(s->identificador != NULL)
       free(s->identificador);
     free(s);
   }
@@ -134,7 +152,7 @@ int getValor(SIMBOLO *s){
   return FALSE;
 }
 
-void isIni(SIMBOLO *s){
+int isIni(SIMBOLO *s){
   if(s) return s->ini;
   return FALSE;
 }
@@ -289,6 +307,21 @@ SIMBOLO *buscarSimbolo(HASH_TABLE *h, char *s){
     return *(hash_item->lista + pos);
 
   return NULL;
+}
+
+listaSimbolo *DumpHashTable(HASH_TABLE *h){
+  int i, j;
+  listaSimbolo *l, *aux;
+  if(h == NULL)
+    return NULL;
+
+  l = newListaSimbolo();
+  for(i=0; i<MAX_HASH; i++){
+    aux = *(h->hash_array + i);
+    for(j=0; j<aux->len; j++)
+      insertaSimboloLista(l, copySIMBOLO(*(aux->lista + j)));
+  }
+  return l;
 }
 
 void printSimbolo(SIMBOLO *s){

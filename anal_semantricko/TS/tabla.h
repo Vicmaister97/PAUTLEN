@@ -51,27 +51,15 @@ CATEGORIA_SIMBOLO CategoriaSimbolo(SIMBOLO *s);
 TIPO getTipo(SIMBOLO *s);
 CATEGORIA getCategoria(SIMBOLO *s);
 int getValor(SIMBOLO *s);
-void isIni(SIMBOLO *s);
+int isIni(SIMBOLO *s);
 int getLongitud(SIMBOLO *s);
 int getNum_parametros(SIMBOLO *s);
 int getPosicion(SIMBOLO *s);
 int getNum_var_locales(SIMBOLO *s);
 
+SIMBOLO *copySIMBOLO(SIMBOLO *s);
 void freeSimbolo(SIMBOLO *s);
 
-
-struct _SIMBOLO{
-    char *identificador;                /* identificador */
-    CATEGORIA_SIMBOLO cat_simbolo;      /* categoría del simbolo */
-    TIPO tipo;                          /* tipo */
-    CATEGORIA categoria;                /* categoria de la variable */
-    int valor;                          /* valor si escalar */
-    int ini;                            /* variable para comprobar si ha sido inicializada una variable (true/false)*/
-    int longitud;                       /* longitud si vector */
-    int num_parametros;                 /* número de parámetros si función */
-    int posicion;                       /* posición en llamada a función si parámetro, posición de declaración si variable local de función */
-    int num_var_locales;                /* número de variables locales si función */
-};
 
 /* Aclaración: como los campos valor, longitud, num_parametros, posicion y num_var_locales
 son opcionales dependiendo de si el símbolo es variable (escalar o vector), parámetro o función,
@@ -93,6 +81,8 @@ void freeHashTable(HASH_TABLE *h);
 int insertarSimbolo(HASH_TABLE *h, SIMBOLO *s);
 
 SIMBOLO *buscarSimbolo(HASH_TABLE *h, char *identificador);
+
+listaSimbolo *DumpHashTable(HASH_TABLE *h);
 
 void printSimbolo(SIMBOLO *s);
 void printLista(listaSimbolo *l);
