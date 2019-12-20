@@ -10,7 +10,7 @@ bison -d -y -v $1.y
 gcc -Wall -o pruebaSemantico lex.yy.c y.tab.c y.tab.h
 
 #Execute the compiler.
-./pruebaSemantico entrada_sem_$2.txt misalida_sem_$2.txt
+./pruebaSemantico main$2.alf misalida_sem_$2.txt
 
 #Verify if we have done it well.
-diff -bB salida_sem_$2.txt misalida_sem_$2.txt
+#diff -bB salida_sem_$2.txt misalida_sem_$2.txt
