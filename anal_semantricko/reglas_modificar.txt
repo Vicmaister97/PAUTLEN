@@ -1,0 +1,57 @@
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	x
+;R2:	<declaraciones> ::= <declaracion>
+;R21:	<funciones> ::=
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	8
+;R104:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	printf
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R80:	<exp> ::= <identificador>
+;R56:	<escritura> ::= printf <exp>
+;R36:	<sentencia_simple> ::= <escritura>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }
+
+
+
+en alfa.y en la seccion donde declaramos variables
+(debajo de int yylex)
+HASH_TABLE *GLOBAL;
+HASH_TABLE *LOCAL;
+
+programa: inicio_tabla TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones escritura_TS funciones sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
+  ;
+inicio_tabla: {GLOBAL = newHashTable();}
+  ;
+escritura_TS: {escribir_subseccion_data(salida);
+               escribir_cabecera_bss(salida);
+
+               
+               declarar_variable(salida, "x", ENTERO, 1);
+               declarar_variable(salida, "y", ENTERO, 1);
+               declarar_variable(salida, "z", ENTERO, 1);
+               escribir_segmento_codigo(salida);
+               }
