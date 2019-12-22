@@ -17,9 +17,8 @@
 #define INT 1
 #define BOOLEAN 2
 
-
-typedef struct{
-  char lexema[MAX_LONG_ID+1];
+typedef struct {
+  char lexema[MAX_LONG_ID + 1];
   int tipo;
   int valor_entero;
   int es_direccion;

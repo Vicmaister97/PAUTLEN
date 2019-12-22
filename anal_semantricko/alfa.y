@@ -11,8 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "alfa.h"
 #include "TS/tabla.h"
+
+
+
 
 
 HASH_TABLE *TGLOBAL;
@@ -48,6 +50,9 @@ SIMBOLO *simbol;
 
 %}
 
+%code requires {
+  #include "alfa.h"
+}
 %union
 {
   tipo_atributos atributos;
@@ -85,7 +90,6 @@ SIMBOLO *simbol;
 %token TOK_MAYORIGUAL
 %token TOK_MENOR
 %token TOK_MAYOR
-
 
 /* Tokens con valor semántico */
 
@@ -154,7 +158,7 @@ identificadores:  identificador {fprintf(yyout, ";R18:\t<identificadores> ::= <i
 funciones:  funcion funciones {fprintf(yyout, ";R20:\t<funciones> ::= <funcion> <funciones>\n");}
          |  {fprintf(yyout, ";R21:\t<funciones> ::= \n");}
          ;
-funcion:  TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA 
+funcion:  TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA
           {
             if (hayReturn == 0){
               errorSemantico("Función $3.lexema sin sentencia de retorno");
@@ -239,7 +243,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                 }
                 fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
              }
-          |  elemento_vector TOK_ASIGNACION exp 
+          |  elemento_vector TOK_ASIGNACION exp
               {
                 if ($1.tipo != $3.tipo){
                   errorSemantico("Asignación incompatible");
@@ -256,7 +260,7 @@ condicional:  TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVE
            ;
 bucle:  TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
      ;
-lectura:  TOK_SCANF TOK_IDENTIFICADOR 
+lectura:  TOK_SCANF TOK_IDENTIFICADOR
           {
             if (ambito == 0){
               simbol = UsoGlobal(TGLOBAL, $2.lexema);
@@ -298,7 +302,7 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
        ;
 escritura:  TOK_PRINTF exp {fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");}
          ;
-retorno_funcion:  TOK_RETURN exp 
+retorno_funcion:  TOK_RETURN exp
                   {
                     if (ambito == 0){
                       errorSemantico("Sentencia de retorno fuera del cuerpo de una función");
@@ -318,7 +322,7 @@ exp:  exp TOK_MAS exp {fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");}
    |  exp TOK_AND exp {fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");}
    |  exp TOK_OR exp {fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");}
    |  TOK_NOT exp {fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");}
-   |  TOK_IDENTIFICADOR 
+   |  TOK_IDENTIFICADOR
       {
         if (ambito == 0){
           simbol = UsoGlobal(TGLOBAL, $1.lexema);
@@ -369,7 +373,7 @@ exp:  exp TOK_MAS exp {fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");}
    |  TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO {$$.tipo = $2.tipo; $$.es_direccion = $2.es_direccion;
                                                                 fprintf(yyout, ";R83:\t<exp> ::= ( <comparacion> )\n");}
    |  elemento_vector {$$.tipo = $1.tipo; $$.es_direccion = $1.es_direccion; fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");}
-   |  id_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO 
+   |  id_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO
       {
         fprintf(yyout, ";R88:\t<exp> ::= id_llamada_funcion ( <lista_expresiones> )\n");
       }
@@ -396,20 +400,20 @@ constante:  constante_logica
               $$.es_direccion = $1.es_direccion;
               fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n");
             }
-          |  TOK_CONSTANTE_ENTERA 
+          |  TOK_CONSTANTE_ENTERA
             {
               $$.tipo = INT;
               $$.es_direccion = $1.es_direccion;
               fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
             }
           ;
-constante_logica:  TOK_TRUE 
+constante_logica:  TOK_TRUE
                   {
                     $$.tipo = BOOLEAN;
                     $$.es_direccion = 0;
                     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
                   }
-                |  TOK_FALSE 
+                |  TOK_FALSE
                     {
                       $$.tipo = BOOLEAN;
                       $$.es_direccion = 0;
@@ -434,7 +438,7 @@ identificador:  TOK_IDENTIFICADOR {
                                         return;
                                       }
 
-                                      if (DeclararLocal(TLOCAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, 
+                                      if (DeclararLocal(TLOCAL, $1.lexema, VARIABLE, tipo_actual, clase_actual,
                                       FALSE, FALSE, FALSE, pos_variable_local_actual) == FALSE){     // redeclaración variable local
                                           errorSemantico("Identificador $1.lexema duplicado");
                                           return;
@@ -488,7 +492,7 @@ int main (int argc, char *argv[]){
     fclose(yyin);
     fclose(yyout);
     exit(1);
-    
+
   }
 
   else{
