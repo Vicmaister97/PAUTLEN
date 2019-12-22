@@ -2046,6 +2046,7 @@ yyreduce:
                                           return 1;
                                       }
                                       else{
+                                          fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
                                           // AQUI VA GENERACION DE CODIGO JEJEJE
                                       }
                                   }
@@ -2063,16 +2064,18 @@ yyreduce:
                                       else{
                                           pos_variable_local_actual++;
                                           num_variables_locales_actual++;
+                                          fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
                                           // AQUI VA GENERACION DE CODIGO JEJEJE
                                       }
                                   }
 
-                                  fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");}
-#line 2072 "y.tab.c" /* yacc.c:1646  */
+                                  //fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+                                  }
+#line 2075 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2076 "y.tab.c" /* yacc.c:1646  */
+#line 2079 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2300,7 +2303,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 456 "alfa.y" /* yacc.c:1906  */
+#line 459 "alfa.y" /* yacc.c:1906  */
 
 
 void yyerror (char *msg)

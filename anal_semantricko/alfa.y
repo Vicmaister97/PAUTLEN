@@ -429,6 +429,7 @@ identificador:  TOK_IDENTIFICADOR {
                                           return 1;
                                       }
                                       else{
+                                          fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
                                           // AQUI VA GENERACION DE CODIGO JEJEJE
                                       }
                                   }
@@ -446,11 +447,13 @@ identificador:  TOK_IDENTIFICADOR {
                                       else{
                                           pos_variable_local_actual++;
                                           num_variables_locales_actual++;
+                                          fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
                                           // AQUI VA GENERACION DE CODIGO JEJEJE
                                       }
                                   }
 
-                                  fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");}
+                                  //fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+                                  }
              ;
 
 %%

@@ -12,8 +12,8 @@
 
 #define MAX_LONG_ID 100
 #define MAX_TAMANIO_VECTOR 64
-// #define ESCALAR 1
-// #define VECTOR 2
+#define ESCALAR 1
+#define VECTOR 2
 #define INT 1
 #define BOOLEAN 2
 
