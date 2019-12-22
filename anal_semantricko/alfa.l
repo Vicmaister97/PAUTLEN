@@ -13,6 +13,7 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "TS/tabla.h"
 #include "y.tab.h"
 
 #define MAXIDLENGTH 100
@@ -75,16 +76,16 @@ main                                         {col += yyleng; fprintf(yyout, ";D:
 "!="                                         {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_DISTINTO;}
 "&&"                                         {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_AND;}
 "or"                                         {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_OR;}
-"int"                                        {yylval.tipo = INT; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INT;}
-"boolean"                                    {yylval.tipo = BOOLEAN; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_BOOLEAN;}
+"int"                                        {yylval.atributos.tipo = INT; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INT;}
+"boolean"                                    {yylval.atributos.tipo = BOOLEAN; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_BOOLEAN;}
 "true"                                       {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_TRUE;}
 "false"                                      {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_FALSE;}
-{DIGITO}+                                    {yylval.valor_entero = int(yytext); col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CONSTANTE_ENTERA;}
-"scanf"                                      {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_SCANF;}
+{DIGITO}+                                    {yylval.atributos.valor_entero = atoi(yytext); col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CONSTANTE_ENTERA;}
+"scanf"									 	 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_SCANF;}
 "printf"                                     {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_PRINTF;}
 "array"                                      {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_ARRAY;}
 "function"                                   {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_FUNCTION;}
-{LETRA}({DIGITO}|{LETRA})*                   {if (yyleng > 100){ errorMorfo(" identificador demasiado largo"); return 0;}	else{col += yyleng; yylval.lexema = strdup(yytext); fprintf(yyout, ";D:\t%s\n", yytext); return TOK_IDENTIFICADOR;}}
+{LETRA}({DIGITO}|{LETRA})*                   {if (yyleng > 100){ errorMorfo(" identificador demasiado largo"); return 0;}	else{col += yyleng; strcpy(yylval.atributos.lexema,yytext); fprintf(yyout, ";D:\t%s\n", yytext); return TOK_IDENTIFICADOR;}}
 [ \t]+                                       { /**se ignoran los espacios y tabuladores **/ col += yyleng;}
 [\n]                                         {col = 1;}
 "//".*                                       { /** accion vacia: ignoramos comentarios **/ }

@@ -34,6 +34,29 @@ typedef struct _HASH_TABLE HASH_TABLE;
 extern int ambito;                 // Indica si el ambito del programa es global (= 0) o local&global (= 1)
 extern int inic_global;            // Controla que el ambito no cambie al crear la tabla global
 
+struct _SIMBOLO{
+    char *identificador;                /* identificador */
+    CATEGORIA_SIMBOLO cat_simbolo;      /* categoría del simbolo */
+    TIPO tipo;                          /* tipo */
+    CATEGORIA categoria;                /* categoria de la variable */
+    int valor;                          /* valor si escalar */
+    int ini;                            /* variable para comprobar si ha sido inicializada una variable (true/false)*/
+    int longitud;                       /* longitud si vector */
+    int num_parametros;                 /* número de parámetros si función */
+    int posicion;                       /* posición en llamada a función si parámetro, posición de declaración si variable local de función */
+    int num_var_locales;                /* número de variables locales si función */
+};
+
+struct _listaSimbolo{
+  SIMBOLO **lista;
+  int len;
+};
+
+struct _HASH_TABLE{
+  listaSimbolo **hash_array;
+  int num_items;
+};
+
 
 SIMBOLO *newSimbolo(char *identificador);
 void setCategoriaSimbolo(SIMBOLO *s, CATEGORIA_SIMBOLO c);

@@ -17,9 +17,10 @@
 #define INT 1
 #define BOOLEAN 2
 
+//#define YYSTYPE atributos	// A partir de ahora, cada símbolo tiene una estructura de tipo atributos
 
-typedef struct{
-  char lexema[MAX_LONG_ID+1];
+typedef struct {
+  char lexema[MAX_LONG_ID + 1];
   int tipo;
   int valor_entero;
   int es_direccion;

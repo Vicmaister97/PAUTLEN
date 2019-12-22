@@ -1,6 +1,12 @@
+// Incrementa en 1 el
+// dato de entrada
+// y muestra el resultado
+
 main
 {
 	int x;
-	x = 8;
-	printf x;
+    int y;
+    array int[65] arr;
+	x = true;
+	printf z;
 }
