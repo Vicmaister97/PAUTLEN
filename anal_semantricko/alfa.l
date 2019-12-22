@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "y.tab.h"
-#include "alfa.h"
 
 #define MAXIDLENGTH 100
 void errorMorfo(char *msg);
@@ -76,8 +75,8 @@ main                                         {col += yyleng; fprintf(yyout, ";D:
 "!="                                         {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_DISTINTO;}
 "&&"                                         {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_AND;}
 "or"                                         {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_OR;}
-"int"                                        {yylval.type = INT; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INT;}
-"boolean"                                    {yylval.type = BOOLEAN; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_BOOLEAN;}
+"int"                                        {yylval.tipo = INT; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INT;}
+"boolean"                                    {yylval.tipo = BOOLEAN; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_BOOLEAN;}
 "true"                                       {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_TRUE;}
 "false"                                      {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_FALSE;}
 {DIGITO}+                                    {yylval.valor_entero = int(yytext); col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CONSTANTE_ENTERA;}
