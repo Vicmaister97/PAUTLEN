@@ -4,10 +4,10 @@ rm y.tab.c
 
 #Generate C source code from the analyzer frameworks.
 flex $1.l
-bison -d -y -v $1.y 
+bison -d -y -v $1.y
 
 #Compile all the code.
-gcc -Wall -o pruebaSemantico lex.yy.c y.tab.c y.tab.h
+gcc -Wall -o pruebaSemantico lex.yy.c y.tab.c TS/tabla.c y.tab.h
 
 #Execute the compiler.
 ./pruebaSemantico main$2.alf misalida_sem_$2.txt

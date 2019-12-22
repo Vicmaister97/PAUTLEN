@@ -52,6 +52,7 @@ SIMBOLO *simbol;
 
 %code requires {
   #include "alfa.h"
+
 }
 %union
 {
@@ -116,7 +117,6 @@ SIMBOLO *simbol;
 %type <atributos> elemento_vector
 
 
-
 %%
 
 
@@ -147,7 +147,7 @@ clase_vector:  TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_COR
                   tamanio_vector_actual = $4.valor_entero;
                   if ( (tamanio_vector_actual < 1) || (tamanio_vector_actual > MAX_TAMANIO_VECTOR) ){
                     errorSemantico("El tamanyo del vector <nombre_vector> $1.lexema excede los limites permitidos (1,64)");
-                    return;
+                    return 1;
                   }
                   fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ constante_entera ]\n");
                 }
@@ -162,11 +162,11 @@ funcion:  TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_fun
           {
             if (hayReturn == 0){
               errorSemantico("Función $3.lexema sin sentencia de retorno");
-              return;
+              return 1;
             }
             if (tipo_actual != tipoReturn){
               errorSemantico("El tipo de la función ($2.tipo) no coincide con el tipo de retorno (tipoReturn");
-              return;
+              return 1;
             }
 
             fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
@@ -203,20 +203,20 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     simbol = UsoGlobal(TGLOBAL, $1.lexema);
                     if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
                         errorSemantico("Acceso a variable no declarada ($1.lexema)");
-                        return;
+                        return 1;
                     }
                     else{                                       // Si lo busca en global y lo encuentra
                         if (CategoriaSimbolo(simbol) == FUNCION){
                           errorSemantico("Asignación incompatible");
-                          return;
+                          return 1;
                         }
                         if (getCategoria(simbol) == VECTOR){
                           errorSemantico("Asignación incompatible");
-                          return;
+                          return 1;
                         }
                         if (getTipo(simbol) != $3.tipo){
                           errorSemantico("Asignación incompatible");
-                          return;
+                          return 1;
                         }
                     }
                 }
@@ -224,20 +224,20 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
                     if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
                         errorSemantico("Acceso a variable no declarada ($1.lexema)");
-                        return;
+                        return 1;
                     }
                     else{                                       // Si lo busca en local y lo encuentra
                         if (CategoriaSimbolo(simbol) == FUNCION){
                           errorSemantico("Asignación incompatible");
-                          return;
+                          return 1;
                         }
                         if (getCategoria(simbol) == VECTOR){
                           errorSemantico("Asignación incompatible");
-                          return;
+                          return 1;
                         }
                         if (getTipo(simbol) != $3.tipo){
                           errorSemantico("Asignación incompatible");
-                          return;
+                          return 1;
                         }
                     }
                 }
@@ -247,7 +247,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
               {
                 if ($1.tipo != $3.tipo){
                   errorSemantico("Asignación incompatible");
-                  return;
+                  return 1;
                 }
 
                 fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
@@ -266,16 +266,16 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
               simbol = UsoGlobal(TGLOBAL, $2.lexema);
               if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
                 errorSemantico("Acceso a variable no declarada ($2.lexema)");
-                return;
+                return 1;
               }
               else{                                       // Si lo busca en global y lo encuentra
                 if (CategoriaSimbolo(simbol) == FUNCION){
                   errorSemantico("Asignación incompatible");
-                  return;
+                  return 1;
                 }
                 if (getCategoria(simbol) == VECTOR){
                   errorSemantico("Asignación incompatible");
-                  return;
+                  return 1;
                 }
               }
             }
@@ -283,16 +283,16 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
               simbol = UsoLocal(TGLOBAL, TLOCAL, $2.lexema);
               if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
                 errorSemantico("Acceso a variable no declarada ($2.lexema)");
-                return;
+                return 1;
               }
               else{                                       // Si lo busca en local y lo encuentra
                 if (CategoriaSimbolo(simbol) == FUNCION){
                   errorSemantico("Asignación incompatible");
-                  return;
+                  return 1;
                 }
                 if (getCategoria(simbol) == VECTOR){
                   errorSemantico("Asignación incompatible");
-                  return;
+                  return 1;
                 }
               }
             }
@@ -306,7 +306,7 @@ retorno_funcion:  TOK_RETURN exp
                   {
                     if (ambito == 0){
                       errorSemantico("Sentencia de retorno fuera del cuerpo de una función");
-                      return;
+                      return 1;
                     }
 
                     hayReturn = 1;
@@ -328,16 +328,16 @@ exp:  exp TOK_MAS exp {fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");}
           simbol = UsoGlobal(TGLOBAL, $1.lexema);
           if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
             errorSemantico("Acceso a variable no declarada ($1.lexema)");
-            return;
+            return 1;
           }
           else{                                       // Si lo busca en global y lo encuentra
             if (CategoriaSimbolo(simbol) == FUNCION){
               errorSemantico("Asignación incompatible");
-              return;
+              return 1;
             }
             if (getCategoria(simbol) == VECTOR){
               errorSemantico("Asignación incompatible");
-              return;
+              return 1;
             }
 
             $$.tipo = getTipo(simbol);
@@ -348,16 +348,16 @@ exp:  exp TOK_MAS exp {fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");}
           simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
           if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
             errorSemantico("Acceso a variable no declarada ($1.lexema)");
-            return;
+            return 1;
           }
           else{                                       // Si lo busca en local y lo encuentra
             if (CategoriaSimbolo(simbol) == FUNCION){
               errorSemantico("Asignación incompatible");
-              return;
+              return 1;
             }
             if (getCategoria(simbol) == VECTOR){
               errorSemantico("Asignación incompatible");
-              return;
+              return 1;
             }
 
             $$.tipo = getTipo(simbol);
@@ -426,7 +426,7 @@ identificador:  TOK_IDENTIFICADOR {
                                   if (ambito == 0){
                                       if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE) == FALSE){     // redeclaración variable global
                                           errorSemantico("Identificador $1.lexema duplicado");
-                                          return;
+                                          return 1;
                                       }
                                       else{
                                           // AQUI VA GENERACION DE CODIGO JEJEJE
@@ -435,13 +435,13 @@ identificador:  TOK_IDENTIFICADOR {
                                   else{                           // Ambito local
                                       if (clase_actual != ESCALAR){
                                         errorSemantico("Variable local de tipo no escalar");
-                                        return;
+                                        return 1;
                                       }
 
                                       if (DeclararLocal(TLOCAL, $1.lexema, VARIABLE, tipo_actual, clase_actual,
                                       FALSE, FALSE, FALSE, pos_variable_local_actual) == FALSE){     // redeclaración variable local
                                           errorSemantico("Identificador $1.lexema duplicado");
-                                          return;
+                                          return 1;
                                       }
                                       else{
                                           pos_variable_local_actual++;

@@ -44,7 +44,8 @@ extern int yydebug;
 
   #include "alfa.h"
 
-#line 48 "y.tab.h" /* yacc.c:1909  */
+
+#line 49 "y.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -134,11 +135,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 57 "alfa.y" /* yacc.c:1909  */
+#line 58 "alfa.y" /* yacc.c:1909  */
 
   tipo_atributos atributos;
 
-#line 142 "y.tab.h" /* yacc.c:1909  */
+#line 143 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -546,7 +546,6 @@ char *yytext;
 #include <stdlib.h>
 #include <string.h>
 #include "y.tab.h"
-#include "alfa.h"
 
 #define MAXIDLENGTH 100
 void errorMorfo(char *msg);
@@ -559,7 +558,7 @@ FILE* yyout;
 int col = 1;
 int is_morpho = 0;
 
-#line 563 "lex.yy.c"
+#line 562 "lex.yy.c"
 /**
 *** La siguiente directiva indica que no se va a implementar la función ’yywrap’
 *** evita que se tenga que enlazar con -lf, o que se tenga que implementar ’yywrap’
@@ -567,7 +566,7 @@ int is_morpho = 0;
 /** Opciones para quitar los warnings de bison **/
 #define YY_NO_INPUT 1
 /** Obliga a mantener el número de línea analizada en la variable global yylineno **/
-#line 571 "lex.yy.c"
+#line 570 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -782,13 +781,13 @@ YY_DECL
 		}
 
 	{
-#line 48 "alfa.l"
+#line 47 "alfa.l"
 
 
-#line 51 "alfa.l"
+#line 50 "alfa.l"
 											/*----- Sección de Reglas ----------------*/
 											/** Además de la accion asociada se guarda el token en yytext como char* y su longitud en yyleng **/
-#line 792 "lex.yy.c"
+#line 791 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -857,217 +856,217 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 53 "alfa.l"
+#line 52 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MAIN;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 54 "alfa.l"
+#line 53 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_LLAVEIZQUIERDA;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 55 "alfa.l"
+#line 54 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_LLAVEDERECHA;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 56 "alfa.l"
+#line 55 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CORCHETEIZQUIERDO;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 57 "alfa.l"
+#line 56 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CORCHETEDERECHO;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 58 "alfa.l"
+#line 57 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_PUNTOYCOMA;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 59 "alfa.l"
+#line 58 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_PARENTESISIZQUIERDO;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 60 "alfa.l"
+#line 59 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_PARENTESISDERECHO;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 61 "alfa.l"
+#line 60 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_COMA;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 62 "alfa.l"
+#line 61 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_ASIGNACION;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 63 "alfa.l"
+#line 62 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_IF;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 64 "alfa.l"
+#line 63 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_ELSE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 65 "alfa.l"
+#line 64 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_WHILE;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 66 "alfa.l"
+#line 65 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_RETURN;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 67 "alfa.l"
+#line 66 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_NOT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 68 "alfa.l"
+#line 67 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MAS;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 69 "alfa.l"
+#line 68 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MENOS;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 70 "alfa.l"
+#line 69 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_ASTERISCO;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 71 "alfa.l"
+#line 70 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_DIVISION;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 72 "alfa.l"
+#line 71 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MAYOR;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 73 "alfa.l"
+#line 72 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MENORIGUAL;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 74 "alfa.l"
+#line 73 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MENOR;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 75 "alfa.l"
+#line 74 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_MAYORIGUAL;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 76 "alfa.l"
+#line 75 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_IGUAL;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 77 "alfa.l"
+#line 76 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_DISTINTO;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 78 "alfa.l"
+#line 77 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_AND;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 79 "alfa.l"
+#line 78 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_OR;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 80 "alfa.l"
-{yylval.atributos.tipo = INT; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INT;}
+#line 79 "alfa.l"
+{col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 81 "alfa.l"
-{yylval.atributos.tipo = BOOLEAN; col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_BOOLEAN;}
+#line 80 "alfa.l"
+{col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_BOOLEAN;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 82 "alfa.l"
+#line 81 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_TRUE;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 83 "alfa.l"
+#line 82 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_FALSE;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 84 "alfa.l"
-{yylval.atributos.valor_entero = int(yytext); col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CONSTANTE_ENTERA;}
+#line 83 "alfa.l"
+{col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_CONSTANTE_ENTERA;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 85 "alfa.l"
+#line 84 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_SCANF;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 86 "alfa.l"
+#line 85 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_PRINTF;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 87 "alfa.l"
+#line 86 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_ARRAY;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 88 "alfa.l"
+#line 87 "alfa.l"
 {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_FUNCTION;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 89 "alfa.l"
-{if (yyleng > 100){ errorMorfo(" identificador demasiado largo"); return 0;}	else{col += yyleng; yylval.atributos.lexema = strdup(yytext); fprintf(yyout, ";D:\t%s\n", yytext); return TOK_IDENTIFICADOR;}}
+#line 88 "alfa.l"
+{if (yyleng > 100){ errorMorfo(" identificador demasiado largo"); return 0;}	else{col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_IDENTIFICADOR;}}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 90 "alfa.l"
+#line 89 "alfa.l"
 { /**se ignoran los espacios y tabuladores **/ col += yyleng;}
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 91 "alfa.l"
+#line 90 "alfa.l"
 {col = 1;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 92 "alfa.l"
+#line 91 "alfa.l"
 { /** accion vacia: ignoramos comentarios **/ }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 93 "alfa.l"
+#line 92 "alfa.l"
 { /** REPRESENTA CUALQUIER CARACTER MENOS SALTO DE LINEA: token desconocido, se produce un mensaje de error **/
                                                    errorMorfo("simbolo no permitido"); return 0;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 95 "alfa.l"
+#line 94 "alfa.l"
 ECHO;
 	YY_BREAK
-#line 1071 "lex.yy.c"
+#line 1070 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2043,7 +2042,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 95 "alfa.l"
+#line 94 "alfa.l"
 
 
 
