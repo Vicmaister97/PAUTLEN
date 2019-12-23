@@ -1,0 +1,16 @@
+// Incrementa en 1 el
+// dato de entrada
+// y muestra el resultado
+
+main
+{
+	int x;
+    int y;
+    boolean bol;
+    array int[60] vector1;
+	x = 9-x;
+    printf true&&false;
+    scanf x;
+	printf y;
+    printf vector1[0];
+}
