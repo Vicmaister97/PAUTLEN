@@ -240,7 +240,7 @@ end_funciones:{
 declaraciones:  declaracion {fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");}
              |  declaracion declaraciones {fprintf(yyout, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");}
              ;
-declaracion:  clase identificadores TOK_PUNTOYCOMA 
+declaracion:  clase identificadores TOK_PUNTOYCOMA
               {
                 if (errorVector == 1){
                   errorVector = 0;
@@ -298,8 +298,8 @@ funcion:  fn_declaration sentencias TOK_LLAVEDERECHA
               sprintf(err, "El tipo de la función (%d) no coincide con el tipo de retorno (%d)", getTipo(simbol), tipoReturn);
               errorSemantico(err);
               return -1;
-            }   
-            
+            }
+
             setNum_parametros(simbol, num_parametros_actual);
             setNum_var_locales(simbol, num_variables_locales_actual);
             strcpy($$.lexema, $1.lexema);
@@ -336,7 +336,7 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
                         errorSemantico(err);
                         return -1;
                     }
-                    
+
                     setNum_parametros(simbol, num_parametros_actual);
                     setNum_var_locales(simbol, num_variables_locales_actual);
                     strcpy($$.lexema, $1.lexema);
@@ -345,7 +345,7 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
 parametros_funcion:  parametro_funcion resto_parametros_funcion {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                   |  {fprintf(yyout, ";R24:\t<parametros_funcion> ::= \n");}
                   ;
-resto_parametros_funcion:  TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion 
+resto_parametros_funcion:  TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion
                             {fprintf(yyout, ";R25:\t<resto_parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                         |  {fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::= \n");}
                         ;
@@ -408,8 +408,13 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                         }
                     }
 
-                    printf("\nTRICK 1: before asignar: id == %s, val = %d", $1.lexema, $1.valor_entero);
-                    printf("\nTRICK 1: before asignar: exp == %s, val = %d\n", $3.lexema, $3.valor_entero);
+                    if($3.es_direccion){
+                      printf("\nTRICK 1: before asignar: %s = %s", $1.lexema, $3.lexema);
+                    }
+                    else{
+                      printf("\nTRICK 1: before asignar: %s = %d", $1.lexema, $3.valor_entero);
+                    }
+                    //printf("\nTRICK 1: before asignar: exp == %s, val = %d\n", $3.lexema, $3.valor_entero);
                     asignar(yyout, $1.lexema, $3.es_direccion);
                 }
                 else{                                           // Búsqueda en local
@@ -501,17 +506,17 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                     // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
-condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
                 fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
               }
-           |   if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+           |   if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
                 fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
               }
            ;
 
-if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp 
+if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp
           {
             if ($3.tipo != BOOLEAN){
               errorSemantico("Condicional con condicion de tipo int");
@@ -526,7 +531,7 @@ bucle_exp:  TOK_WHILE TOK_PARENTESISIZQUIERDO exp
               if ($3.tipo != BOOLEAN){
                 errorSemantico("Bucle con condicion de tipo int");
                 return -1;
-              }              
+              }
             }
          ;
 
@@ -586,8 +591,17 @@ escritura:  TOK_PRINTF exp {
                               //  escribir_operando(yyout,$2.valor_entero,$2.es_direccion);
                               //  escribir(yyout, CTE, $2.tipo);
                               //}
-                              escribir_operando(yyout,$2.lexema,1);
-                              escribir(yyout, 1, $2.tipo);
+                              if($2.es_direccion){
+                                escribir_operando(yyout,$2.lexema,1);
+                                escribir(yyout, 1, $2.tipo);
+                              }
+                              else{
+                                char val[MAX_INT_LEN];
+                                sprintf(val, "%d", $2.valor_entero);
+                                escribir_operando(yyout,val,0);
+                                escribir(yyout, CTE, $2.tipo);
+                              }
+
                              fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");}
         ;
 retorno_funcion:  TOK_RETURN exp
@@ -797,7 +811,7 @@ idf_llamada_funcion:  TOK_IDENTIFICADOR
                             errorSemantico(err);
                             return -1;
                           }
-                           
+
                         }
                       }
                       else{                                           // Búsqueda en local
@@ -830,14 +844,14 @@ idf_llamada_funcion:  TOK_IDENTIFICADOR
                       strcpy($$.lexema, getIdentificador(simbol) );
                     }
                   ;
-lista_expresiones:  exp resto_lista_expresiones 
+lista_expresiones:  exp resto_lista_expresiones
                     {
                       num_parametros_llamada_actual++;
 
                       fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
                  |  {fprintf(yyout, ";R90:\t<lista_expresiones> ::= \n");}
                  ;
-resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones 
+resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones
                           {
                             num_parametros_llamada_actual++;
 
