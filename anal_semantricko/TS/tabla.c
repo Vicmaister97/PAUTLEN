@@ -351,7 +351,7 @@ void printHashTable(HASH_TABLE *h){
 *******************************************************/
 
 // Declarar una variable de ámbito global
-int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini){
+int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini, int longitud){
     SIMBOLO *newS;
     newS = newSimbolo(id);
     setCategoriaSimbolo(newS, cat_s);
@@ -359,6 +359,8 @@ int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO 
     setCategoria(newS, c);
     if(ini == TRUE)
       setValor(newS, valor);
+    if(longitud != FALSE)
+      setLongitud(newS, longitud);
 
     return insertarSimbolo(TGLOBAL, newS);         // Devuelve TRUE si no es una redeclaración de una variable global
                                                    // y ha podido insertarlo o FALSE en caso contrario

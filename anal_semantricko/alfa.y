@@ -25,7 +25,7 @@ int global_no;
 //Para generacion de etiquetas
 int etiqueta;
 
-void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
+void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){v
   if(op1.es_direccion){
     escribir_operando(yyout, op1.lexema, VAR);
     }
@@ -972,19 +972,28 @@ constante_entera:  TOK_CONSTANTE_ENTERA
 
 identificador:  TOK_IDENTIFICADOR {
                             if (ambito == 0){
-                                if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE) == FALSE){     // redeclaración variable global
-                                    char err[MAX_LONG_ID];
-                                    sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
-                                    errorSemantico(err);
-                                    return -1;
-                                 }
-                                else{
-                                    if (clase_actual == VECTOR){      // Estamos declarando un array
+                                if (clase_actual == VECTOR){      // Estamos declarando un array
                                       sprintf(nombre_vector, "%s", $1.lexema);  // Guardamos el nombre del array
-                                    }
-                                      fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
-                                      // AQUI VA GENERACION DE CODIGO JEJEJE
+                                      
+                                      if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE, tamanio_vector_actual) == FALSE){     // redeclaración variable global
+                                        char err[MAX_LONG_ID];
+                                        sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
+                                        errorSemantico(err);
+                                        return -1;
+                                      }
+                                }
+                                else{
+                                  if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE, FALSE) == FALSE){     // redeclaración variable global
+                                      char err[MAX_LONG_ID];
+                                      sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
+                                      errorSemantico(err);
+                                      return -1;
+                                   }
+                                  else{
+                                        fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+                                        // AQUI VA GENERACION DE CODIGO JEJEJE
                                   }
+                                }
                               }
 
                               else{                           // Ambito local

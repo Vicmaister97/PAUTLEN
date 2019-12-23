@@ -20,6 +20,70 @@ HASH_TABLE *TGLOBAL;
 HASH_TABLE *TLOCAL = NULL;
 
 
+//Para la negacion Logica
+int global_no;
+//Para generacion de etiquetas
+int etiqueta;
+
+void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){v
+  if(op1.es_direccion){
+    escribir_operando(yyout, op1.lexema, VAR);
+    }
+  else{
+    char val1[MAX_INT_LEN];
+    sprintf(val1, "%d", op1.valor_entero);
+    escribir_operando(yyout, val1, CTE);
+    }
+
+  if(tipo_op == TIPO_MENOS){
+    cambiar_signo(yyout, op1.es_direccion);
+    return;
+  }
+
+  if(tipo_op == TIPO_NEG){
+    no(yyout, op1.es_direccion, global_no++);
+    //global_no = 0;
+    return;
+  }
+
+  if(op2.es_direccion)
+    escribir_operando(yyout, op2.lexema, VAR);
+  else{
+    char val2[MAX_INT_LEN];
+    sprintf(val2, "%d", op2.valor_entero);
+    escribir_operando(yyout, val2, CTE);
+    }
+
+  if(tipo_op == TIPO_SUMA)
+    sumar(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_RESTA)
+    restar(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_DIV)
+    dividir(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_MUL)
+    multiplicar(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_AND)
+    y(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_OR)
+    o(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == CMP_IGUAL)
+    igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_DIST)
+    distinto(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MEN_IG)
+    menor_igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MAY_IG)
+    mayor_igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MEN)
+    menor(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MAY)
+    mayor(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+
+  return;
+
+}
+
+
 extern void errorMorfo (char *msg);
 void yyerror(char *msg);
 void errorSemantico (char *msg);
@@ -176,7 +240,7 @@ end_funciones:{
 declaraciones:  declaracion {fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");}
              |  declaracion declaraciones {fprintf(yyout, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");}
              ;
-declaracion:  clase identificadores TOK_PUNTOYCOMA 
+declaracion:  clase identificadores TOK_PUNTOYCOMA
               {
                 if (errorVector == 1){
                   errorVector = 0;
@@ -234,8 +298,8 @@ funcion:  fn_declaration sentencias TOK_LLAVEDERECHA
               sprintf(err, "El tipo de la función (%d) no coincide con el tipo de retorno (%d)", getTipo(simbol), tipoReturn);
               errorSemantico(err);
               return -1;
-            }   
-            
+            }
+
             setNum_parametros(simbol, num_parametros_actual);
             setNum_var_locales(simbol, num_variables_locales_actual);
             strcpy($$.lexema, $1.lexema);
@@ -272,7 +336,7 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
                         errorSemantico(err);
                         return -1;
                     }
-                    
+
                     setNum_parametros(simbol, num_parametros_actual);
                     setNum_var_locales(simbol, num_variables_locales_actual);
                     strcpy($$.lexema, $1.lexema);
@@ -281,7 +345,7 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
 parametros_funcion:  parametro_funcion resto_parametros_funcion {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                   |  {fprintf(yyout, ";R24:\t<parametros_funcion> ::= \n");}
                   ;
-resto_parametros_funcion:  TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion 
+resto_parametros_funcion:  TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion
                             {fprintf(yyout, ";R25:\t<resto_parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                         |  {fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::= \n");}
                         ;
@@ -343,7 +407,15 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
-                    asignar(yyout, getIdentificador(simbol), 0);
+
+                    if($3.es_direccion){
+                      printf("\nTRICK 1: before asignar: %s = %s", $1.lexema, $3.lexema);
+                    }
+                    else{
+                      printf("\nTRICK 1: before asignar: %s = %d", $1.lexema, $3.valor_entero);
+                    }
+                    //printf("\nTRICK 1: before asignar: exp == %s, val = %d\n", $3.lexema, $3.valor_entero);
+                    asignar(yyout, $1.lexema, $3.es_direccion);
                 }
                 else{                                           // Búsqueda en local
                     simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
@@ -376,6 +448,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                   errorSemantico("Asignación incompatible");
                   return -1;
                 }
+                asignar(yyout, $1.lexema, $3.es_direccion);
 
                 fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
               }
@@ -427,21 +500,23 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                       }
                     }
                     fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
-
+                    escribir_operando(yyout,$3.lexema,$3.es_direccion);
+                    escribir_elemento_vector(yyout, $1.lexema, getLongitud(simbol), $3.es_direccion);
+                    // PETAAAAAAAAAA!!!!!!!!!!
                     // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
-condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
                 fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
               }
-           |   if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+           |   if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
                 fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
               }
            ;
 
-if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp 
+if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp
           {
             if ($3.tipo != BOOLEAN){
               errorSemantico("Condicional con condicion de tipo int");
@@ -456,7 +531,7 @@ bucle_exp:  TOK_WHILE TOK_PARENTESISIZQUIERDO exp
               if ($3.tipo != BOOLEAN){
                 errorSemantico("Bucle con condicion de tipo int");
                 return -1;
-              }              
+              }
             }
          ;
 
@@ -500,14 +575,33 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
                 }
               }
             }
-
+            leer(yyout, $2.lexema, $2.tipo);
             fprintf(yyout, ";R54:\t<lectura> ::= scanf <identificador>\n");
           }
        ;
 escritura:  TOK_PRINTF exp {
                              // fons1 escribir(yyout, $2.es_direccion, $2.tipo);
-                             escribir_operando(yyout,$2.lexema,1);
-                             escribir(yyout, 1, $2.tipo);
+                              //ESTO ES LO QUE DEBERIA ESTAR... PERO EXPLOTA
+                              //POR AHORA MAL
+                              //if($2.es_direccion){
+                              //  escribir_operando(yyout,$2.lexema,$2.es_direccion);
+                              //  escribir(yyout, VAR, $2.tipo);
+                              //}
+                              //else{
+                              //  escribir_operando(yyout,$2.valor_entero,$2.es_direccion);
+                              //  escribir(yyout, CTE, $2.tipo);
+                              //}
+                              if($2.es_direccion){
+                                escribir_operando(yyout,$2.lexema,1);
+                                escribir(yyout, 1, $2.tipo);
+                              }
+                              else{
+                                char val[MAX_INT_LEN];
+                                sprintf(val, "%d", $2.valor_entero);
+                                escribir_operando(yyout,val,0);
+                                escribir(yyout, CTE, $2.tipo);
+                              }
+
                              fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");}
         ;
 retorno_funcion:  TOK_RETURN exp
@@ -602,6 +696,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $2, $2, TIPO_NEG);
         fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");
       }
 
@@ -627,6 +722,7 @@ exp:  exp TOK_MAS exp
 
             $$.tipo = getTipo(simbol);
             $$.es_direccion = 1;
+            escribir_operando(yyout, $1.lexema, VAR);
           }
         }
         else{                                           // Búsqueda en local
@@ -715,7 +811,7 @@ idf_llamada_funcion:  TOK_IDENTIFICADOR
                             errorSemantico(err);
                             return -1;
                           }
-                           
+
                         }
                       }
                       else{                                           // Búsqueda en local
@@ -748,14 +844,14 @@ idf_llamada_funcion:  TOK_IDENTIFICADOR
                       strcpy($$.lexema, getIdentificador(simbol) );
                     }
                   ;
-lista_expresiones:  exp resto_lista_expresiones 
+lista_expresiones:  exp resto_lista_expresiones
                     {
                       num_parametros_llamada_actual++;
 
                       fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
                  |  {fprintf(yyout, ";R90:\t<lista_expresiones> ::= \n");}
                  ;
-resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones 
+resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones
                           {
                             num_parametros_llamada_actual++;
 
@@ -770,6 +866,8 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+
+              funcOp(yyout, $1, $3, CMP_IGUAL);
               fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
               }
            |  exp TOK_DISTINTO exp
@@ -780,6 +878,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_DIST);
               fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
               }
            |  exp TOK_MENORIGUAL exp
@@ -790,6 +889,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MEN_IG);
               fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
               }
            |  exp TOK_MAYORIGUAL exp
@@ -800,6 +900,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MAY_IG);
               fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
               }
            |  exp TOK_MENOR exp
@@ -810,6 +911,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MEN);
               fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
               }
            |  exp TOK_MAYOR exp
@@ -820,6 +922,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MAY);
               fprintf(yyout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
               }
            ;
@@ -833,10 +936,6 @@ constante:  constante_logica
             {
               $$.tipo = INT;
               $$.es_direccion = $1.es_direccion;
-
-              char val[MAX_INT_LEN];
-              sprintf(val, "%d", $1.valor_entero);
-              escribir_operando(yyout,val,CTE);
               fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
             }
           ;
@@ -863,6 +962,9 @@ constante_entera:  TOK_CONSTANTE_ENTERA
                       $$.tipo = INT;
                       $$.es_direccion = 0;
 
+                      char val[MAX_INT_LEN];
+                      sprintf(val, "%d", $1.valor_entero);
+                      escribir_operando(yyout,val,CTE);
                       fprintf(yyout, ";R105:\t<constante_entera> ::= <numero>\n");
                     }
                 ;
@@ -870,19 +972,28 @@ constante_entera:  TOK_CONSTANTE_ENTERA
 
 identificador:  TOK_IDENTIFICADOR {
                             if (ambito == 0){
-                                if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE) == FALSE){     // redeclaración variable global
-                                    char err[MAX_LONG_ID];
-                                    sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
-                                    errorSemantico(err);
-                                    return -1;
-                                 }
-                                else{
-                                    if (clase_actual == VECTOR){      // Estamos declarando un array
+                                if (clase_actual == VECTOR){      // Estamos declarando un array
                                       sprintf(nombre_vector, "%s", $1.lexema);  // Guardamos el nombre del array
-                                    }
-                                      fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
-                                      // AQUI VA GENERACION DE CODIGO JEJEJE
+                                      
+                                      if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE, tamanio_vector_actual) == FALSE){     // redeclaración variable global
+                                        char err[MAX_LONG_ID];
+                                        sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
+                                        errorSemantico(err);
+                                        return -1;
+                                      }
+                                }
+                                else{
+                                  if (DeclararGlobal(TGLOBAL, $1.lexema, VARIABLE, tipo_actual, clase_actual, FALSE, FALSE, FALSE) == FALSE){     // redeclaración variable global
+                                      char err[MAX_LONG_ID];
+                                      sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
+                                      errorSemantico(err);
+                                      return -1;
+                                   }
+                                  else{
+                                        fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+                                        // AQUI VA GENERACION DE CODIGO JEJEJE
                                   }
+                                }
                               }
 
                               else{                           // Ambito local

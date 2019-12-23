@@ -118,7 +118,7 @@ void printHashTable(HASH_TABLE *h);
 ** TABLA SIMBOLOS
 ******************************************/
 
-int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini);
+int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini, int longitud);
 int DeclararLocal(HASH_TABLE *TLOCAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO t, CATEGORIA c, int valor, int ini, int longitud, int pos);
 SIMBOLO *UsoGlobal(HASH_TABLE *TGLOBAL, char *id);
 SIMBOLO *UsoLocal(HASH_TABLE *TGLOBAL, HASH_TABLE *TLOCAL,  char *id);
