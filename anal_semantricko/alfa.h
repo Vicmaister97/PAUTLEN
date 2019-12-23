@@ -16,6 +16,13 @@
 #define VECTOR 2
 #define INT 1
 #define BOOLEAN 2
+#define CTE 0
+#define VAR 1
+#define MAX_INT_LEN 11
+#define STR_TRUE "1"
+#define STR_FALSE "0"
+
+
 
 //#define YYSTYPE atributos	// A partir de ahora, cada símbolo tiene una estructura de tipo atributos
 
