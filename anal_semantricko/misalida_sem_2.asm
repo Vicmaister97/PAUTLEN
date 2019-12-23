@@ -75,6 +75,9 @@ main:
 ;D:	printf
 ;D:	x
 ;D:	;
+	; inicio de la funcion escribir_operando
+	mov dword eax, _x
+	push dword eax
 ;R80:	<exp> ::= <identificador>
 	; inicio de la funcion escribir_operando
 	mov dword eax, _x
@@ -92,6 +95,9 @@ main:
 ;D:	printf
 ;D:	y
 ;D:	;
+	; inicio de la funcion escribir_operando
+	mov dword eax, _y
+	push dword eax
 ;R80:	<exp> ::= <identificador>
 	; inicio de la funcion escribir_operando
 	mov dword eax, _y
@@ -110,9 +116,15 @@ main:
 ;D:	=
 ;D:	x
 ;D:	&&
+	; inicio de la funcion escribir_operando
+	mov dword eax, _x
+	push dword eax
 ;R80:	<exp> ::= <identificador>
 ;D:	y
 ;D:	;
+	; inicio de la funcion escribir_operando
+	mov dword eax, _y
+	push dword eax
 ;R80:	<exp> ::= <identificador>
 	; inicio de la funcion escribir_operando
 	mov dword eax, _x
@@ -137,6 +149,9 @@ main:
 ;D:	printf
 ;D:	z
 ;D:	;
+	; inicio de la funcion escribir_operando
+	mov dword eax, _z
+	push dword eax
 ;R80:	<exp> ::= <identificador>
 	; inicio de la funcion escribir_operando
 	mov dword eax, _z
@@ -154,9 +169,82 @@ main:
 ;D:	z
 ;D:	=
 ;D:	x
+;D:	or
+	; inicio de la funcion escribir_operando
+	mov dword eax, _x
+	push dword eax
 ;R80:	<exp> ::= <identificador>
+;D:	y
+;D:	;
+	; inicio de la funcion escribir_operando
+	mov dword eax, _y
+	push dword eax
+;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribir_operando
+	mov dword eax, _x
+	push dword eax
+	; inicio de la funcion escribir_operando
+	mov dword eax, _y
+	push dword eax
+	; inicio de la funcion o
+	pop dword ebx
+	mov dword ebx, [ebx]
+	pop dword eax
+	mov dword eax, [eax]
+	or eax, ebx
+	push dword eax
+;R78:	<exp> ::= <exp> || <exp>
 	; inicio de la funcion asignar
 	pop dword eax
 	mov dword [_z], eax 
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	printf
+;D:	z
+;D:	;
+	; inicio de la funcion escribir_operando
+	mov dword eax, _z
+	push dword eax
+;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribir_operando
+	mov dword eax, _z
+	push dword eax
+	; inicio de la funcion escribir
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
+	call print_boolean
+	add esp, 4
+	call print_endofline
+;R56:	<escritura> ::= printf <exp>
+;R36:	<sentencia_simple> ::= <escritura>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+	; inicio de la funcion escribir_fin
+	jmp fin
+error_1:
+	push dword mensaje_1
+	call print_string
+	add esp, 4
+	mov dword esp, [__esp]
+	call print_endofline
+	jmp fin
+error_2:
+	push dword mensaje_2
+	call print_string
+	add esp, 4
+	mov dword esp, [__esp]
+	call print_endofline
+	jmp fin
+fin:
+	mov dword esp, [__esp]
+	ret

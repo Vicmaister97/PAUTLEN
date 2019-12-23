@@ -164,6 +164,17 @@ main:
 ;R105:	<constante_entera> ::= <numero>
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
+	; inicio de la funcion escribir_operando
+	mov dword eax, 5
+	push dword eax
+	; inicio de la funcion escribir_operando
+	mov dword eax, 6
+	push dword eax
+	; inicio de la funcion multiplicar
+	pop dword ebx
+	pop dword eax
+	imul ebx
+	push dword eax
 ;R75:	<exp> ::= <exp> * <exp>
 ;D:	;
 	; inicio de la funcion asignar
@@ -206,6 +217,19 @@ main:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribir_operando
+	mov dword eax, _x
+	push dword eax
+	; inicio de la funcion escribir_operando
+	mov dword eax, _y
+	push dword eax
+	; inicio de la funcion sumar
+	pop dword ebx
+	mov dword ebx, [ebx]
+	pop dword eax
+	mov dword eax, [eax]
+	add eax, ebx
+	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax

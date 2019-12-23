@@ -4,3 +4,4 @@ rm ex1
 rm pruebaSemantico
 rm y.output
 rm misalida_sem_1.o
+rm ex*

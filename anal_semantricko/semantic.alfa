@@ -7,8 +7,27 @@ main
 	int x,y;
     int z;
     boolean bol;
-  
+    array int[60]vector1;
+    int num, num2;
+	
 
+	function int potencia (int num; int exp)
+	{
+		int num2;
+		int i;
+   	
+
+	   num2=1;
+    	   i = 0;
+
+    	   while ((i<exp))
+    	   {
+               num2 = num2 * num;
+               i = i + 1;
+    	   }
+
+           return num2;
+	}
  
 
     // Aritmetica
@@ -29,6 +48,6 @@ main
     
     printf true&&false;
     scanf x;
-	printf y;
+	printf ;
 
 }

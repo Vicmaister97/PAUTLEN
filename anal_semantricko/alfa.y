@@ -25,7 +25,8 @@ int global_no;
 //Para generacion de etiquetas
 int etiqueta;
 
-void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){v
+
+void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
   if(op1.es_direccion){
     escribir_operando(yyout, op1.lexema, VAR);
     }
@@ -409,10 +410,8 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     }
 
                     if($3.es_direccion){
-                      printf("\nTRICK 1: before asignar: %s = %s", $1.lexema, $3.lexema);
                     }
                     else{
-                      printf("\nTRICK 1: before asignar: %s = %d", $1.lexema, $3.valor_entero);
                     }
                     //printf("\nTRICK 1: before asignar: exp == %s, val = %d\n", $3.lexema, $3.valor_entero);
                     asignar(yyout, $1.lexema, $3.es_direccion);
@@ -502,8 +501,6 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                     fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
                     escribir_operando(yyout,$3.lexema,$3.es_direccion);
                     escribir_elemento_vector(yyout, $1.lexema, getLongitud(simbol), $3.es_direccion);
-                    // PETAAAAAAAAAA!!!!!!!!!!
-                    // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
 condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
@@ -624,6 +621,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_SUMA);
         fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");
       }
    |  exp TOK_MENOS exp
@@ -634,6 +632,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_MENOS);
         fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");
       }
    |  exp TOK_DIVISION exp
@@ -644,6 +643,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_DIV);
         fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");
       }
    |  exp TOK_ASTERISCO exp
@@ -654,6 +654,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_MUL);
         fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");
       }
    |  TOK_MENOS exp
@@ -664,6 +665,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $2, $2, TIPO_MENOS);
         fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");
       }
 
@@ -676,6 +678,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_AND);
         fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");
       }
    |  exp TOK_OR exp
@@ -686,6 +689,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_OR);
         fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");
       }
    |  TOK_NOT exp
@@ -740,7 +744,6 @@ exp:  exp TOK_MAS exp
             }
             if (getCategoria(simbol) == VECTOR){
               errorSemantico("Expresion incompatible");
-              fprintf(stdout, "SIMBOL %s de cat_simbol %d y tipo %d categoria %d", getIdentificador(simbol), CategoriaSimbolo(simbol), getTipo(simbol), getCategoria(simbol));
               return -1;
             }
 
@@ -1014,7 +1017,6 @@ identificador:  TOK_IDENTIFICADOR {
                                     num_variables_locales_actual++;
 
                                     fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
-                                          // AQUI VA GENERACION DE CODIGO JEJEJE
                                     }
                                 }
 
