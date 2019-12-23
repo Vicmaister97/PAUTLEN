@@ -497,6 +497,7 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                     fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
                     escribir_operando(yyout,$3.lexema,$3.es_direccion);
                     escribir_elemento_vector(yyout, $1.lexema, getLongitud(simbol), $3.es_direccion);
+                    // PETAAAAAAAAAA!!!!!!!!!!
                     // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
