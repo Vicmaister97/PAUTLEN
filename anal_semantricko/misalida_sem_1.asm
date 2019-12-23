@@ -114,19 +114,6 @@ main:
 ;D:	y
 ;D:	;
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	mov dword ebx, [ebx]
-	pop dword eax
-	mov dword eax, [eax]
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -169,17 +156,6 @@ main:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribir_operando
-	mov dword eax, 3
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 4
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	pop dword eax
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -217,18 +193,6 @@ main:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 4
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	pop dword eax
-	mov dword eax, [eax]
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -266,18 +230,6 @@ main:
 ;D:	y
 ;D:	;
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, 3
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	mov dword ebx, [ebx]
-	pop dword eax
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -315,18 +267,6 @@ main:
 ;D:	z
 ;D:	;
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, 3
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	mov dword ebx, [ebx]
-	pop dword eax
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -364,18 +304,6 @@ main:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 2
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	pop dword eax
-	mov dword eax, [eax]
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -408,19 +336,6 @@ main:
 ;D:	x
 ;D:	;
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion sumar
-	pop dword ebx
-	mov dword ebx, [ebx]
-	pop dword eax
-	mov dword eax, [eax]
-	add eax, ebx
-	push dword eax
 ;R72:	<exp> ::= <exp> + <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -457,18 +372,6 @@ main:
 	push dword eax
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 10
-	push dword eax
-	; inicio de la funcion multiplicar
-	pop dword ebx
-	pop dword eax
-	mov dword eax, [eax]
-	imul ebx
-	push dword eax
 ;R75:	<exp> ::= <exp> * <exp>
 ;D:	;
 	; inicio de la funcion asignar
@@ -506,21 +409,6 @@ main:
 	push dword eax
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 11
-	push dword eax
-	; inicio de la funcion dividir
-	pop dword ecx
-	cmp ecx, 0
-	je error_1
-	pop dword eax
-	mov dword eax, [eax]
-	cdq
-	idiv ecx
-	push dword eax
 ;R74:	<exp> ::= <exp> / <exp>
 ;D:	;
 	; inicio de la funcion asignar
@@ -552,14 +440,6 @@ main:
 ;D:	z
 ;D:	;
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion cambiar_signo
-	pop dword eax
-	mov dword eax, [eax]
-	neg eax
-	push dword eax
 ;R76:	<exp> ::= - <exp>
 	; inicio de la funcion asignar
 	pop dword eax
@@ -592,19 +472,6 @@ main:
 ;D:	x
 ;D:	;
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _z
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion restar
-	pop dword ebx
-	mov dword ebx, [ebx]
-	pop dword eax
-	mov dword eax, [eax]
-	sub eax, ebx
-	push dword eax
 ;R73:	<exp> ::= <exp> - <exp>
 	; inicio de la funcion asignar
 	pop dword eax

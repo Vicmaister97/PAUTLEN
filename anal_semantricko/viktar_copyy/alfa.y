@@ -36,15 +36,21 @@ int yylex();
 int tipo_actual;
 int clase_actual;
 int tamanio_vector_actual;
+int num_parametros_llamada_actual;
+int en_explist = 0;       // Vale 1 si es una llamada a funcion dentro de una llamada a funcion
 
 
 /* INICIALIZAR EN DECLARAR FUNCION!!!!!!!!!!!!!!!!!!!!!!! */
 int pos_variable_local_actual;       // Incrementamos esta variable cada vez que se declara una variable LOCAL
 int num_variables_locales_actual;    // Incrementamos esta variable cada vez que se declara una variable LOCAL
+int pos_parametro_actual;
+int num_parametros_actual;
 int hayReturn = 0;                   // Indica si la funcion tiene una sentencia return (=1) o no (=0)
 int tipoReturn;
+
+
 char nombre_vector[MAX_LONG_ID];
-/* INICIALIZAR EN DECLARAR FUNCION!!!!!!!!!!!!!!!!!!!!!!! */
+int errorVector = 0;                 // Indica si hay un error al declarar un vector (=1) o no (=0)
 
 SIMBOLO *simbol;
 
@@ -110,6 +116,7 @@ SIMBOLO *simbol;
 
 /* Simbolos no terminales con valor semántico */
 
+%type <atributos> identificadores
 %type <atributos> identificador
 %type <atributos> tipo
 
@@ -119,6 +126,12 @@ SIMBOLO *simbol;
 %type <atributos> constante_logica
 %type <atributos> constante_entera
 %type <atributos> elemento_vector
+
+%type <atributos> funcion
+%type <atributos> fn_name
+%type <atributos> fn_declaration
+%type <atributos> idf_llamada_funcion
+
 
 
 %%
@@ -146,8 +159,8 @@ escritura_TS:{
                 tempSymbol = *(getListaSimbolo(temp_list_symbols) + i);
                 if(getCategoria(tempSymbol) == VECTOR)
                   len = getLongitud(tempSymbol);
-                  if(len <= 0)
-                    len = 1;
+                if(len <= 0)
+                  len = 1;
                 declarar_variable(yyout, getIdentificador(tempSymbol), getTipo(tempSymbol), len);
                 }
 
@@ -163,8 +176,18 @@ end_funciones:{
 declaraciones:  declaracion {fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");}
              |  declaracion declaraciones {fprintf(yyout, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");}
              ;
-declaracion:  clase identificadores TOK_PUNTOYCOMA {fprintf(yyout, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");}
-           ;
+declaracion:  clase identificadores TOK_PUNTOYCOMA 
+              {
+                if (errorVector == 1){
+                  errorVector = 0;
+                  char err[MAX_LONG_ID];
+                  sprintf(err, "El tamanyo del vector <%s> excede los limites permitidos (1,64)", $2.lexema);
+                  errorSemantico(err);
+                  return -1;
+                }
+                fprintf(yyout, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");
+              }
+            ;
 clase:  clase_escalar {clase_actual=ESCALAR; fprintf(yyout, ";R5:\t<clase> ::= <clase_escalar>\n");}
      |  clase_vector {clase_actual=VECTOR; fprintf(yyout, ";R7:\t<clase> ::= <clase_vector>\n");}
      ;
@@ -177,8 +200,7 @@ clase_vector:  TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_COR
                 {
                   tamanio_vector_actual = $4.valor_entero;
                   if ( (tamanio_vector_actual < 1) || (tamanio_vector_actual > MAX_TAMANIO_VECTOR) ){
-                    errorSemantico("El tamanyo del vector <nombre_vector> excede los limites permitidos (1,64)");
-                    return -1;
+                    errorVector = 1;
                   }
                   fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ constante_entera ]\n");
                 }
@@ -189,32 +211,96 @@ identificadores:  identificador {fprintf(yyout, ";R18:\t<identificadores> ::= <i
 funciones:  funcion funciones {fprintf(yyout, ";R20:\t<funciones> ::= <funcion> <funciones>\n");}
          |  {fprintf(yyout, ";R21:\t<funciones> ::= \n");}
          ;
-funcion:  TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA
+funcion:  fn_declaration sentencias TOK_LLAVEDERECHA
           {
+            // CHECKKKKK !!!!!!!!
+
+            simbol = UsoGlobal(TGLOBAL, $1.lexema);
+              if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
+                char err[MAX_LONG_ID];
+                sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                errorSemantico(err);
+                return -1;
+              }
+
             if (hayReturn == 0){
               char err[MAX_LONG_ID];
-              sprintf(err, "Función %s sin sentencia de retorno", $3.lexema);
+              sprintf(err, "Función %s sin sentencia de retorno", $1.lexema);
               errorSemantico(err);
               return -1;
             }
-            if (tipo_actual != tipoReturn){
+            if (getTipo(simbol) != tipoReturn){
               char err[MAX_LONG_ID];
-              sprintf(err, "El tipo de la función (%d) no coincide con el tipo de retorno (%d)", $2.tipo, tipoReturn);
+              sprintf(err, "El tipo de la función (%d) no coincide con el tipo de retorno (%d)", getTipo(simbol), tipoReturn);
               errorSemantico(err);
               return -1;
-            }
+            }   
+            
+            setNum_parametros(simbol, num_parametros_actual);
+            setNum_var_locales(simbol, num_variables_locales_actual);
+            strcpy($$.lexema, $1.lexema);
+
+            freeHashTable(TLOCAL);
 
             fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
           }
        ;
+fn_name:  TOK_FUNCTION tipo TOK_IDENTIFICADOR
+          {
+            TLOCAL = newHashTable();    // Inicializamos la tabla local
+            if (DeclararFuncion(TGLOBAL, TLOCAL, $3.lexema, FUNCION, tipo_actual, FALSE, FALSE) == FALSE){
+              char err[MAX_LONG_ID];
+              sprintf(err, "Declaracion (%s) duplicada", $3.lexema);
+              errorSemantico(err);
+              return -1;
+            }
+            // Inicializamos variables para la funcion
+            num_variables_locales_actual = 0;
+            pos_variable_local_actual = 1;      // Hemos insertado la funcion
+            num_parametros_actual = 0;
+            pos_parametro_actual = 0;
+
+            strcpy($$.lexema, $3.lexema);
+          }
+        ;
+fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion
+                  {
+                    simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
+                    if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
+                        char err[MAX_LONG_ID];
+                        sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                        errorSemantico(err);
+                        return -1;
+                    }
+                    
+                    setNum_parametros(simbol, num_parametros_actual);
+                    setNum_var_locales(simbol, num_variables_locales_actual);
+                    strcpy($$.lexema, $1.lexema);
+                  }
+              ;
 parametros_funcion:  parametro_funcion resto_parametros_funcion {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                   |  {fprintf(yyout, ";R24:\t<parametros_funcion> ::= \n");}
                   ;
-resto_parametros_funcion:  TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion {fprintf(yyout, ";R25:\t<resto_parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
+resto_parametros_funcion:  TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion 
+                            {fprintf(yyout, ";R25:\t<resto_parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                         |  {fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::= \n");}
                         ;
-parametro_funcion:  tipo identificador {fprintf(yyout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");}
+parametro_funcion:  clase idpf {fprintf(yyout, ";R27:\t<parametro_funcion> ::= <tipo> <idpf>\n");}
                  ;
+idpf:  TOK_IDENTIFICADOR
+        {
+          if (DeclararLocal(TLOCAL, $1.lexema, PARAMETRO, tipo_actual, clase_actual,
+                                        FALSE, FALSE, FALSE, pos_parametro_actual) == FALSE){     // redeclaración variable local
+            char err[MAX_LONG_ID];
+            sprintf(err, "Declaracion (%s) duplicada", $1.lexema);
+            errorSemantico(err);
+            return -1;
+          }
+          else{
+            pos_parametro_actual++;
+            num_parametros_actual++;
+          }
+        }
 declaraciones_funcion:  declaraciones {fprintf(yyout, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");}
                      |  {fprintf(yyout, ";R29:\t<declaraciones_funcion> ::= \n");}
                      ;
@@ -257,13 +343,6 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
-                    char val[3];
-                    val[0] = $3.valor_entero + 48;
-                    val[1] = '\0';
-                    //printf("\nTIPO VAL is %d", $3.tipo);
-                    escribir_operando(yyout,val,0);
-                    //printf("\nTRICK 1 ES VAL === %d\n", $3.valor_entero);
-                    //printSimbolo(simbol);
                     asignar(yyout, getIdentificador(simbol), 0);
                 }
                 else{                                           // Búsqueda en local
@@ -352,11 +431,35 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                     // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
-condicional:  TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");}
-           |   TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");}
+condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+              {
+                fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
+              }
+           |   if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+              {
+                fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
+              }
            ;
-bucle:  TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
+
+if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp 
+          {
+            if ($3.tipo != BOOLEAN){
+              errorSemantico("Condicional con condicion de tipo int");
+              return -1;
+            }
+          }
+      ;
+bucle:  bucle_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
      ;
+bucle_exp:  TOK_WHILE TOK_PARENTESISIZQUIERDO exp
+            {
+              if ($3.tipo != BOOLEAN){
+                errorSemantico("Bucle con condicion de tipo int");
+                return -1;
+              }              
+            }
+         ;
+
 lectura:  TOK_SCANF TOK_IDENTIFICADOR
           {
             if (ambito == 0){
@@ -369,11 +472,11 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
               }
               else{                                       // Si lo busca en global y lo encuentra
                 if (CategoriaSimbolo(simbol) == FUNCION){
-                  errorSemantico("Asignación incompatible");
+                  errorSemantico("Lectura incompatible");
                   return -1;
                 }
                 if (getCategoria(simbol) == VECTOR){
-                  errorSemantico("Asignación incompatible");
+                  errorSemantico("Lectura incompatible");
                   return -1;
                 }
               }
@@ -388,11 +491,11 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
               }
               else{                                       // Si lo busca en local y lo encuentra
                 if (CategoriaSimbolo(simbol) == FUNCION){
-                  errorSemantico("Asignación incompatible");
+                  errorSemantico("Lectura incompatible");
                   return -1;
                 }
                 if (getCategoria(simbol) == VECTOR){
-                  errorSemantico("Asignación incompatible");
+                  errorSemantico("Lectura incompatible");
                   return -1;
                 }
               }
@@ -514,11 +617,11 @@ exp:  exp TOK_MAS exp
           }
           else{                                       // Si lo busca en global y lo encuentra
             if (CategoriaSimbolo(simbol) == FUNCION){
-              errorSemantico("Asignación incompatible");
+              errorSemantico("Expresion incompatible");
               return -1;
             }
             if (getCategoria(simbol) == VECTOR){
-              errorSemantico("Asignación incompatible");
+              errorSemantico("Expresion incompatible");
               return -1;
             }
 
@@ -536,11 +639,12 @@ exp:  exp TOK_MAS exp
           }
           else{                                       // Si lo busca en local y lo encuentra
             if (CategoriaSimbolo(simbol) == FUNCION){
-              errorSemantico("Asignación incompatible");
+              errorSemantico("Expresion incompatible");
               return -1;
             }
             if (getCategoria(simbol) == VECTOR){
-              errorSemantico("Asignación incompatible");
+              errorSemantico("Expresion incompatible");
+              fprintf(stdout, "SIMBOL %s de cat_simbol %d y tipo %d categoria %d", getIdentificador(simbol), CategoriaSimbolo(simbol), getTipo(simbol), getCategoria(simbol));
               return -1;
             }
 
@@ -557,18 +661,105 @@ exp:  exp TOK_MAS exp
    |  TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO {$$.tipo = $2.tipo; $$.es_direccion = $2.es_direccion;
                                                                 fprintf(yyout, ";R83:\t<exp> ::= ( <comparacion> )\n");}
    |  elemento_vector {$$.tipo = $1.tipo; $$.es_direccion = $1.es_direccion; fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");}
-   |  id_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO
+   |  idf_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO
       {
+        if (ambito == 0){
+          simbol = UsoGlobal(TGLOBAL, $1.lexema);
+          if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+            char err[MAX_LONG_ID];
+            sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+            errorSemantico(err);
+            return -1;
+          }
+        }
+
+        else{                                           // Búsqueda en local
+          simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
+          if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
+            char err[MAX_LONG_ID];
+            sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+            errorSemantico(err);
+            return -1;
+          }
+        }
+
+        if (num_parametros_llamada_actual != getNum_parametros(simbol)){
+            errorSemantico("Numero incorrecto de parametros en llamada a funcion");
+            return -1;
+        }
+
+        // Reseteamos variable para controlar llamada a func desde una llamada
+        en_explist = 0;
+        $$.tipo = getTipo(simbol);
+        $$.es_direccion = 0;
+
         fprintf(yyout, ";R88:\t<exp> ::= id_llamada_funcion ( <lista_expresiones> )\n");
       }
    ;
 
-id_llamada_funcion:  TOK_IDENTIFICADOR
+idf_llamada_funcion:  TOK_IDENTIFICADOR
+                    {
+                      if (ambito == 0){
+                        simbol = UsoGlobal(TGLOBAL, $1.lexema);
+                        if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+                          char err[MAX_LONG_ID];
+                          sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                          errorSemantico(err);
+                          return -1;
+                        }
+
+                        else{                                       // Si lo busca en global y lo encuentra
+                          if (CategoriaSimbolo(simbol) != FUNCION){
+                            char err[MAX_LONG_ID];
+                            sprintf(err, "Llamada a funcion %s que no tiene categoria de funcion", $1.lexema);
+                            errorSemantico(err);
+                            return -1;
+                          }
+                           
+                        }
+                      }
+                      else{                                           // Búsqueda en local
+                          simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
+                          if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
+                              char err[MAX_LONG_ID];
+                              sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                              errorSemantico(err);
+                              return -1;
+                          }
+                          else{                                       // Si lo busca en local y lo encuentra
+                              if (CategoriaSimbolo(simbol) != FUNCION){
+                                char err[MAX_LONG_ID];
+                                sprintf(err, "Llamada a funcion %s que no tiene categoria de funcion", $1.lexema);
+                                errorSemantico(err);
+                                return -1;
+                              }
+                          }
+                      }
+
+                      if (en_explist == 0){
+                        en_explist = 1;
+                      }
+                      else{
+                        errorSemantico("No esta permitido el uso de llamadas a funciones como parametros de otras funciones");
+                        return -1;
+                      }
+
+                      num_parametros_llamada_actual = 0;
+                      strcpy($$.lexema, getIdentificador(simbol) );
+                    }
                   ;
-lista_expresiones:  exp resto_lista_expresiones {fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
+lista_expresiones:  exp resto_lista_expresiones 
+                    {
+                      num_parametros_llamada_actual++;
+
+                      fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
                  |  {fprintf(yyout, ";R90:\t<lista_expresiones> ::= \n");}
                  ;
-resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones {fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");}
+resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones 
+                          {
+                            num_parametros_llamada_actual++;
+
+                            fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");}
                        |  {fprintf(yyout, ";R92:\t<resto_lista_expresiones> ::= \n");}
                        ;
 comparacion:  exp TOK_IGUAL exp
@@ -642,6 +833,10 @@ constante:  constante_logica
             {
               $$.tipo = INT;
               $$.es_direccion = $1.es_direccion;
+
+              char val[MAX_INT_LEN];
+              sprintf(val, "%d", $1.valor_entero);
+              escribir_operando(yyout,val,CTE);
               fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
             }
           ;
@@ -649,12 +844,16 @@ constante_logica:  TOK_TRUE
                   {
                     $$.tipo = BOOLEAN;
                     $$.es_direccion = 0;
+
+                    escribir_operando(yyout,STR_TRUE,CTE);
                     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
                   }
                 |  TOK_FALSE
                     {
                       $$.tipo = BOOLEAN;
                       $$.es_direccion = 0;
+
+                      escribir_operando(yyout,STR_FALSE,CTE);
 
                       fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");
                     }

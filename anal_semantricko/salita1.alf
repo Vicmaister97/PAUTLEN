@@ -44,8 +44,22 @@
 ;D:	;
 ;R18:	<identificadores> ::= <identificador>
 ;R4:	<declaracion> ::= <clase> <identificadores> ;
-;D:	x
+;D:	array
+;D:	boolean
+;R11:	<tipo> ::= boolean
+;D:	[
+;D:	10
+;D:	]
+;R15:	<clase_vector> ::= array <tipo> [ constante_entera ]
+;R7:	<clase> ::= <clase_vector>
+;D:	bools
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	function
 ;R2:	<declaraciones> ::= <declaracion>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
 ;R3:	<declaraciones> ::= <declaracion> <declaraciones>
 ;R3:	<declaraciones> ::= <declaracion> <declaraciones>
 ;R3:	<declaraciones> ::= <declaracion> <declaraciones>
@@ -59,6 +73,7 @@ segment .bss
 	;
 	__esp resd 1
 	_x resd 1
+	_bools resd 1
 	_y resd 1
 	_z resd 1
 	_bol resd 1
@@ -68,46 +83,80 @@ segment .text
 	;habilitar funciones de alfalib
 	extern scan_int, scan_boolean
 	extern print_int, print_boolean, print_string, print_blank, print_endofline
-;R21:	<funciones> ::= 
-	;codigo correspondiente a la compilacion del no terminal "funciones" 
-	;
-main:
-	mov dword [__esp], esp
+;D:	int
+;R10:	<tipo> ::= int
+;D:	doble
+;D:	(
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	num
+;R27:	<parametro_funcion> ::= <tipo> <idpf>
+;D:	)
+;R26:	<resto_parametros_funcion> ::= 
+;R23:	<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	dos
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	dos
+;R2:	<declaraciones> ::= <declaracion>
+;R28:	<declaraciones_funcion> ::= <declaraciones>
 ;D:	=
-;D:	9
+;D:	2
 ;R105:	<constante_entera> ::= <numero>
 	; inicio de la funcion escribir_operando
-	mov dword eax, 9
-	push dword eax
-;R100:	<constante> ::= <constante_entera>
-;R81:	<exp> ::= <constante>
-;D:	-
-;D:	5
-;R105:	<constante_entera> ::= <numero>
-	; inicio de la funcion escribir_operando
-	mov dword eax, 5
+	mov dword eax, 2
 	push dword eax
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-;R73:	<exp> ::= <exp> - <exp>
-	; inicio de la funcion asignar
-	pop dword eax
-	mov dword [_x], eax 
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
-;D:	bol
-;D:	=
+;D:	return
 ;D:	(
-;D:	x
-;D:	<
+;D:	doble
+;D:	(
+;D:	num
+;D:	*
 ;R80:	<exp> ::= <identificador>
-;D:	true
-	; inicio de la funcion escribir_operando
-	mov dword eax, 1
-	push dword eax
-;R102:	<constante_logica> ::= true
-;R99:	<constante> ::= <constante_logica>
-;R81:	<exp> ::= <constante>
+;D:	x
 ;D:	)
+;R80:	<exp> ::= <identificador>
+;R75:	<exp> ::= <exp> * <exp>
+;R92:	<resto_lista_expresiones> ::= 
+;R89:	<lista_expresiones> ::= <exp> <resto_lista_expresiones>
+;R88:	<exp> ::= id_llamada_funcion ( <lista_expresiones> )
+;D:	)
+;R82:	<exp> ::= ( <exp> )
+;D:	;
+;R61:	<retorno_funcion> ::= return <exp>
+;R38:	<sentencia_simple> ::= <retorno_funcion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R22:	<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }
+;D:	return
+;R21:	<funciones> ::= 
+;R20:	<funciones> ::= <funcion> <funciones>
+	;codigo correspondiente a la compilacion del no terminal "funciones" 
+	;
+main:
+	mov dword [__esp], esp
+;D:	54
+;R105:	<constante_entera> ::= <numero>
+	; inicio de la funcion escribir_operando
+	mov dword eax, 54
+	push dword eax
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
