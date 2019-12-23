@@ -21,6 +21,15 @@
 #define MAX_INT_LEN 11
 #define STR_TRUE "1"
 #define STR_FALSE "0"
+#define TIPO_SUMA 0
+#define TIPO_RESTA 1
+#define TIPO_DIV 2
+#define TIPO_MUL 3
+#define TIPO_MENOS 4
+#define TIPO_AND 5
+#define TIPO_OR 6
+#define TIPO_NEG 7
+
 
 
 

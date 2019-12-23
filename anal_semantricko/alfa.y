@@ -19,6 +19,55 @@
 HASH_TABLE *TGLOBAL;
 HASH_TABLE *TLOCAL = NULL;
 
+//Para la negacion Logica
+int global_no;
+
+void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
+  if(op1.es_direccion){
+    escribir_operando(yyout, op1.lexema, VAR);
+    }
+  else{
+    char val1[MAX_INT_LEN];
+    sprintf(val1, "%d", op1.valor_entero);
+    escribir_operando(yyout, val1, CTE);
+    }
+
+  if(tipo_op == TIPO_MENOS){
+    cambiar_signo(yyout, op1.es_direccion);
+    return;
+  }
+
+  if(tipo_op == TIPO_NEG){
+    no(yyout, op1.es_direccion, global_no++);
+    global_no = 0;
+    return;
+  }
+
+  if(op2.es_direccion)
+    escribir_operando(yyout, op2.lexema, VAR);
+  else{
+    char val2[MAX_INT_LEN];
+    sprintf(val2, "%d", op2.valor_entero);
+    escribir_operando(yyout, val2, CTE);
+    }
+
+  if(tipo_op == TIPO_SUMA)
+    sumar(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_RESTA)
+    restar(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_DIV)
+    dividir(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_MUL)
+    multiplicar(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_AND)
+    y(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == TIPO_OR)
+    o(yyout, op1.es_direccion, op2.es_direccion);
+
+  return;
+
+}
+
 
 extern void errorMorfo (char *msg);
 void yyerror(char *msg);
@@ -257,6 +306,8 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
+                    printf("\nTRICK 1: before asignar: id == %s, val = %d", $1.lexema, $1.valor_entero);
+                    printf("\nTRICK 1: before asignar: exp == %s, val = %d\n", $3.lexema, $3.valor_entero);
                     asignar(yyout, getIdentificador(simbol), 0);
                 }
                 else{                                           // Búsqueda en local
@@ -420,6 +471,8 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+
+        funcOp(yyout, $1, $3, TIPO_SUMA);
         fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");
       }
    |  exp TOK_MENOS exp
@@ -430,6 +483,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_RESTA);
         fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");
       }
    |  exp TOK_DIVISION exp
@@ -440,6 +494,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_DIV);
         fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");
       }
    |  exp TOK_ASTERISCO exp
@@ -450,6 +505,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_MUL);
         fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");
       }
    |  TOK_MENOS exp
@@ -460,6 +516,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $2, $2, TIPO_MENOS);
         fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");
       }
 
@@ -472,6 +529,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_AND);
         fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");
       }
    |  exp TOK_OR exp
@@ -482,6 +540,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_OR);
         fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");
       }
    |  TOK_NOT exp

@@ -6,10 +6,61 @@
 //    array int[65] arr;
 //	x = true;
 //	printf z;
+//1
+//2
+//3
+//7
+//5
+//5
+//8
+//10
+//11
+//110
+//10
+//-10
+//-11
+
 
 main
 {
-	int x;
-	x = 1234;
+	int x, y, z;
+	x = 1;
+	y = 2;
 	printf x;
+	printf y;
+	// z = 3
+	z = x + y;
+	printf z;
+	// z = 7
+	z = 3 + 4;
+	printf z;
+	// z = 5
+	z = x + 4;
+	printf z;
+	// z = 5
+	z = 3 + y;
+	printf z;
+	// z = 8
+	z = 3 + z;
+	printf z;
+	// z = 10
+	z = z + 2;
+	printf z;
+	// z = 11
+	z = z + x;
+	printf z;
+	// z = 110
+	z = z * 10;
+	printf z;
+	// z = 10
+	z = z / 11;
+	printf z;
+	// z = -10
+	z = - z;
+	printf z;
+	// z = -11
+	z = z - x;
+	printf z;
+
+
 }
