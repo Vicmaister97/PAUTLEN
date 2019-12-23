@@ -1,0 +1,22 @@
+main
+{
+  boolean x, y, z;
+  x = true;
+  y = false;
+  printf x;
+  printf y;
+  // z = false
+  z = x && y;
+  printf z;
+  // z = true
+  z = x || y;
+  printf z;
+  // z = false
+  //z = !x;
+  //printf z;
+  // z = true;
+  //z = !y;
+  //printf z;
+
+
+}
