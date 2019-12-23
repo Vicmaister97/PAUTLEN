@@ -10,6 +10,6 @@
 main
 {
 	int x;
-	x = 8;
+	x = 1234;
 	printf x;
 }

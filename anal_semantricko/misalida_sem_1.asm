@@ -32,13 +32,13 @@ segment .text
 main:
 	mov dword [__esp], esp
 ;D:	=
-;D:	8
+;D:	1234
+	; inicio de la funcion escribir_operando
+	mov dword eax, 1234
+	push dword eax
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribir_operando
-	mov dword eax, 8
-	push dword eax
 	; inicio de la funcion asignar
 	pop dword eax
 	mov dword [_x], eax 

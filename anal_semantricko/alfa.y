@@ -145,8 +145,8 @@ escritura_TS:{
                 tempSymbol = *(getListaSimbolo(temp_list_symbols) + i);
                 if(getCategoria(tempSymbol) == VECTOR)
                   len = getLongitud(tempSymbol);
-                  if(len <= 0)
-                    len = 1;
+                if(len <= 0)
+                  len = 1;
                 declarar_variable(yyout, getIdentificador(tempSymbol), getTipo(tempSymbol), len);
                 }
 
@@ -258,13 +258,6 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
-                    char val[3];
-                    val[0] = $3.valor_entero + 48;
-                    val[1] = '\0';
-                    //printf("\nTIPO VAL is %d", $3.tipo);
-                    escribir_operando(yyout,val,0);
-                    //printf("\nTRICK 1 ES VAL === %d\n", $3.valor_entero);
-                    //printSimbolo(simbol);
                     asignar(yyout, getIdentificador(simbol), 0);
                 }
                 else{                                           // Búsqueda en local
@@ -641,6 +634,10 @@ constante:  constante_logica
             {
               $$.tipo = INT;
               $$.es_direccion = $1.es_direccion;
+
+              char val[MAX_INT_LEN];
+              sprintf(val, "%d", $1.valor_entero);
+              escribir_operando(yyout,val,CTE);
               fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
             }
           ;
@@ -648,12 +645,16 @@ constante_logica:  TOK_TRUE
                   {
                     $$.tipo = BOOLEAN;
                     $$.es_direccion = 0;
+
+                    escribir_operando(yyout,STR_TRUE,CTE);
                     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
                   }
                 |  TOK_FALSE
                     {
                       $$.tipo = BOOLEAN;
                       $$.es_direccion = 0;
+
+                      escribir_operando(yyout,STR_FALSE,CTE);
 
                       fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");
                     }
