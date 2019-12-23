@@ -33,6 +33,7 @@ main:
 	mov dword [__esp], esp
 ;D:	=
 ;D:	8
+;R105:	<constante_entera> ::= <numero>
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
@@ -84,4 +85,3 @@ error_2:
 fin:
 	mov dword esp, [__esp]
 	ret
-;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }

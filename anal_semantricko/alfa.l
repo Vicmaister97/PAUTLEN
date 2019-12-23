@@ -98,5 +98,5 @@ main                                         {col += yyleng; fprintf(yyout, ";D:
 void errorMorfo (char *msg)
 {
 	is_morpho = 1;
-	fprintf(stderr,"****Error en [lin %d, col %d]: %s (%s)\n", yylineno, col, msg, yytext);
+	fprintf(stderr,"****Error morfologico en [lin %d, col %d]: %s (%s)\n", yylineno, col, msg, yytext);
 }

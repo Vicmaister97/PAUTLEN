@@ -4,11 +4,16 @@
 
 main
 {
-	int x;
-    int y;
+	int x,y;
+    int z;
     boolean bol;
     array int[60] vector1;
-	x = 9-x;
+
+    //  Deberia dar error
+	x = 9-false;
+    // Deberia dar error
+    bol = true or 7;
+    
     printf true&&false;
     scanf x;
 	printf y;

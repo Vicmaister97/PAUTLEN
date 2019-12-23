@@ -6,14 +6,27 @@
 ;R5:	<clase> ::= <clase_escalar>
 ;D:	x
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	,
+;D:	y
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	;
 ;R18:	<identificadores> ::= <identificador>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
 ;R4:	<declaracion> ::= <clase> <identificadores> ;
 ;D:	int
 ;R10:	<tipo> ::= int
 ;R9:	<clase_escalar> ::= <tipo>
 ;R5:	<clase> ::= <clase_escalar>
-;D:	y
+;D:	z
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	boolean
+;R11:	<tipo> ::= boolean
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	bol
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	;
 ;R18:	<identificadores> ::= <identificador>
@@ -26,4 +39,70 @@
 ;D:	]
 ;R15:	<clase_vector> ::= array <tipo> [ constante_entera ]
 ;R7:	<clase> ::= <clase_vector>
-;D:	arr
+;D:	vector1
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	x
+;R2:	<declaraciones> ::= <declaracion>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+segment .data
+	;declaracion de variables inicializadas
+	;
+	mensaje_1 db "División por cero", 0
+	mensaje_2 db "Indice fuera de rango", 0
+segment .bss
+	;declaracion de variables sin inicializar
+	;
+	__esp resd 1
+	_x resd 1
+	_y resd 1
+	_z resd 1
+	_bol resd 1
+	_vector1 resd 1
+segment .text
+	global main
+	;habilitar funciones de alfalib
+	extern scan_int, scan_boolean
+	extern print_int, print_boolean, print_string, print_blank, print_endofline
+;R21:	<funciones> ::= 
+	;codigo correspondiente a la compilacion del no terminal "funciones" 
+	;
+main:
+	mov dword [__esp], esp
+;D:	=
+;D:	9
+;R105:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	-
+;D:	5
+;R105:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R73:	<exp> ::= <exp> - <exp>
+	; inicio de la funcion escribir_operando
+	mov dword eax, 9
+	push dword eax
+	; inicio de la funcion asignar
+	pop dword eax
+	mov dword [_x], eax 
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	bol
+;D:	=
+;D:	true
+;R102:	<constante_logica> ::= true
+;R99:	<constante> ::= <constante_logica>
+;R81:	<exp> ::= <constante>
+;D:	or
+;D:	7
+;R105:	<constante_entera> ::= <numero>
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;

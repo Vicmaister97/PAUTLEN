@@ -117,6 +117,7 @@ SIMBOLO *simbol;
 %type <atributos> comparacion
 %type <atributos> constante
 %type <atributos> constante_logica
+%type <atributos> constante_entera
 %type <atributos> elemento_vector
 
 
@@ -124,7 +125,7 @@ SIMBOLO *simbol;
 
 
 programa: inicioTabla TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones escritura_TS funciones end_funciones sentencias TOK_LLAVEDERECHA { escribir_fin(yyout);
-                                                                                                                                            fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
+        }
         ;
 
 inicioTabla:{
@@ -176,9 +177,7 @@ clase_vector:  TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_COR
                 {
                   tamanio_vector_actual = $4.valor_entero;
                   if ( (tamanio_vector_actual < 1) || (tamanio_vector_actual > MAX_TAMANIO_VECTOR) ){
-                    char err[MAX_LONG_ID];
-                    sprintf(err, "El tamanyo del vector <%s> excede los limites permitidos (1,64)", nombre_vector);
-                    errorSemantico(err);
+                    errorSemantico("El tamanyo del vector <nombre_vector> excede los limites permitidos (1,64)");
                     return -1;
                   }
                   fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ constante_entera ]\n");
@@ -349,6 +348,8 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                       }
                     }
                     fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
+
+                    // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
 condicional:  TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");}
@@ -637,7 +638,7 @@ constante:  constante_logica
               $$.es_direccion = $1.es_direccion;
               fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n");
             }
-          |  TOK_CONSTANTE_ENTERA
+          | constante_entera
             {
               $$.tipo = INT;
               $$.es_direccion = $1.es_direccion;
@@ -658,6 +659,15 @@ constante_logica:  TOK_TRUE
                       fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");
                     }
                 ;
+constante_entera:  TOK_CONSTANTE_ENTERA
+                    {
+                      $$.tipo = INT;
+                      $$.es_direccion = 0;
+
+                      fprintf(yyout, ";R105:\t<constante_entera> ::= <numero>\n");
+                    }
+                ;
+
 
 identificador:  TOK_IDENTIFICADOR {
                             if (ambito == 0){
