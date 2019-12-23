@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "TS/tabla.h"
+#include "gen_codigo/generacion.h"
 #include "alfa.h"
 
 
@@ -122,13 +123,40 @@ SIMBOLO *simbol;
 %%
 
 
-programa: inicioTabla TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones funciones sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
+programa: inicioTabla TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones escritura_TS funciones end_funciones sentencias TOK_LLAVEDERECHA { escribir_fin(yyout);
+                                                                                                                                            fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
         ;
 
 inicioTabla:{
               /* Acciones de inicialización de la tabla de símbolos */
               TGLOBAL = newHashTable();       // Tabla hash que almacena los símbolos de ámbito global
             }
+
+escritura_TS:{
+              listaSimbolo *temp_list_symbols;
+              int i, total, len;
+              SIMBOLO *tempSymbol;
+
+              escribir_subseccion_data(yyout);
+              escribir_cabecera_bss(yyout);
+              temp_list_symbols = DumpHashTable(TGLOBAL);
+              total = getLenListaSimbolo(temp_list_symbols);
+              for(i=0; i<total; i++){
+                tempSymbol = *(getListaSimbolo(temp_list_symbols) + i);
+                if(getCategoria(tempSymbol) == VECTOR)
+                  len = getLongitud(tempSymbol);
+                  if(len <= 0)
+                    len = 1;
+                declarar_variable(yyout, getIdentificador(tempSymbol), getTipo(tempSymbol), len);
+                }
+
+                freeListaSimbolo(temp_list_symbols);
+                escribir_segmento_codigo(yyout);
+              }
+
+end_funciones:{
+                escribir_inicio_main(yyout);
+              }
 
 
 declaraciones:  declaracion {fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");}
@@ -215,7 +243,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     errorSemantico(err);
                     return -1;
                   }
-         
+
                   else{                                       // Si lo busca en global y lo encuentra
                         if (CategoriaSimbolo(simbol) == FUNCION){
                           errorSemantico("Asignación incompatible");
@@ -230,6 +258,14 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
+                    char val[3];
+                    val[0] = $3.valor_entero + 48;
+                    val[1] = '\0';
+                    //printf("\nTIPO VAL is %d", $3.tipo);
+                    escribir_operando(yyout,val,0);
+                    //printf("\nTRICK 1 ES VAL === %d\n", $3.valor_entero);
+                    //printSimbolo(simbol);
+                    asignar(yyout, getIdentificador(simbol), 0);
                 }
                 else{                                           // Búsqueda en local
                     simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
@@ -266,7 +302,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                 fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
               }
           ;
-elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO 
+elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
                   {
                     if (ambito == 0){
                       simbol = UsoGlobal(TGLOBAL, $1.lexema);
@@ -298,7 +334,7 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                         errorSemantico(err);
                         return -1;
                       }
-             
+
                       else{                                       // Si lo busca en global y lo encuentra
                         if (getCategoria(simbol) != VECTOR){
                           errorSemantico("Intento de indexacion de una variable que no es de tipo vector");
@@ -364,8 +400,12 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
             fprintf(yyout, ";R54:\t<lectura> ::= scanf <identificador>\n");
           }
        ;
-escritura:  TOK_PRINTF exp {fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");}
-         ;
+escritura:  TOK_PRINTF exp {
+                             // fons1 escribir(yyout, $2.es_direccion, $2.tipo);
+                             escribir_operando(yyout,$2.lexema,1);
+                             escribir(yyout, 1, $2.tipo);
+                             fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");}
+        ;
 retorno_funcion:  TOK_RETURN exp
                   {
                     if (ambito == 0){
@@ -378,7 +418,7 @@ retorno_funcion:  TOK_RETURN exp
                     fprintf(yyout, ";R61:\t<retorno_funcion> ::= return <exp>\n");
                   }
                ;
-exp:  exp TOK_MAS exp 
+exp:  exp TOK_MAS exp
       {
         if ( ($1.tipo != INT) || ($3.tipo != INT) ){
           errorSemantico("Operacion aritmetica con operandos boolean");
@@ -388,7 +428,7 @@ exp:  exp TOK_MAS exp
         $$.es_direccion = 0;
         fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");
       }
-   |  exp TOK_MENOS exp 
+   |  exp TOK_MENOS exp
       {
         if ( ($1.tipo != INT) || ($3.tipo != INT) ){
           errorSemantico("Operacion aritmetica con operandos boolean");
@@ -398,7 +438,7 @@ exp:  exp TOK_MAS exp
         $$.es_direccion = 0;
         fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");
       }
-   |  exp TOK_DIVISION exp 
+   |  exp TOK_DIVISION exp
       {
         if ( ($1.tipo != INT) || ($3.tipo != INT) ){
           errorSemantico("Operacion aritmetica con operandos boolean");
@@ -408,7 +448,7 @@ exp:  exp TOK_MAS exp
         $$.es_direccion = 0;
         fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");
       }
-   |  exp TOK_ASTERISCO exp 
+   |  exp TOK_ASTERISCO exp
       {
         if ( ($1.tipo != INT) || ($3.tipo != INT) ){
           errorSemantico("Operacion aritmetica con operandos boolean");
@@ -418,7 +458,7 @@ exp:  exp TOK_MAS exp
         $$.es_direccion = 0;
         fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");
       }
-   |  TOK_MENOS exp 
+   |  TOK_MENOS exp
       {
         if ($2.tipo != INT){
           errorSemantico("Operacion aritmetica con operandos boolean");
@@ -430,7 +470,7 @@ exp:  exp TOK_MAS exp
       }
 
 
-   |  exp TOK_AND exp 
+   |  exp TOK_AND exp
       {
         if ( ($1.tipo != BOOLEAN) || ($3.tipo != BOOLEAN) ){
           errorSemantico("Operacion logica con operandos int");
@@ -440,7 +480,7 @@ exp:  exp TOK_MAS exp
         $$.es_direccion = 0;
         fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");
       }
-   |  exp TOK_OR exp 
+   |  exp TOK_OR exp
       {
         if ( ($1.tipo != BOOLEAN) || ($3.tipo != BOOLEAN) ){
           errorSemantico("Operacion logica con operandos int");
@@ -450,7 +490,7 @@ exp:  exp TOK_MAS exp
         $$.es_direccion = 0;
         fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");
       }
-   |  TOK_NOT exp 
+   |  TOK_NOT exp
       {
         if ($2.tipo != BOOLEAN){
           errorSemantico("Operacion logica con operandos boolean");
@@ -530,7 +570,7 @@ lista_expresiones:  exp resto_lista_expresiones {fprintf(yyout, ";R89:\t<lista_e
 resto_lista_expresiones:  TOK_COMA exp resto_lista_expresiones {fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");}
                        |  {fprintf(yyout, ";R92:\t<resto_lista_expresiones> ::= \n");}
                        ;
-comparacion:  exp TOK_IGUAL exp 
+comparacion:  exp TOK_IGUAL exp
               {
               if ( ($1.tipo != INT) || ($3.tipo != INT) ){
                 errorSemantico("Comparacion con operandos boolean");
@@ -540,7 +580,7 @@ comparacion:  exp TOK_IGUAL exp
               $$.es_direccion = 0;
               fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
               }
-           |  exp TOK_DISTINTO exp 
+           |  exp TOK_DISTINTO exp
               {
               if ( ($1.tipo != INT) || ($3.tipo != INT) ){
                 errorSemantico("Comparacion con operandos boolean");
@@ -550,7 +590,7 @@ comparacion:  exp TOK_IGUAL exp
               $$.es_direccion = 0;
               fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
               }
-           |  exp TOK_MENORIGUAL exp 
+           |  exp TOK_MENORIGUAL exp
               {
               if ( ($1.tipo != INT) || ($3.tipo != INT) ){
                 errorSemantico("Comparacion con operandos boolean");
@@ -570,7 +610,7 @@ comparacion:  exp TOK_IGUAL exp
               $$.es_direccion = 0;
               fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
               }
-           |  exp TOK_MENOR exp 
+           |  exp TOK_MENOR exp
               {
               if ( ($1.tipo != INT) || ($3.tipo != INT) ){
                 errorSemantico("Comparacion con operandos boolean");
@@ -580,7 +620,7 @@ comparacion:  exp TOK_IGUAL exp
               $$.es_direccion = 0;
               fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
               }
-           |  exp TOK_MAYOR exp 
+           |  exp TOK_MAYOR exp
               {
               if ( ($1.tipo != INT) || ($3.tipo != INT) ){
                 errorSemantico("Comparacion con operandos boolean");
@@ -652,7 +692,7 @@ identificador:  TOK_IDENTIFICADOR {
                                   else{
                                     pos_variable_local_actual++;
                                     num_variables_locales_actual++;
-                                  
+
                                     fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
                                           // AQUI VA GENERACION DE CODIGO JEJEJE
                                     }

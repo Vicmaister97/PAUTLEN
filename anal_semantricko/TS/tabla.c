@@ -183,6 +183,18 @@ int isSimboloEnLista(listaSimbolo *l, char *s){
   return FALSE;
 }
 
+int getLenListaSimbolo(listaSimbolo *l){
+  if(l != NULL)
+    return l->len;
+  else return ERR;
+}
+
+SIMBOLO **getListaSimbolo(listaSimbolo *l){
+  if(l != NULL)
+    return l->lista;
+  else return NULL;
+}
+
 void freeListaSimbolo(listaSimbolo *l){
   int i;
   if(l != NULL){

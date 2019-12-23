@@ -92,6 +92,8 @@ y gestionar en cada caso al guardar y recuperar los valores el dato que correspo
 
 
 listaSimbolo *newListaSimbolo();
+int getLenListaSimbolo(listaSimbolo *l);
+SIMBOLO **getListaSimbolo(listaSimbolo *l);
 void freeListaSimbolo(listaSimbolo *l);
 void insertaSimboloLista(listaSimbolo *l, SIMBOLO *s);
 
