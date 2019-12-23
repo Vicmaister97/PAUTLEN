@@ -21,6 +21,8 @@ HASH_TABLE *TLOCAL = NULL;
 
 //Para la negacion Logica
 int global_no;
+//Para generacion de etiquetas
+int etiqueta;
 
 void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
   if(op1.es_direccion){
@@ -39,7 +41,7 @@ void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
 
   if(tipo_op == TIPO_NEG){
     no(yyout, op1.es_direccion, global_no++);
-    global_no = 0;
+    //global_no = 0;
     return;
   }
 
@@ -63,6 +65,18 @@ void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
     y(yyout, op1.es_direccion, op2.es_direccion);
   else if(tipo_op == TIPO_OR)
     o(yyout, op1.es_direccion, op2.es_direccion);
+  else if(tipo_op == CMP_IGUAL)
+    igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_DIST)
+    distinto(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MEN_IG)
+    menor_igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MAY_IG)
+    mayor_igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MEN)
+    menor(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
+  else if(tipo_op == CMP_MAY)
+    mayor(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
 
   return;
 
@@ -308,7 +322,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     }
                     printf("\nTRICK 1: before asignar: id == %s, val = %d", $1.lexema, $1.valor_entero);
                     printf("\nTRICK 1: before asignar: exp == %s, val = %d\n", $3.lexema, $3.valor_entero);
-                    asignar(yyout, getIdentificador(simbol), 0);
+                    asignar(yyout, $1.lexema, $3.es_direccion);
                 }
                 else{                                           // Búsqueda en local
                     simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
@@ -341,6 +355,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                   errorSemantico("Asignación incompatible");
                   return -1;
                 }
+                asignar(yyout, $1.lexema, $3.es_direccion);
 
                 fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
               }
@@ -392,7 +407,8 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                       }
                     }
                     fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
-
+                    escribir_operando(yyout,$3.lexema,$3.es_direccion);
+                    escribir_elemento_vector(yyout, $1.lexema, getLongitud(simbol), $3.es_direccion);
                     // !!!!!!!!! GEN_CODIGO:  FALTA COMPROBAR INDICE EN TIEMPO DE EJECUCION !!!!!!!!
                   }
                ;
@@ -441,14 +457,24 @@ lectura:  TOK_SCANF TOK_IDENTIFICADOR
                 }
               }
             }
-
+            leer(yyout, $2.lexema, $2.tipo);
             fprintf(yyout, ";R54:\t<lectura> ::= scanf <identificador>\n");
           }
        ;
 escritura:  TOK_PRINTF exp {
                              // fons1 escribir(yyout, $2.es_direccion, $2.tipo);
-                             escribir_operando(yyout,$2.lexema,1);
-                             escribir(yyout, 1, $2.tipo);
+                              //ESTO ES LO QUE DEBERIA ESTAR... PERO EXPLOTA
+                              //POR AHORA MAL
+                              //if($2.es_direccion){
+                              //  escribir_operando(yyout,$2.lexema,$2.es_direccion);
+                              //  escribir(yyout, VAR, $2.tipo);
+                              //}
+                              //else{
+                              //  escribir_operando(yyout,$2.valor_entero,$2.es_direccion);
+                              //  escribir(yyout, CTE, $2.tipo);
+                              //}
+                              escribir_operando(yyout,$2.lexema,1);
+                              escribir(yyout, 1, $2.tipo);
                              fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");}
         ;
 retorno_funcion:  TOK_RETURN exp
@@ -551,6 +577,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $2, $2, TIPO_NEG);
         fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");
       }
 
@@ -576,6 +603,7 @@ exp:  exp TOK_MAS exp
 
             $$.tipo = getTipo(simbol);
             $$.es_direccion = 1;
+            escribir_operando(yyout, $1.lexema, VAR);
           }
         }
         else{                                           // Búsqueda en local
@@ -608,7 +636,11 @@ exp:  exp TOK_MAS exp
                                                         fprintf(yyout, ";R82:\t<exp> ::= ( <exp> )\n");}
    |  TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO {$$.tipo = $2.tipo; $$.es_direccion = $2.es_direccion;
                                                                 fprintf(yyout, ";R83:\t<exp> ::= ( <comparacion> )\n");}
-   |  elemento_vector {$$.tipo = $1.tipo; $$.es_direccion = $1.es_direccion; fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");}
+   |  elemento_vector {
+                        $$.tipo = $1.tipo;
+                        $$.es_direccion = $1.es_direccion;
+                        fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");
+                      }
    |  id_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO
       {
         fprintf(yyout, ";R88:\t<exp> ::= id_llamada_funcion ( <lista_expresiones> )\n");
@@ -631,6 +663,8 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+
+              funcOp(yyout, $1, $3, CMP_IGUAL);
               fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
               }
            |  exp TOK_DISTINTO exp
@@ -641,6 +675,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_DIST);
               fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
               }
            |  exp TOK_MENORIGUAL exp
@@ -651,6 +686,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MEN_IG);
               fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
               }
            |  exp TOK_MAYORIGUAL exp
@@ -661,6 +697,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MAY_IG);
               fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
               }
            |  exp TOK_MENOR exp
@@ -671,6 +708,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MEN);
               fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
               }
            |  exp TOK_MAYOR exp
@@ -681,6 +719,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
+              funcOp(yyout, $1, $3, CMP_MAY);
               fprintf(yyout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
               }
            ;
@@ -694,10 +733,6 @@ constante:  constante_logica
             {
               $$.tipo = INT;
               $$.es_direccion = $1.es_direccion;
-
-              char val[MAX_INT_LEN];
-              sprintf(val, "%d", $1.valor_entero);
-              escribir_operando(yyout,val,CTE);
               fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
             }
           ;
@@ -724,6 +759,9 @@ constante_entera:  TOK_CONSTANTE_ENTERA
                       $$.tipo = INT;
                       $$.es_direccion = 0;
 
+                      char val[MAX_INT_LEN];
+                      sprintf(val, "%d", $1.valor_entero);
+                      escribir_operando(yyout,val,CTE);
                       fprintf(yyout, ";R105:\t<constante_entera> ::= <numero>\n");
                     }
                 ;
