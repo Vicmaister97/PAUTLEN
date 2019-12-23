@@ -9,10 +9,12 @@ main
     boolean bol;
     array int[60] vector1;
 
-    //  Deberia dar error
-	x = 9-false;
-    // Deberia dar error
-    bol = true or 7;
+    // Aritmetica
+	x = 9-5;
+    // Logica
+    bol = (x < true);
+    // Vector
+    vector1[6] = 6;
     
     printf true&&false;
     scanf x;

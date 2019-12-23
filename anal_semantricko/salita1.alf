@@ -82,11 +82,32 @@ main:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	-
-;D:	false
+;D:	5
+;R105:	<constante_entera> ::= <numero>
 	; inicio de la funcion escribir_operando
-	mov dword eax, 0
+	mov dword eax, 5
 	push dword eax
-;R103:	<constante_logica> ::= false
-;R99:	<constante> ::= <constante_logica>
+;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
+;R73:	<exp> ::= <exp> - <exp>
+	; inicio de la funcion asignar
+	pop dword eax
+	mov dword [_x], eax 
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	bol
+;D:	=
+;D:	(
+;D:	x
+;D:	<
+;R80:	<exp> ::= <identificador>
+;D:	true
+	; inicio de la funcion escribir_operando
+	mov dword eax, 1
+	push dword eax
+;R102:	<constante_logica> ::= true
+;R99:	<constante> ::= <constante_logica>
+;R81:	<exp> ::= <constante>
+;D:	)
