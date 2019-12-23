@@ -26,6 +26,9 @@ int global_no;
 int etiqueta;
 
 void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
+  printf("\nIN FUNC OP: ");
+  printf("\nOP1: %s\nval: %d\nesDir:%d ", op1.lexema, op1.valor_entero, op1.es_direccion);
+  printf("\nOP2: %s\nval: %d\nesDir:%d ", op2.lexema, op2.valor_entero, op2.es_direccion);
   if(op1.es_direccion){
     escribir_operando(yyout, op1.lexema, VAR);
     }
@@ -623,6 +626,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_SUMA);
         fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");
       }
    |  exp TOK_MENOS exp
@@ -633,6 +637,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_MENOS);
         fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");
       }
    |  exp TOK_DIVISION exp
@@ -643,6 +648,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_DIV);
         fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");
       }
    |  exp TOK_ASTERISCO exp
@@ -653,6 +659,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_MUL);
         fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");
       }
    |  TOK_MENOS exp
@@ -663,6 +670,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
+        funcOp(yyout, $2, $2, TIPO_MENOS);
         fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");
       }
 
@@ -675,6 +683,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_AND);
         fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");
       }
    |  exp TOK_OR exp
@@ -685,6 +694,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
+        funcOp(yyout, $1, $3, TIPO_OR);
         fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");
       }
    |  TOK_NOT exp
