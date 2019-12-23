@@ -1,0 +1,15 @@
+main
+{
+	int x, y, z;
+	x = 1;
+	y = 2;
+	z = y;
+	printf z;
+	printf x;
+	printf y;
+  z = 5 * 7;
+  printf z;
+  z = x + y;
+  printf z;
+
+}
