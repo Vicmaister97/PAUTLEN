@@ -3,14 +3,14 @@ main
   boolean x, y, z;
   x = true;
   y = false;
-  printf x;
-  printf y;
+  printf x;       //true
+  printf y;       //false
   // z = false
   z = x && y;
-  printf z;
+  printf z;       //false
   // z = true
-  z = x || y;
-  printf z;
+  z = x or y;
+  printf z;       //true
   // z = false
   //z = !x;
   //printf z;

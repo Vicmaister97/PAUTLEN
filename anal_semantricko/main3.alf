@@ -1,0 +1,37 @@
+main
+{
+  int x, y;
+  boolean z;
+  x = 5;
+  y = 3;
+  printf x;
+  printf y;
+  z = (x == y); //False
+  printf z;
+  z = (x != y); //True
+  printf z;
+  z = (x < y); //False
+  printf z;
+  z = (x <= y); //False
+  printf z;
+  z = (x > y); //True
+  printf z;
+  z = (x >= y); //True
+  printf z;
+
+  z = (1 >= 0); //True
+  printf z;
+  z = (1 > 0); //True
+  printf z;
+  z = (1 == 0); //False
+  printf z;
+  z = (1 < 0); //False
+  printf z;
+  z = (1 <= 0); //False
+  printf z;
+  z = (4 != 3); //True
+  printf z;
+
+
+
+}
