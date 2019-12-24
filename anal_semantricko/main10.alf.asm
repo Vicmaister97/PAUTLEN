@@ -49,7 +49,7 @@ segment .text
 ;D:	;
 ;R18:	<identificadores> ::= <identificador>
 ;R4:	<declaracion> ::= <clase> <identificadores> ;
-;D:	printf
+;D:	auxArg
 ;R2:	<declaraciones> ::= <declaracion>
 ;R28:	<declaraciones_funcion> ::= <declaraciones>
 	; inicio de la funcion declararFuncion
@@ -57,16 +57,34 @@ segment .text
 	push ebp
 	mov ebp, esp
 	sub esp, 4
-;D:	44
-	; inicio de la funcion escribir_operando
-	mov dword eax, 44
-	push dword eax
-;R105:	<constante_entera> ::= <numero>
-;R100:	<constante> ::= <constante_entera>
-;R81:	<exp> ::= <constante>
+;D:	=
+;D:	arg
 ;D:	;
+	; inicio de la funcion escribirParametro
+	lea eax, [ebp + 8]
+	push dword eax
+;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribirVariableLocal
+	lea eax, [ebp - 4]
+	push dword eax
+	; inicio de la funcion asignarDestinoEnPila
+	pop dword ebx
+	pop dword eax
+	mov eax, [eax]
+	mov dword [ebx], eax
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	printf
+;D:	auxArg
+;D:	;
+	; inicio de la funcion escribirVariableLocal
+	lea eax, [ebp - 4]
+	push dword eax
+;R80:	<exp> ::= <identificador>
 	; inicio de la funcion escribir
 	pop dword eax
+	mov dword eax, [eax]
 	push dword eax
 	call print_int
 	add esp, 4
@@ -75,9 +93,9 @@ segment .text
 ;R36:	<sentencia_simple> ::= <escritura>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	return
-;D:	2
+;D:	3
 	; inicio de la funcion escribir_operando
-	mov dword eax, 2
+	mov dword eax, 3
 	push dword eax
 ;R105:	<constante_entera> ::= <numero>
 ;R100:	<constante> ::= <constante_entera>
@@ -94,8 +112,7 @@ segment .text
 ;D:	}
 ;R30:	<sentencias> ::= <sentencia>
 ;R31:	<sentencias> ::= <sentencia> <sentencias>
-	_auxArg resd 1
-	_arg resd 1
+;R31:	<sentencias> ::= <sentencia> <sentencias>
 ;R22:	<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }
 ;D:	z
 ;R21:	<funciones> ::= 
@@ -105,9 +122,9 @@ segment .text
 main:
 	mov dword [__esp], esp
 ;D:	=
-;D:	1
+;D:	99
 	; inicio de la funcion escribir_operando
-	mov dword eax, 1
+	mov dword eax, 99
 	push dword eax
 ;R105:	<constante_entera> ::= <numero>
 ;R100:	<constante> ::= <constante_entera>
@@ -125,7 +142,7 @@ main:
 ;D:	z
 ;D:	)
 	; inicio de la funcion escribir_operando
-	mov dword eax, _z
+	mov dword eax, 99
 	push dword eax
 	; inicio de la funcion operandoEnPilaAArgumento
 ;R80:	<exp> ::= <identificador>
