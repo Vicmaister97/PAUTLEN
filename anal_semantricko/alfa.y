@@ -28,13 +28,13 @@ int etiqueta;
 
 void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
   if(op1.es_direccion){
-    //printf("\nTRICK 2 writing operando %s\n", op1.lexema);
+    ////printf("\nTRICK 2 writing operando %s\n", op1.lexema);
     escribir_operando(yyout, op1.lexema, VAR);
     }
   else{
     char val1[MAX_INT_LEN];
     sprintf(val1, "%d", op1.valor_entero);
-    //printf("\nTRICK 3 writing operando %s\n", val1);
+    ////printf("\nTRICK 3 writing operando %s\n", val1);
     escribir_operando(yyout, val1, CTE);
     }
 
@@ -50,13 +50,13 @@ void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
   }
 
   if(op2.es_direccion){
-    //printf("\nTRICK 4 writing operando %s\n", op1.lexema);
+    ////printf("\nTRICK 4 writing operando %s\n", op1.lexema);
     escribir_operando(yyout, op2.lexema, VAR);
     }
   else{
     char val2[MAX_INT_LEN];
     sprintf(val2, "%d", op2.valor_entero);
-    //printf("\nTRICK 5 writing operando %s\n", val2);
+    ////printf("\nTRICK 5 writing operando %s\n", val2);
     escribir_operando(yyout, val2, CTE);
     }
 
@@ -66,8 +66,10 @@ void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
     restar(yyout, op1.es_direccion, op2.es_direccion);
   else if(tipo_op == TIPO_DIV)
     dividir(yyout, op1.es_direccion, op2.es_direccion);
-  else if(tipo_op == TIPO_MUL)
+  else if(tipo_op == TIPO_MUL){
+    //printf("\nTrick 6");
     multiplicar(yyout, op1.es_direccion, op2.es_direccion);
+    }
   else if(tipo_op == TIPO_AND)
     y(yyout, op1.es_direccion, op2.es_direccion);
   else if(tipo_op == TIPO_OR)
@@ -316,6 +318,23 @@ funcion:  fn_declaration sentencias TOK_LLAVEDERECHA
             setNum_var_locales(simbol, num_variables_locales_actual);
             strcpy($$.lexema, $1.lexema);
 
+            listaSimbolo *temp_list_symbols;
+            int i, total, len;
+            SIMBOLO *tempSymbol;
+            temp_list_symbols = DumpHashTable(TLOCAL);
+            total = getLenListaSimbolo(temp_list_symbols);
+            for(i=0; i<total; i++){
+              tempSymbol = *(getListaSimbolo(temp_list_symbols) + i);
+              if(strcmp(getIdentificador(tempSymbol), $1.lexema) == 0)
+                continue;
+              if(getCategoria(tempSymbol) == VECTOR)
+                len = getLongitud(tempSymbol);
+              if(len <= 0)
+                len = 1;
+              declarar_variable(yyout, getIdentificador(tempSymbol), getTipo(tempSymbol), len);
+            }
+
+            freeListaSimbolo(temp_list_symbols);
             freeHashTable(TLOCAL);
 
             fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
@@ -352,6 +371,8 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
                     setNum_parametros(simbol, num_parametros_actual);
                     setNum_var_locales(simbol, num_variables_locales_actual);
                     strcpy($$.lexema, $1.lexema);
+                    //printf("\nTRICK 1");
+                    declararFuncion(yyout, $1.lexema, num_variables_locales_actual);
                   }
               ;
 parametros_funcion:  parametro_funcion resto_parametros_funcion {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
@@ -444,6 +465,11 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
+                    ////printf("\nTrick var local pos: %d\nDir: %d",getPosicion(simbol), $1.es_direccion);
+                    //printf("\nTrick 3");
+                    escribirVariableLocal(yyout, getPosicion(simbol));
+                    //printf("\nTrick 4");
+                    asignarDestinoEnPila(yyout, 1);
                 }
                 fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
              }
@@ -511,7 +537,7 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                ;
 condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
-                //printf("\nFIN GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $1.etiqueta);
+                ////printf("\nFIN GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $1.etiqueta);
                 ifthen_fin(yyout, $1.etiqueta);
                 fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
               }
@@ -529,7 +555,7 @@ if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp
             }
             $$.etiqueta = etiqueta;
             ifthen_inicio(yyout, $3.es_direccion, etiqueta);
-            //printf("\nINI GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $$.etiqueta);
+            ////printf("\nINI GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $$.etiqueta);
           }
       ;
 if_else_exp: if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
@@ -547,7 +573,7 @@ bucle:  bucle_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVED
 bucle_exp:  while exp
             {
               if ($2.tipo != BOOLEAN){
-                //printf("\nPETA AQUI");
+                ////printf("\nPETA AQUI");
                 errorSemantico("Bucle con condicion de tipo int");
                 return -1;
               }
@@ -619,6 +645,8 @@ retorno_funcion:  TOK_RETURN exp
 
                     hayReturn = 1;
                     tipoReturn = $2.tipo;
+                    //printf("\nTRICK 7");
+                    retornarFuncion(yyout, $2.es_direccion);
                     fprintf(yyout, ";R61:\t<retorno_funcion> ::= return <exp>\n");
                   }
                ;
@@ -736,6 +764,9 @@ exp:  exp TOK_MAS exp
             $$.tipo = getTipo(simbol);
             $$.es_direccion = 1;
           }
+          escribir_operando(yyout, $1.lexema, VAR);
+          if(en_explist)
+            operandoEnPilaAArgumento(yyout, getPosicion(simbol));
         }
         else{                                           // Búsqueda en local
           simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
@@ -754,13 +785,24 @@ exp:  exp TOK_MAS exp
               errorSemantico("Expresion incompatible");
               return -1;
             }
-
             $$.tipo = getTipo(simbol);
             $$.es_direccion = 1;
           }
+          int pos;
+          pos = getPosicion(simbol); //Posicion tanto si Parametro como var Local
+          ////printf("\nPOS == %d\n", pos);
+          if(CategoriaSimbolo(simbol) == PARAMETRO){
+            ////printf("\nTRICK 1 escribiendo parametro de pos = %d\n", pos);
+            //printf("\nTrick 2");
+            escribirParametro(yyout, pos, VAR);
+          }
+          else{
+            //printf("\nTrick 3.5");
+            escribirVariableLocal(yyout, pos);
+            }
         }
-        //printf("\nTRICK 1 writing operando %s\n", $1.lexema);
-        escribir_operando(yyout, $1.lexema, VAR);
+        ////printf("\nTRICK 1 writing operando %s\n", $1.lexema);
+
         fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n");
       }
    |  constante {$$.tipo = $1.tipo; $$.es_direccion = $1.es_direccion; fprintf(yyout, ";R81:\t<exp> ::= <constante>\n");}
@@ -780,6 +822,7 @@ exp:  exp TOK_MAS exp
             errorSemantico(err);
             return -1;
           }
+          llamarFuncion(yyout, getIdentificador(simbol), getNum_parametros(simbol));
         }
 
         else{                                           // Búsqueda en local
@@ -879,7 +922,7 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
-              //printf("\nIGUAL: %d == %d", $1.valor_entero, $3.valor_entero);
+              ////printf("\nIGUAL: %d == %d", $1.valor_entero, $3.valor_entero);
               cmpOp(yyout, $1, $3, CMP_IGUAL);
               fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
               }
@@ -956,7 +999,7 @@ constante_logica:  TOK_TRUE
                   {
                     $$.tipo = BOOLEAN;
                     $$.es_direccion = 0;
-                    //printf("\nTRICK 6 writing operando %s\n", STR_TRUE);
+                    ////printf("\nTRICK 6 writing operando %s\n", STR_TRUE);
                     escribir_operando(yyout,STR_TRUE,CTE);
                     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
                   }
@@ -964,7 +1007,7 @@ constante_logica:  TOK_TRUE
                     {
                       $$.tipo = BOOLEAN;
                       $$.es_direccion = 0;
-                      //printf("\nTRICK 7 writing operando %s\n", STR_FALSE);
+                      ////printf("\nTRICK 7 writing operando %s\n", STR_FALSE);
                       escribir_operando(yyout,STR_FALSE,CTE);
 
                       fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");
@@ -977,7 +1020,8 @@ constante_entera:  TOK_CONSTANTE_ENTERA
 
                       char val[MAX_INT_LEN];
                       sprintf(val, "%d", $1.valor_entero);
-                      //printf("\nTRICK 8 writing operando %s\n", val);
+                      ////printf("\nTRICK 8 writing operando %s\n", val);
+                      //printf("\nTrick 5");
                       escribir_operando(yyout,val,CTE);
                       fprintf(yyout, ";R105:\t<constante_entera> ::= <numero>\n");
                     }

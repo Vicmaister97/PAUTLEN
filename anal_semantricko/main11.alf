@@ -1,0 +1,15 @@
+main
+{
+  int z;
+
+  function int doble(int arg)
+  {
+    int auxArg;
+    auxArg = arg;
+    printf arg;
+    return 2 * auxArg;
+  }
+
+  z = 2;
+  printf doble(z);
+}

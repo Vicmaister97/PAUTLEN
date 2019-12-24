@@ -1,0 +1,14 @@
+main
+{
+  int z;
+
+  function int printandret2(int arg)
+  {
+    int auxArg;
+    printf 44;
+    return 2;
+  }
+
+  z = 1;
+  printf printandret2(z);
+}
