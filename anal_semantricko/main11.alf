@@ -1,16 +1,18 @@
 main
 {
-  int z;
+  int z, x;
 
-  function int doble(int arg)
+  function int doble(int arg; int aux2; int aux3)
   {
     int auxArg;
-    auxArg = arg;
+    printf aux2;
+    auxArg = aux2*2;
     printf auxArg;
     printf (auxArg * auxArg);
     return 2 * auxArg;
   }
 
-  z = 80;
-  printf doble(z);
+  z = 5;
+  x = 3;
+  printf doble(z,4,9);
 }

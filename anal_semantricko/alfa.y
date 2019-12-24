@@ -71,7 +71,7 @@ int num_parametros_actual;
 int hayReturn = 0;                   // Indica si la funcion tiene una sentencia return (=1) o no (=0)
 int tipoReturn;
 
-
+char nombre_funcion_actual[MAX_LONG_ID];
 char nombre_vector[MAX_LONG_ID];
 int errorVector = 0;                 // Indica si hay un error al declarar un vector (=1) o no (=0)
 
@@ -265,6 +265,7 @@ funcion:  fn_declaration sentencias TOK_LLAVEDERECHA
 
             setNum_parametros(simbol, num_parametros_actual);
             setNum_var_locales(simbol, num_variables_locales_actual);
+
             strcpy($$.lexema, $1.lexema);
 
             freeHashTable(TLOCAL);
@@ -288,6 +289,7 @@ fn_name:  TOK_FUNCTION tipo TOK_IDENTIFICADOR
             pos_parametro_actual = 0;
 
             strcpy($$.lexema, $3.lexema);
+            strcpy(nombre_funcion_actual, $3.lexema);
           }
         ;
 fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion
@@ -738,7 +740,7 @@ exp:  exp TOK_MAS exp
             ////printf("\nTRICK 1 escribiendo parametro de pos = %d\n", pos);
             //printf("\nTrick 2");
             printf("\nEscribir parametro %s con pos %d y valor %d", getIdentificador(simbol), pos, getValor(simbol));
-            escribirParametro(yyout, pos, VAR);
+            escribirParametro(yyout, pos, getNum_parametros(UsoLocal(TGLOBAL, TLOCAL, nombre_funcion_actual) ));
           }
           else{
             //printf("\nTrick 3.5");
@@ -787,6 +789,7 @@ exp:  exp TOK_MAS exp
 
         // Reseteamos variable para controlar llamada a func desde una llamada
         en_explist = 0;
+
         $$.tipo = getTipo(simbol);
         $$.es_direccion = 0;
 
@@ -843,6 +846,7 @@ idf_llamada_funcion:  TOK_IDENTIFICADOR
 
                       num_parametros_llamada_actual = 0;
                       strcpy($$.lexema, getIdentificador(simbol) );
+                      strcpy(nombre_funcion_actual,  getIdentificador(simbol));
                     }
                   ;
 lista_expresiones:  exp resto_lista_expresiones
