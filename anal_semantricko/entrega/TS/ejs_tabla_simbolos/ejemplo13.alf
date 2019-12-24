@@ -1,0 +1,25 @@
+main {
+
+// Declaraciones
+	int x;
+
+
+// Funciones
+	function int negar ( int numero )
+	{
+		int w;
+
+		w = -arg;
+
+		return  w;
+
+	}
+
+	scanf x;
+
+	printf negar(x);
+	
+
+// Sentencias
+
+}

@@ -5,16 +5,20 @@ main
   function int mayorQue5(int arg)
   {
     int auxArg, rv;
-    auxArg = arg * 3;
-    printf auxArg;
+    auxArg = arg;
+    printf arg;
     rv = 1;
     if((auxArg < 5)){
       rv = 0;
     }
+    else{
+      rv=100;
+    }
     return rv;
   }
 
-  z = 2;
+  scanf z;
+  printf z;
   res = mayorQue5(z);
   printf res;
 }

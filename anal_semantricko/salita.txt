@@ -61,36 +61,20 @@ segment .text
 ;D:	auxArg
 ;R2:	<declaraciones> ::= <declaracion>
 ;R28:	<declaraciones_funcion> ::= <declaraciones>
-	; inicio de la funcion declararFuncion
-	_mayorQue5:
-	push ebp
-	mov ebp, esp
-	sub esp, 8
 ;D:	=
 ;D:	arg
 ;D:	;
-	; inicio de la funcion escribirParametro
-	lea eax, [ebp + 8]
-	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribirVariableLocal
-	lea eax, [ebp - 4]
-	push dword eax
-	; inicio de la funcion asignarDestinoEnPila
-	pop dword ebx
-	pop dword eax
-	mov eax, [eax]
-	mov dword [ebx], eax
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	printf
 ;D:	arg
 ;D:	;
-	; inicio de la funcion escribirParametro
-	lea eax, [ebp + 8]
-	push dword eax
 ;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribir_operando
+	mov dword eax, _arg
+	push dword eax
 	; inicio de la funcion escribir
 	pop dword eax
 	mov dword eax, [eax]
@@ -111,13 +95,6 @@ segment .text
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribirVariableLocal
-	lea eax, [ebp - 8]
-	push dword eax
-	; inicio de la funcion asignarDestinoEnPila
-	pop dword ebx
-	pop dword eax
-	mov dword [ebx], eax
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
@@ -126,9 +103,6 @@ segment .text
 ;D:	(
 ;D:	auxArg
 ;D:	<
-	; inicio de la funcion escribirVariableLocal
-	lea eax, [ebp - 4]
-	push dword eax
 ;R80:	<exp> ::= <identificador>
 ;D:	5
 	; inicio de la funcion escribir_operando
@@ -138,6 +112,12 @@ segment .text
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
+	; inicio de la funcion escribir_operando
+	mov dword eax, _auxArg
+	push dword eax
+	; inicio de la funcion escribir_operando
+	mov dword eax, 5
+	push dword eax
 	; inicio de la funcion menor
 	pop dword ebx
 	pop dword eax
@@ -151,10 +131,6 @@ fin_menorigual_0:
 ;R97:	<comparacion> ::= <exp> < <exp>
 ;R83:	<exp> ::= ( <comparacion> )
 ;D:	)
-	; inicio de la funcion ifthen_inicio
-	pop eax
-	cmp eax, 1
-	jne fin_then_1
 ;D:	{
 ;D:	rv
 ;D:	=
@@ -166,22 +142,12 @@ fin_menorigual_0:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribirVariableLocal
-	lea eax, [ebp - 8]
-	push dword eax
-	; inicio de la funcion asignarDestinoEnPila
-	pop dword ebx
-	pop dword eax
-	mov dword [ebx], eax
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	}
 ;R30:	<sentencias> ::= <sentencia>
 ;D:	else
-	; inicio de la funcion ifthenelse_fin_then
-	jmp fin_then_else_1
-fin_then_1:
 ;D:	{
 ;D:	rv
 ;D:	=
@@ -193,36 +159,18 @@ fin_then_1:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-	; inicio de la funcion escribirVariableLocal
-	lea eax, [ebp - 8]
-	push dword eax
-	; inicio de la funcion asignarDestinoEnPila
-	pop dword ebx
-	pop dword eax
-	mov dword [ebx], eax
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	}
 ;R30:	<sentencias> ::= <sentencia>
-	; inicio de la funcion ifthenelse_fin
-fin_then_else_1:
 ;R51:	<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }
 ;R40:	<bloque> ::= <condicional>
 ;R33:	<sentencia> ::= <bloque>
 ;D:	return
 ;D:	rv
 ;D:	;
-	; inicio de la funcion escribirVariableLocal
-	lea eax, [ebp - 8]
-	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion retornarFuncion
-	pop dword eax
-	mov eax, [eax]
-	mov esp, ebp
-	pop dword ebp
-	ret
 ;R61:	<retorno_funcion> ::= return <exp>
 ;R38:	<sentencia_simple> ::= <retorno_funcion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
@@ -256,6 +204,9 @@ main:
 	mov dword eax, _z
 	push dword eax
 ;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribir_operando
+	mov dword eax, _z
+	push dword eax
 	; inicio de la funcion escribir
 	pop dword eax
 	mov dword eax, [eax]
@@ -273,17 +224,11 @@ main:
 ;D:	z
 ;D:	)
 	; inicio de la funcion escribir_operando
-	mov dword eax, 100
+	mov dword eax, _z
 	push dword eax
-	; inicio de la funcion operandoEnPilaAArgumento
 ;R80:	<exp> ::= <identificador>
 ;R92:	<resto_lista_expresiones> ::= 
 ;R89:	<lista_expresiones> ::= <exp> <resto_lista_expresiones>
-	; inicio de la funcion llamarFuncion
-	call _mayorQue5
-	; inicio de la funcion limpiarPila
-	add esp, 4
-	push dword eax
 ;R88:	<exp> ::= id_llamada_funcion ( <lista_expresiones> )
 ;D:	;
 	; inicio de la funcion asignar
@@ -299,6 +244,9 @@ main:
 	mov dword eax, _res
 	push dword eax
 ;R80:	<exp> ::= <identificador>
+	; inicio de la funcion escribir_operando
+	mov dword eax, _res
+	push dword eax
 	; inicio de la funcion escribir
 	pop dword eax
 	mov dword eax, [eax]

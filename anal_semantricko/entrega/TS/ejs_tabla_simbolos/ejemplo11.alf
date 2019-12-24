@@ -11,13 +11,20 @@ main
 		{
 			return 1;
 		}
-		return n * factorial (n-1);
-
+		else
+		{
+			return n * factorial ( n - 1);
+		}
 	}
 
 // Sentencias
 
-	resultado = factorial (6);
+	scanf x;
+
+	resultado = factorial (x);
 
 	printf resultado;
 }
+
+
+

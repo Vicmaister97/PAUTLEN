@@ -108,12 +108,6 @@ main:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
 	; inicio de la funcion multiplicar
 	pop dword ebx
 	mov dword ebx, [ebx]

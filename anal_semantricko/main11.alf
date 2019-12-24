@@ -1,0 +1,28 @@
+main
+{
+  int z, x;
+
+
+  function int doble(int a; int b; int c)
+  {
+    int auxArg;
+    auxArg = c;
+
+    printf auxArg;
+    printf (auxArg * auxArg);
+    return 2 * auxArg;
+  }
+
+  function int triple(int a; int b)
+  {
+    int auxArg;
+    auxArg = b;
+    printf auxArg;
+    printf (auxArg * auxArg);
+    return 3 * b;
+  }
+
+  z = 5;
+  printf triple(z, 10);
+  printf doble(z, 2, 3);
+}

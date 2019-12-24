@@ -1,0 +1,17 @@
+main
+{
+
+	boolean i;
+	int j;
+	
+
+	function int i (int arg)
+	{
+		return arg*2;
+	}
+
+  	printf i(j);
+
+}
+
+

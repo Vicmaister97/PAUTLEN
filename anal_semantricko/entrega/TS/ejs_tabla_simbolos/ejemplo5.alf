@@ -1,0 +1,17 @@
+main
+{
+
+	int i, j;
+	
+
+	function boolean mayorque (int num; int num)
+	{
+		return (num > num2);
+	}
+
+	j=20;
+	i=10;
+
+  	printf mayorque(j,i);
+
+}
