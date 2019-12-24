@@ -751,10 +751,15 @@ exp:  exp TOK_MAS exp
             $$.es_direccion = 1;
           }
           printf("\nESCRIBIR Normal %s, valor %d\n", $1.lexema, $1.valor_entero);
-          escribir_operando(yyout, $1.lexema, VAR);
           if(en_explist){
+            char val[MAX_INT_LEN];
+            sprintf(val, "%d", $1.valor_entero);
+            escribir_operando(yyout, val, CTE);
             printf("\nOperando %s con pos %d y con valor %d a pila", getIdentificador(simbol), getPosicion(simbol), $1.valor_entero);
             operandoEnPilaAArgumento(yyout, getPosicion(simbol));
+          }
+          else{
+            escribir_operando(yyout, $1.lexema, VAR);
           }
         }
         else{                                           // Búsqueda en local

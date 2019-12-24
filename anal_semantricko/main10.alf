@@ -5,10 +5,11 @@ main
   function int printandret2(int arg)
   {
     int auxArg;
-    printf arg;
-    return 2;
+    auxArg = arg;
+    printf auxArg;
+    return 3;
   }
 
-  z = 1;
+  z = 99;
   printf printandret2(z);
 }
