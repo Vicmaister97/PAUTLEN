@@ -372,6 +372,7 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
                     setNum_var_locales(simbol, num_variables_locales_actual);
                     strcpy($$.lexema, $1.lexema);
                     //printf("\nTRICK 1");
+                    printf("\nDeclarar funcion: %s con %d varLoc", $1.lexema, num_variables_locales_actual);
                     declararFuncion(yyout, $1.lexema, num_variables_locales_actual);
                   }
               ;
@@ -440,7 +441,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
-
+                    printf("\nAsignando a %s el valor %d, es DIR: %d", $1.lexema, $3.valor_entero, $3.es_direccion);
                     asignar(yyout, $1.lexema, $3.es_direccion);
                 }
                 else{                                           // Búsqueda en local
@@ -467,8 +468,10 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     }
                     ////printf("\nTrick var local pos: %d\nDir: %d",getPosicion(simbol), $1.es_direccion);
                     //printf("\nTrick 3");
+                    printf("\nEscribir VLoc %s con pos %d", getIdentificador(simbol), getPosicion(simbol));
                     escribirVariableLocal(yyout, getPosicion(simbol));
                     //printf("\nTrick 4");
+                    printf("\nAsignar dst en pila");
                     asignarDestinoEnPila(yyout, 1);
                 }
                 fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
@@ -765,8 +768,10 @@ exp:  exp TOK_MAS exp
             $$.es_direccion = 1;
           }
           escribir_operando(yyout, $1.lexema, VAR);
-          if(en_explist)
+          if(en_explist){
+            printf("\nOperando %s con pos %d y con valor %d a pila", getIdentificador(simbol), getPosicion(simbol), getValor(simbol));
             operandoEnPilaAArgumento(yyout, getPosicion(simbol));
+          }
         }
         else{                                           // Búsqueda en local
           simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
@@ -794,6 +799,7 @@ exp:  exp TOK_MAS exp
           if(CategoriaSimbolo(simbol) == PARAMETRO){
             ////printf("\nTRICK 1 escribiendo parametro de pos = %d\n", pos);
             //printf("\nTrick 2");
+            printf("\nEscribir parametro %s con pos %d y valor %d", getIdentificador(simbol), pos, getValor(simbol));
             escribirParametro(yyout, pos, VAR);
           }
           else{
@@ -822,6 +828,7 @@ exp:  exp TOK_MAS exp
             errorSemantico(err);
             return -1;
           }
+          printf("\nLLamando a funcion %s con %d params", getIdentificador(simbol), getNum_parametros(simbol));
           llamarFuncion(yyout, getIdentificador(simbol), getNum_parametros(simbol));
         }
 
