@@ -25,57 +25,6 @@ int global_no;
 //Para generacion de etiquetas
 int etiqueta;
 
-
-void funcOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
-  if(op1.es_direccion){
-    ////printf("\nTRICK 2 writing operando %s\n", op1.lexema);
-    escribir_operando(yyout, op1.lexema, VAR);
-    }
-  else{
-    char val1[MAX_INT_LEN];
-    sprintf(val1, "%d", op1.valor_entero);
-    ////printf("\nTRICK 3 writing operando %s\n", val1);
-    escribir_operando(yyout, val1, CTE);
-    }
-
-  if(tipo_op == TIPO_MENOS){
-    cambiar_signo(yyout, op1.es_direccion);
-    return;
-  }
-
-  if(tipo_op == TIPO_NEG){
-    no(yyout, op1.es_direccion, global_no++);
-    //global_no = 0;
-    return;
-  }
-
-  if(op2.es_direccion){
-    ////printf("\nTRICK 4 writing operando %s\n", op1.lexema);
-    escribir_operando(yyout, op2.lexema, VAR);
-    }
-  else{
-    char val2[MAX_INT_LEN];
-    sprintf(val2, "%d", op2.valor_entero);
-    ////printf("\nTRICK 5 writing operando %s\n", val2);
-    escribir_operando(yyout, val2, CTE);
-    }
-
-  if(tipo_op == TIPO_SUMA)
-    sumar(yyout, op1.es_direccion, op2.es_direccion);
-  else if(tipo_op == TIPO_RESTA)
-    restar(yyout, op1.es_direccion, op2.es_direccion);
-  else if(tipo_op == TIPO_DIV)
-    dividir(yyout, op1.es_direccion, op2.es_direccion);
-  else if(tipo_op == TIPO_MUL){
-    //printf("\nTrick 6");
-    multiplicar(yyout, op1.es_direccion, op2.es_direccion);
-    }
-  else if(tipo_op == TIPO_AND)
-    y(yyout, op1.es_direccion, op2.es_direccion);
-  else if(tipo_op == TIPO_OR)
-    o(yyout, op1.es_direccion, op2.es_direccion);
-  return;
-}
 void cmpOp(FILE *yyout, tipo_atributos op1, tipo_atributos op2, int tipo_op){
   if(tipo_op == CMP_IGUAL)
     igual(yyout, op1.es_direccion, op2.es_direccion, etiqueta++);
@@ -644,7 +593,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
-        funcOp(yyout, $1, $3, TIPO_SUMA);
+        sumar(yyout, $1.es_direccion, $3.es_direccion);
         fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");
       }
    |  exp TOK_MENOS exp
@@ -655,7 +604,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
-        funcOp(yyout, $1, $3, TIPO_MENOS);
+        restar(yyout, $1.es_direccion, $3.es_direccion);
         fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");
       }
    |  exp TOK_DIVISION exp
@@ -666,7 +615,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
-        funcOp(yyout, $1, $3, TIPO_DIV);
+        dividir(yyout, $1.es_direccion, $3.es_direccion);
         fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");
       }
    |  exp TOK_ASTERISCO exp
@@ -677,7 +626,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
-        funcOp(yyout, $1, $3, TIPO_MUL);
+        multiplicar(yyout, $1.es_direccion, $3.es_direccion);
         fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");
       }
    |  TOK_MENOS exp
@@ -688,7 +637,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = INT;
         $$.es_direccion = 0;
-        funcOp(yyout, $2, $2, TIPO_MENOS);
+        cambiar_signo(yyout, $2.es_direccion);
         fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");
       }
 
@@ -701,7 +650,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
-        funcOp(yyout, $1, $3, TIPO_AND);
+        y(yyout, $1.es_direccion, $3.es_direccion);
         fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");
       }
    |  exp TOK_OR exp
@@ -712,7 +661,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
-        funcOp(yyout, $1, $3, TIPO_OR);
+        o(yyout, $1.es_direccion, $3.es_direccion);
         fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");
       }
    |  TOK_NOT exp
@@ -723,7 +672,7 @@ exp:  exp TOK_MAS exp
         }
         $$.tipo = BOOLEAN;
         $$.es_direccion = 0;
-        funcOp(yyout, $2, $2, TIPO_NEG);
+        no(yyout, $2.es_direccion, 1);
         fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");
       }
 

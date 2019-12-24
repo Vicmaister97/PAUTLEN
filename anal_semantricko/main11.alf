@@ -6,10 +6,11 @@ main
   {
     int auxArg;
     auxArg = arg;
-    printf arg;
+    printf auxArg;
+    printf (auxArg * auxArg);
     return 2 * auxArg;
   }
 
-  z = 2;
+  z = 80;
   printf doble(z);
 }
