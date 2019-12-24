@@ -303,7 +303,6 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
                     setNum_parametros(simbol, num_parametros_actual);
                     setNum_var_locales(simbol, num_variables_locales_actual);
                     strcpy($$.lexema, $1.lexema);
-                    //printf("\nTRICK 1");
                     printf("\nDeclarar funcion: %s con %d varLoc", $1.lexema, num_variables_locales_actual);
                     declararFuncion(yyout, $1.lexema, num_variables_locales_actual);
                   }
@@ -738,7 +737,8 @@ exp:  exp TOK_MAS exp
             ////printf("\nTRICK 1 escribiendo parametro de pos = %d\n", pos);
             //printf("\nTrick 2");
             printf("\nEscribir parametro %s con pos %d y valor %d", getIdentificador(simbol), pos, getValor(simbol));
-            escribirParametro(yyout, pos, VAR);
+            printf("\nNUM_PARAMS_ACTUAL=== %d",num_parametros_actual);
+            escribirParametro(yyout, pos, num_parametros_actual);
           }
           else{
             //printf("\nTrick 3.5");
