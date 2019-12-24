@@ -318,23 +318,6 @@ funcion:  fn_declaration sentencias TOK_LLAVEDERECHA
             setNum_var_locales(simbol, num_variables_locales_actual);
             strcpy($$.lexema, $1.lexema);
 
-            listaSimbolo *temp_list_symbols;
-            int i, total, len;
-            SIMBOLO *tempSymbol;
-            temp_list_symbols = DumpHashTable(TLOCAL);
-            total = getLenListaSimbolo(temp_list_symbols);
-            for(i=0; i<total; i++){
-              tempSymbol = *(getListaSimbolo(temp_list_symbols) + i);
-              if(strcmp(getIdentificador(tempSymbol), $1.lexema) == 0)
-                continue;
-              if(getCategoria(tempSymbol) == VECTOR)
-                len = getLongitud(tempSymbol);
-              if(len <= 0)
-                len = 1;
-              declarar_variable(yyout, getIdentificador(tempSymbol), getTipo(tempSymbol), len);
-            }
-
-            freeListaSimbolo(temp_list_symbols);
             freeHashTable(TLOCAL);
 
             fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
@@ -767,9 +750,10 @@ exp:  exp TOK_MAS exp
             $$.tipo = getTipo(simbol);
             $$.es_direccion = 1;
           }
+          printf("\nESCRIBIR Normal %s, valor %d\n", $1.lexema, $1.valor_entero);
           escribir_operando(yyout, $1.lexema, VAR);
           if(en_explist){
-            printf("\nOperando %s con pos %d y con valor %d a pila", getIdentificador(simbol), getPosicion(simbol), getValor(simbol));
+            printf("\nOperando %s con pos %d y con valor %d a pila", getIdentificador(simbol), getPosicion(simbol), $1.valor_entero);
             operandoEnPilaAArgumento(yyout, getPosicion(simbol));
           }
         }
@@ -828,7 +812,7 @@ exp:  exp TOK_MAS exp
             errorSemantico(err);
             return -1;
           }
-          printf("\nLLamando a funcion %s con %d params", getIdentificador(simbol), getNum_parametros(simbol));
+          printf("\nLLamando a funcion %s con %d params\n", getIdentificador(simbol), getNum_parametros(simbol));
           llamarFuncion(yyout, getIdentificador(simbol), getNum_parametros(simbol));
         }
 
