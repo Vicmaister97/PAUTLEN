@@ -204,6 +204,7 @@ SIMBOLO *simbol;
 %type <atributos> fn_declaration
 %type <atributos> idf_llamada_funcion
 %type <atributos> if_exp
+%type <atributos> if_else_exp
 %type <atributos> while
 %type <atributos> bucle_exp
 %type <atributos> bucle
@@ -514,8 +515,9 @@ condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLA
                 ifthen_fin(yyout, $1.etiqueta);
                 fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
               }
-           |   if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
+           |   if_else_exp TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
+                ifthenelse_fin(yyout, $1.etiqueta);
                 fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
               }
            ;
@@ -528,6 +530,12 @@ if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp
             $$.etiqueta = etiqueta;
             ifthen_inicio(yyout, $3.es_direccion, etiqueta);
             //printf("\nINI GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $$.etiqueta);
+          }
+      ;
+if_else_exp: if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
+          {
+            $$.etiqueta = $1.etiqueta;
+            ifthenelse_fin_then(yyout, $1.etiqueta);
           }
       ;
 bucle:  bucle_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
@@ -553,7 +561,7 @@ while: TOK_WHILE TOK_PARENTESISIZQUIERDO
         $$.etiqueta = etiqueta;
         while_inicio(yyout, etiqueta);
       }
-
+    ;
 lectura:  TOK_SCANF TOK_IDENTIFICADOR
           {
             if (ambito == 0){
