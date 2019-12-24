@@ -1,0 +1,11 @@
+main
+{
+  int x, i;
+  x = 9;
+  i = 0;
+  while((i < x))
+  {
+    i = i + 1;
+    printf i;
+  }
+}

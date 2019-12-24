@@ -204,6 +204,9 @@ SIMBOLO *simbol;
 %type <atributos> fn_declaration
 %type <atributos> idf_llamada_funcion
 %type <atributos> if_exp
+%type <atributos> while
+%type <atributos> bucle_exp
+%type <atributos> bucle
 
 
 %%
@@ -527,18 +530,29 @@ if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp
             //printf("\nINI GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $$.etiqueta);
           }
       ;
-bucle:  bucle_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
+bucle:  bucle_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
+      {
+        while_fin(yyout, $1.etiqueta);
+        fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");
+      }
      ;
-bucle_exp:  TOK_WHILE TOK_PARENTESISIZQUIERDO exp
+bucle_exp:  while exp
             {
-              //printf("\nINSIDE WHILE con exp tipo %d\nexp valor %d\n", $3.tipo, $3.valor_entero);
-              if ($3.tipo != BOOLEAN){
+              if ($2.tipo != BOOLEAN){
                 //printf("\nPETA AQUI");
                 errorSemantico("Bucle con condicion de tipo int");
                 return -1;
               }
+              $$.etiqueta = $1.etiqueta;
+              while_exp_pila(yyout, $2.es_direccion, $1.etiqueta);
             }
          ;
+
+while: TOK_WHILE TOK_PARENTESISIZQUIERDO
+      {
+        $$.etiqueta = etiqueta;
+        while_inicio(yyout, etiqueta);
+      }
 
 lectura:  TOK_SCANF TOK_IDENTIFICADOR
           {
