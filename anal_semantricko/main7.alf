@@ -1,0 +1,30 @@
+//  int m;
+//  array int [4] v;
+//  m = 0;
+//  while (m <= 4){
+//    printf m;
+//    v[m] = m*10;
+//    m = m + 1;
+main
+{
+  int x;
+  x = 3;
+  if((x <= 3)){
+    printf 99;    //true
+  }
+  if((x >= 9)){
+    printf 91;    //false
+  }
+  if((x == 9)){
+    printf 91;    //false
+  }
+  if((x == 3)){
+    printf 6008;    //true
+  }
+  if((x != 3)){
+    printf 6008;    //false
+  }
+  if((x != 9)){
+    printf 6008;    //true
+  }
+}

@@ -127,20 +127,17 @@ main:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion no
+	; inicio de la funcion igual
+	pop dword ebx
+	mov ebx, [ebx]
 	pop dword eax
-	mov dword eax, [eax]
-	cmp eax, 0
-	je negar_0_0
-	mov dword ebx, 0
-	jmp fin_neg_0
-negar_0_0:
-	mov dword ebx, 1
-fin_neg_0:
-	push dword ebx
+	mov eax, [eax]
+	mov ecx, 1
+	cmp eax, ebx
+	je fin_igual_0
+	mov ecx, 0
+fin_igual_0:
+	push dword ecx
 ;R93:	<comparacion> ::= <exp> == <exp>
 ;R83:	<exp> ::= ( <comparacion> )
 ;D:	;
@@ -182,12 +179,6 @@ fin_neg_0:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
 	; inicio de la funcion distinto
 	pop dword ebx
 	mov ebx, [ebx]
@@ -195,9 +186,9 @@ fin_neg_0:
 	mov eax, [eax]
 	mov ecx, 1
 	cmp eax, ebx
-	jne fin_dist_0
+	jne fin_dist_1
 	mov ecx, 0
-fin_dist_0:
+fin_dist_1:
 	push dword ecx
 ;R94:	<comparacion> ::= <exp> != <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -240,12 +231,6 @@ fin_dist_0:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
 	; inicio de la funcion menor
 	pop dword ebx
 	mov ebx, [ebx]
@@ -253,9 +238,9 @@ fin_dist_0:
 	mov eax, [eax]
 	mov ecx, 1
 	cmp eax, ebx
-	jl fin_menorigual_1
+	jl fin_menorigual_2
 	mov ecx, 0
-fin_menorigual_1:
+fin_menorigual_2:
 	push dword ecx
 ;R97:	<comparacion> ::= <exp> < <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -298,12 +283,6 @@ fin_menorigual_1:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
 	; inicio de la funcion menor_igual
 	pop dword ebx
 	mov ebx, [ebx]
@@ -311,9 +290,9 @@ fin_menorigual_1:
 	mov eax, [eax]
 	mov ecx, 1
 	cmp eax, ebx
-	jle fin_menorigual_2
+	jle fin_menorigual_3
 	mov ecx, 0
-fin_menorigual_2:
+fin_menorigual_3:
 	push dword ecx
 ;R95:	<comparacion> ::= <exp> <= <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -356,12 +335,6 @@ fin_menorigual_2:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
 	; inicio de la funcion mayor
 	pop dword ebx
 	mov ebx, [ebx]
@@ -369,9 +342,9 @@ fin_menorigual_2:
 	mov eax, [eax]
 	mov ecx, 1
 	cmp eax, ebx
-	jg fin_menorigual_3
+	jg fin_menorigual_4
 	mov ecx, 0
-fin_menorigual_3:
+fin_menorigual_4:
 	push dword ecx
 ;R98:	<comparacion> ::= <exp> > <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -414,12 +387,6 @@ fin_menorigual_3:
 	mov dword eax, _y
 	push dword eax
 ;R80:	<exp> ::= <identificador>
-	; inicio de la funcion escribir_operando
-	mov dword eax, _x
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, _y
-	push dword eax
 	; inicio de la funcion mayor_igual
 	pop dword ebx
 	mov ebx, [ebx]
@@ -427,9 +394,9 @@ fin_menorigual_3:
 	mov eax, [eax]
 	mov ecx, 1
 	cmp eax, ebx
-	jge fin_menorigual_4
+	jge fin_menorigual_5
 	mov ecx, 0
-fin_menorigual_4:
+fin_menorigual_5:
 	push dword ecx
 ;R96:	<comparacion> ::= <exp> >= <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -476,20 +443,14 @@ fin_menorigual_4:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
-	; inicio de la funcion escribir_operando
-	mov dword eax, 1
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 0
-	push dword eax
 	; inicio de la funcion mayor_igual
 	pop dword ebx
 	pop dword eax
 	mov ecx, 1
 	cmp eax, ebx
-	jge fin_menorigual_5
+	jge fin_menorigual_6
 	mov ecx, 0
-fin_menorigual_5:
+fin_menorigual_6:
 	push dword ecx
 ;R96:	<comparacion> ::= <exp> >= <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -536,20 +497,14 @@ fin_menorigual_5:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
-	; inicio de la funcion escribir_operando
-	mov dword eax, 1
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 0
-	push dword eax
 	; inicio de la funcion mayor
 	pop dword ebx
 	pop dword eax
 	mov ecx, 1
 	cmp eax, ebx
-	jg fin_menorigual_6
+	jg fin_menorigual_7
 	mov ecx, 0
-fin_menorigual_6:
+fin_menorigual_7:
 	push dword ecx
 ;R98:	<comparacion> ::= <exp> > <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -596,19 +551,15 @@ fin_menorigual_6:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
-	; inicio de la funcion escribir_operando
-	mov dword eax, 1
-	push dword eax
-	; inicio de la funcion no
+	; inicio de la funcion igual
+	pop dword ebx
 	pop dword eax
-	cmp eax, 0
-	je negar_0_1
-	mov dword ebx, 0
-	jmp fin_neg_1
-negar_0_1:
-	mov dword ebx, 1
-fin_neg_1:
-	push dword ebx
+	mov ecx, 1
+	cmp eax, ebx
+	je fin_igual_8
+	mov ecx, 0
+fin_igual_8:
+	push dword ecx
 ;R93:	<comparacion> ::= <exp> == <exp>
 ;R83:	<exp> ::= ( <comparacion> )
 ;D:	;
@@ -654,20 +605,14 @@ fin_neg_1:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
-	; inicio de la funcion escribir_operando
-	mov dword eax, 1
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 0
-	push dword eax
 	; inicio de la funcion menor
 	pop dword ebx
 	pop dword eax
 	mov ecx, 1
 	cmp eax, ebx
-	jl fin_menorigual_7
+	jl fin_menorigual_9
 	mov ecx, 0
-fin_menorigual_7:
+fin_menorigual_9:
 	push dword ecx
 ;R97:	<comparacion> ::= <exp> < <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -714,20 +659,14 @@ fin_menorigual_7:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
-	; inicio de la funcion escribir_operando
-	mov dword eax, 1
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 0
-	push dword eax
 	; inicio de la funcion menor_igual
 	pop dword ebx
 	pop dword eax
 	mov ecx, 1
 	cmp eax, ebx
-	jle fin_menorigual_8
+	jle fin_menorigual_10
 	mov ecx, 0
-fin_menorigual_8:
+fin_menorigual_10:
 	push dword ecx
 ;R95:	<comparacion> ::= <exp> <= <exp>
 ;R83:	<exp> ::= ( <comparacion> )
@@ -774,20 +713,14 @@ fin_menorigual_8:
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	)
-	; inicio de la funcion escribir_operando
-	mov dword eax, 4
-	push dword eax
-	; inicio de la funcion escribir_operando
-	mov dword eax, 3
-	push dword eax
 	; inicio de la funcion distinto
 	pop dword ebx
 	pop dword eax
 	mov ecx, 1
 	cmp eax, ebx
-	jne fin_dist_9
+	jne fin_dist_11
 	mov ecx, 0
-fin_dist_9:
+fin_dist_11:
 	push dword ecx
 ;R94:	<comparacion> ::= <exp> != <exp>
 ;R83:	<exp> ::= ( <comparacion> )

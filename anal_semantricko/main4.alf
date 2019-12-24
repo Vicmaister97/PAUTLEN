@@ -1,7 +1,8 @@
+//FALLA AL HACER UNA OP CON 2 VECTORES (CUANDO HAY UN VECTOR EN LA 2a EXP)
 main
 {
   array int[4] x;
-  int y;
+  int y, z, w, q;
   //y = 0;
   x[0] = 3;
   x[1] = 1;
@@ -18,4 +19,15 @@ main
   printf x[0];
   printf x[1];
   printf x[2];
+  z = x[0] * x[2];
+  printf z;
+  z = 3 * 4;
+  printf z;
+  q = x[0];
+  w = x[2];
+  printf w;
+  printf q;
+  z = x[2] - x[0];
+  printf z;
+  printf x[4];
 }
