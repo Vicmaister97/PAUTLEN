@@ -777,6 +777,22 @@ void asignarDestinoEnPila(FILE* fpasm, int es_variable){
   fprintf(fpasm, "\tmov dword [ebx], eax\n");
 }
 
+void asignarDestinoEnPilaINV(FILE* fpasm, int es_variable){
+  fprintf(fpasm, "\t; inicio de la funcion asignarDestinoEnPilaINV\n");
+  /* Comenzamos extrayendo el valor a asignar*/
+  fprintf(fpasm,"\tpop dword eax\n");
+  /* Acto seguido, extraemos de la pila el destino donde realizaremos la asignacion*/
+  fprintf(fpasm,"\tpop dword ebx\n");
+  /* Comprobamos si el valor leido es una variable*/
+  if (es_variable == 1){
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+  }
+
+  /* Finalmente, guardamos el valor leido en el destino correspondiente
+  [ebx] = eax*/
+  fprintf(fpasm, "\tmov dword [ebx], eax\n");
+}
+
 void operandoEnPilaAArgumento(FILE * fpasm, int es_variable){
   fprintf(fpasm, "\t; inicio de la funcion operandoEnPilaAArgumento\n");
   /* Comprobamos si el valor leido es una variable*/

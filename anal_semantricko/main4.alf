@@ -2,9 +2,20 @@ main
 {
   array int[4] x;
   int y;
-  x[0] = 9;
-//  z[0] = 10;
-//  z[1] = 3;
-  y = 5;
+  //y = 0;
+  x[0] = 3;
+  x[1] = 1;
+  x[2] = 4;
+  //x[3] = 9;
+  //y = 5;
+  //printf y;
+  y = x[0];
   printf y;
+  y = x[1];
+  printf y;
+  y = x[2];
+  printf y;
+  printf x[0];
+  printf x[1];
+  printf x[2];
 }

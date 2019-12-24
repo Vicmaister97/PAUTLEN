@@ -251,6 +251,7 @@ es_variable
    Es 0 en caso contrario (constante u otro tipo de expresión)
 */
 void asignarDestinoEnPila(FILE* fpasm, int es_variable);
+void asignarDestinoEnPilaINV(FILE* fpasm, int es_variable);
 
 
 /*Como habrás visto en el material, nuestro convenio de llamadas a las funciones asume que

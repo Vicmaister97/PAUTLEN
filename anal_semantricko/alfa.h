@@ -17,6 +17,7 @@
 #define INT 1
 #define BOOLEAN 2
 
+#define MAX_ERR_LEN 200
 #define CTE 0
 #define VAR 1
 #define MAX_INT_LEN 11
