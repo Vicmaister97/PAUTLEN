@@ -1,15 +1,20 @@
 main
 {
-  int z;
+  int z, res;
 
-  function int printandret2(int arg)
+  function int mayorQue5(int arg)
   {
-    int auxArg;
-    auxArg = arg;
+    int auxArg, rv;
+    auxArg = arg * 3;
     printf auxArg;
-    return 3;
+    rv = 1;
+    if((auxArg < 5)){
+      rv = 0;
+    }
+    return rv;
   }
 
-  z = 99;
-  printf printandret2(z);
+  z = 2;
+  res = mayorQue5(z);
+  printf res;
 }
