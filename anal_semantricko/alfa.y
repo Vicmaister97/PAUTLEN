@@ -404,7 +404,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                     escribirVariableLocal(yyout, getPosicion(simbol));
                     //printf("\nTrick 4");
                     printf("\nAsignar dst en pila");
-                    asignarDestinoEnPila(yyout, 1);
+                    asignarDestinoEnPila(yyout, $3.es_direccion);
                 }
                 fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
              }
