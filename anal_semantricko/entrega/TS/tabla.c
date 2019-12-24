@@ -359,7 +359,6 @@ int DeclararGlobal(HASH_TABLE *TGLOBAL, char *id, CATEGORIA_SIMBOLO cat_s, TIPO 
     setCategoria(newS, c);
     if(ini == TRUE)
       setValor(newS, valor);
-      printf("DANDO VALOR %d\n", valor);
     if(longitud != FALSE)
       setLongitud(newS, longitud);
 

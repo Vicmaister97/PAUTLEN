@@ -305,7 +305,6 @@ fn_declaration:  fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
                     setNum_parametros(simbol, num_parametros_actual);
                     setNum_var_locales(simbol, num_variables_locales_actual);
                     strcpy($$.lexema, $1.lexema);
-                    printf("\nDeclarar funcion: %s con %d varLoc", $1.lexema, num_variables_locales_actual);
                     declararFuncion(yyout, $1.lexema, num_variables_locales_actual);
                   }
               ;
@@ -374,7 +373,6 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
-                    printf("\nAsignando a %s el valor %d, es DIR: %d", $1.lexema, $3.valor_entero, $3.es_direccion);
                     asignar(yyout, $1.lexema, $3.es_direccion);
                 }
                 else{                                           // Búsqueda en local
@@ -399,12 +397,7 @@ asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
                           return -1;
                         }
                     }
-                    ////printf("\nTrick var local pos: %d\nDir: %d",getPosicion(simbol), $1.es_direccion);
-                    //printf("\nTrick 3");
-                    printf("\nEscribir VLoc %s con pos %d", getIdentificador(simbol), getPosicion(simbol));
                     escribirVariableLocal(yyout, getPosicion(simbol));
-                    //printf("\nTrick 4");
-                    printf("\nAsignar dst en pila");
                     asignarDestinoEnPila(yyout, $3.es_direccion);
                 }
                 fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
@@ -473,7 +466,6 @@ elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECH
                ;
 condicional:  if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
               {
-                ////printf("\nFIN GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $1.etiqueta);
                 ifthen_fin(yyout, $1.etiqueta);
                 fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
               }
@@ -491,7 +483,6 @@ if_exp:  TOK_IF TOK_PARENTESISIZQUIERDO exp
             }
             $$.etiqueta = etiqueta;
             ifthen_inicio(yyout, $3.es_direccion, etiqueta);
-            ////printf("\nINI GLOBAL = %d\nETIQUETA SEM = %d\n", etiqueta, $$.etiqueta);
           }
       ;
 if_else_exp: if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
@@ -509,7 +500,6 @@ bucle:  bucle_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVED
 bucle_exp:  while exp
             {
               if ($2.tipo != BOOLEAN){
-                ////printf("\nPETA AQUI");
                 errorSemantico("Bucle con condicion de tipo int");
                 return -1;
               }
@@ -581,7 +571,6 @@ retorno_funcion:  TOK_RETURN exp
 
                     hayReturn = 1;
                     tipoReturn = $2.tipo;
-                    //printf("\nTRICK 7");
                     retornarFuncion(yyout, $2.es_direccion);
                     fprintf(yyout, ";R61:\t<retorno_funcion> ::= return <exp>\n");
                   }
@@ -700,12 +689,10 @@ exp:  exp TOK_MAS exp
             $$.tipo = getTipo(simbol);
             $$.es_direccion = 1;
           }
-          printf("\nESCRIBIR Normal %s, valor %d\n", $1.lexema, $1.valor_entero);
           if(en_explist){
             char val[MAX_INT_LEN];
             sprintf(val, "%d", $1.valor_entero);
             escribir_operando(yyout, val, CTE);
-            printf("\nOperando %s con pos %d y con valor %d a pila", getIdentificador(simbol), getPosicion(simbol), $1.valor_entero);
             operandoEnPilaAArgumento(yyout, getPosicion(simbol));
           }
           else{
@@ -734,19 +721,13 @@ exp:  exp TOK_MAS exp
           }
           int pos;
           pos = getPosicion(simbol); //Posicion tanto si Parametro como var Local
-          ////printf("\nPOS == %d\n", pos);
           if(CategoriaSimbolo(simbol) == PARAMETRO){
-            ////printf("\nTRICK 1 escribiendo parametro de pos = %d\n", pos);
-            //printf("\nTrick 2");
-            printf("\nEscribir parametro %s con pos %d y valor %d", getIdentificador(simbol), pos, getValor(simbol));
             escribirParametro(yyout, pos, getNum_parametros(UsoLocal(TGLOBAL, TLOCAL, nombre_funcion_actual) ));
           }
           else{
-            //printf("\nTrick 3.5");
             escribirVariableLocal(yyout, pos);
             }
         }
-        ////printf("\nTRICK 1 writing operando %s\n", $1.lexema);
 
         fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n");
       }
@@ -768,7 +749,6 @@ exp:  exp TOK_MAS exp
             errorSemantico(err);
             return -1;
           }
-          printf("\nLLamando a funcion %s con %d params\n", getIdentificador(simbol), getNum_parametros(simbol));
           llamarFuncion(yyout, getIdentificador(simbol), getNum_parametros(simbol));
         }
 
@@ -871,7 +851,6 @@ comparacion:  exp TOK_IGUAL exp
               }
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
-              ////printf("\nIGUAL: %d == %d", $1.valor_entero, $3.valor_entero);
               cmpOp(yyout, $1, $3, CMP_IGUAL);
               fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
               }
@@ -950,7 +929,7 @@ constante_logica:  TOK_TRUE
                     $$.tipo = BOOLEAN;
                     $$.es_direccion = 0;
                     $$.valor_entero = 1;
-                    ////printf("\nTRICK 6 writing operando %s\n", STR_TRUE);
+
                     escribir_operando(yyout,STR_TRUE,CTE);
                     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
                   }
@@ -959,7 +938,7 @@ constante_logica:  TOK_TRUE
                       $$.tipo = BOOLEAN;
                       $$.es_direccion = 0;
                       $$.valor_entero = 0;
-                      ////printf("\nTRICK 7 writing operando %s\n", STR_FALSE);
+
                       escribir_operando(yyout,STR_FALSE,CTE);
 
                       fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");
@@ -973,8 +952,6 @@ constante_entera:  TOK_CONSTANTE_ENTERA
 
                       char val[MAX_INT_LEN];
                       sprintf(val, "%d", $1.valor_entero);
-                      ////printf("\nTRICK 8 writing operando %s\n", val);
-                      //printf("\nTrick 5");
                       escribir_operando(yyout,val,CTE);
                       fprintf(yyout, ";R105:\t<constante_entera> ::= <numero>\n");
                     }

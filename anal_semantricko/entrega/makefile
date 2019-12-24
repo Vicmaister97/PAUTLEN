@@ -11,3 +11,4 @@ clean:
 	rm y.tab.h
 	rm pruebaSemantico
 	rm y.output
+	rm alfa
