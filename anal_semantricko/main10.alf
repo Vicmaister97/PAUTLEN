@@ -5,7 +5,7 @@ main
   function int printandret2(int arg)
   {
     int auxArg;
-    printf 44;
+    printf arg;
     return 2;
   }
 
