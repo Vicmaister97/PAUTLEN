@@ -1,0 +1,25 @@
+//FALLA AL HACER UNA OP CON 2 VECTORES (CUANDO HAY UN VECTOR EN LA 2a EXP)
+main
+{
+  array boolean[10] v;
+  //int x;
+
+  //x = 3;
+
+  init v{true; false};
+  //v[0] = 3;
+  printf v[0];
+  printf v[1];
+  printf v[2];
+  printf v[3];
+  printf v[4];
+  printf v[5];
+  printf v[6];
+  printf v[7];
+  printf v[8];
+  printf v[9];
+  printf v[10];
+//  printf v[1];
+//  printf v[2];
+//  printf v[3];
+}
