@@ -1,0 +1,32 @@
+//FALLA AL HACER UNA OP CON 2 VECTORES (CUANDO HAY UN VECTOR EN LA 2a EXP)
+main
+{
+  array int[13] v;
+  int x, y, z, j;
+
+  x = 30;
+  y = 40;
+  z = x*y;
+  init v{10;20;x;y;20+30;70-10;140/2;10*8;-90;x+7;x+y;x-y;z};
+  printf v[0];
+  printf v[1];
+  printf v[2];
+  printf v[3];
+  printf v[4];
+  printf v[5];
+  printf v[6];
+  printf v[7];
+  printf v[8];
+  printf v[9];
+  printf v[10];
+  printf v[11];
+  printf v[12];
+
+  z = v[12] + v[0];
+  printf z;
+  j = y - x;
+  v[j] = 999;
+  printf v[j];
+  printf v[j-1];
+  printf v[y-x];
+}

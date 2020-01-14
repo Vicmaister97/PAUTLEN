@@ -1,0 +1,418 @@
+declarar vector v e inicializarlo posteriormente
+//seccion declarativa
+array int[4] v;
+...
+
+//seccion de instrucciones
+init v{10;20;30;40*2};
+
+-- comienza por palabra reservada init
+-- identificador de vector que se va a inicializar
+-- lista de inicializacion no vacia
+    entre llaves
+    expresiones separadas por ";"
+      pueden ser aritmeticas, logicas etc... (cualquier expresion)
+-- valores se asignan en orden de aparicion en lista
+-- si lista es menor q tam vector, resto de los elems se inicializan a 0 o false
+-- si lista es mayor q tam vector, error semantico
+  ****Error semantico en lin X: Lista de inicialización de longitud incorrecta.
+-- tipo de exp no coincide error semantico
+  ****Error semantico en lin X: Lista de inicialización con expresión de tipo incorrecto.
+-- identificador a continuacion de init no declarado error semantico
+  ****Error semantico en lin X: Acceso a variable no declarada (<nombre_variable>).
+-- identificador a continuacion de init no es vector
+  ****Error semantico en lin X: Intento de inicializacion de una variable que no es de tipo vector.
+
+  Ficheros que vamos a tener que tocar:
+
+ej.alf: crearlo con las pruebas que queremos hacer
+alfa.l:
+alfa.y:
+generacion.h:
+generacion.c:
+
+
+1: Add "%token TOK_INIT" en alfa.y --> encima de TOK_IF
+2: Add esta linea encima de la linea "if" en alfa.l siguiendo el formato de tu alfa.l
+    "init"                                       {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INIT;}
+3: Esto es el esqueleto de lo que tenemos que poner debajo de elemento_vector en alfa.y:
+val_lista:     exp
+              {
+                fprintf(yyout, ";REX6:\t<lista_vector> ::= <exp> ; <lista_vector>\n");
+              }
+              ;
+lista_vector:   val_lista TOK_PUNTOYCOMA lista_vector
+               {
+                 fprintf(yyout, ";REX1:\t<lista_vector> ::= <exp> ; <lista_vector>\n");
+               }
+             |
+               val_lista
+               {
+                //rellenar los huecos del vector que faltan
+                 fprintf(yyout, ";REX2:\t<lista_vector> ::= <exp> ;\n");
+               }
+             ;
+init_vector:   principio_init TOK_LLAVEIZQUIERDA lista_vector TOK_LLAVEDERECHA
+               {
+                 fprintf(yyout, ";REX3:\t<init_vector> ::= <principio_init> { <lista_vector> } ;\n");
+               }
+              ;
+principio_init: TOK_INIT TOK_IDENTIFICADOR
+               {
+              fprintf(yyout, ";REX5:\t<principio_init> ::= init <identificador> ;\n");
+              }
+             ;
+4: Add en sentencia_simple: debajo de "retorno_funcion"
+    |  init_vector {fprintf(yyout, ";REX4:\t<sentencia_simple> ::= <init_vector>\n");}
+
+5: Add variables globales en alfa.y arriba donde las vars globales
+    int global_init_vector_tipo;
+    int global_init_vector_len;
+    int global_init_vector_pos;
+    char global_init_vector_nombre[MAX_LONG_ID];
+
+6: idea general (TRICK Vectores)
+    para hacer asignacion con vectores:
+    a: insertar valor de la EXP en pila --> escribir_operando(FILE* fpasm, char* nombre, int es_variable)
+    b: insertar valor de exp que indexa el elemento del vector en pila --> escribir_operando(FILE* fpasm, char* nombre, int es_variable)
+    c: insertar direccion del elemento del vector al que queremos meterle algo --> void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion)
+    d: hacer asignacion --> asignarDestinoEnPila(FILE* fpasm, int es_variable)
+
+    *** esto es el orden original. Si resulta que por x razones el programa (por leer la expresion despues o lo que sea)
+        seguimos los pasos b,c,a
+        entonces d': hacer asignacion --> asignarDestinoEnPilaINV(FILE* fpasm, int es_variable)
+
+
+
+val_lista:     exp
+              {
+                if($1.es_direccion == 1)
+                  printf("\nEs direccion TRICK VALOR EXP == %s con valor", $1.lexema);
+                else printf("\nTRICK VALOR EXP == %d", $1.valor_entero);
+                if(global_init_vector_tipo != $1.tipo){
+                  errorSemantico("Lista de inicialización con expresión de tipo incorrecto.");
+                  return -1;
+                }
+                if(global_init_vector_len <= global_init_vector_pos){
+                  errorSemantico("Lista de inicialización de longitud incorrecta.");
+                  return -1;
+                }
+                printf("\nTRIKC: %s[%d]\n", global_init_vector_nombre, global_init_vector_pos);
+                char val[MAX_INT_LEN];
+                sprintf(val, "%d", global_init_vector_pos);
+                global_init_vector_pos++;
+                escribir_operando(yyout, val, CTE);
+                escribir_elemento_vector(yyout, global_init_vector_nombre, global_init_vector_len, 0);
+                asignarDestinoEnPila(yyout, $1.es_direccion);
+                fprintf(yyout, ";REX6:\t<lista_vector> ::= <exp> ; <lista_vector>\n");
+              }
+              ;
+lista_vector:   val_lista TOK_PUNTOYCOMA lista_vector
+               {
+                 fprintf(yyout, ";REX1:\t<lista_vector> ::= <exp> ; <lista_vector>\n");
+               }
+             |
+               val_lista
+               {
+                //rellenar los huecos del vector que faltan
+                int i;
+                char vector_pos[MAX_INT_LEN];
+                char val[MAX_INT_LEN];
+                if(global_init_vector_tipo == ENTERO)
+                  sprintf(val, "%d", 0);
+                else strcpy(val, STR_FALSE);
+                for(i=global_init_vector_pos; i < global_init_vector_len; i++){
+                  sprintf(vector_pos, "%d", i);
+                  escribir_operando(yyout, val, CTE);
+                  escribir_operando(yyout, vector_pos, CTE);
+                  escribir_elemento_vector(yyout, global_init_vector_nombre, global_init_vector_len, 0);
+                  asignarDestinoEnPila(yyout, 0);
+                }
+                 fprintf(yyout, ";REX2:\t<lista_vector> ::= <exp> ;\n");
+               }
+             ;
+init_vector:   principio_init TOK_LLAVEIZQUIERDA lista_vector TOK_LLAVEDERECHA
+               {
+                 fprintf(yyout, ";REX3:\t<init_vector> ::= <principio_init> { <lista_vector> } ;\n");
+               }
+              ;
+principio_init: TOK_INIT TOK_IDENTIFICADOR
+               {
+               // GLOBAL
+               if (ambito == 0){
+                 simbol = UsoGlobal(TGLOBAL, $2.lexema);
+                 if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+                   char err[MAX_ERR_LEN];
+                   sprintf(err, "Acceso a variable no declarada (%s)", $2.lexema);
+                   errorSemantico(err);
+                   return -1;
+                 }
+                 else{                                       // Si lo busca en global y lo encuentra
+                   if (getCategoria(simbol) != VECTOR){
+                     errorSemantico("Intento de inicializacion de una variable que no es de tipo vector.");
+                     return -1;
+                   }
+                 }
+                 //EXAMEN asignamos las variables globales para usar luego
+                 //FOR LATER USO LOCAL
+                 printf("\nSET TIPO del VECTOR %s== %d ", $2.lexema, getTipo(simbol));
+                 strcpy(global_init_vector_nombre, $2.lexema);
+                 global_init_vector_tipo = getTipo(simbol);
+                 global_init_vector_len = getLongitud(simbol);
+                 global_init_vector_pos = 0;
+
+               }
+              fprintf(yyout, ";REX5:\t<principio_init> ::= init <identificador> ;\n");
+              }
+             ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+asignacion:  TOK_IDENTIFICADOR TOK_ASIGNACION exp
+             {
+                if (ambito == 0){
+                  simbol = UsoGlobal(TGLOBAL, $1.lexema);
+                  if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+                    char err[MAX_ERR_LEN];
+                    sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                    errorSemantico(err);
+                    return -1;
+                  }
+
+                  else{                                       // Si lo busca en global y lo encuentra
+                        if (CategoriaSimbolo(simbol) == FUNCION){
+                          errorSemantico("Asignación incompatible");
+                          return -1;
+                        }
+                        if (getCategoria(simbol) == VECTOR){
+                          errorSemantico("Asignación incompatible");
+                          return -1;
+                        }
+                        if (getTipo(simbol) != $3.tipo){
+                          errorSemantico("Asignación incompatible");
+                          return -1;
+                        }
+                    }
+                    asignar(yyout, $1.lexema, $3.es_direccion);
+                }
+                else{                                           // Búsqueda en local
+                    simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
+                    if (simbol == NULL){                           // Si se busca en su ambito pero NO lo encuentra
+                        char err[MAX_ERR_LEN];
+                        sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                        errorSemantico(err);
+                        return -1;
+                    }
+                    else{                                       // Si lo busca en local y lo encuentra
+                        if (CategoriaSimbolo(simbol) == FUNCION){
+                          errorSemantico("Asignación incompatible");
+                          return -1;
+                        }
+                        if (getCategoria(simbol) == VECTOR){
+                          errorSemantico("Asignación incompatible");
+                          return -1;
+                        }
+                        if (getTipo(simbol) != $3.tipo){
+                          errorSemantico("Asignación incompatible");
+                          return -1;
+                        }
+                    }
+                    escribirVariableLocal(yyout, getPosicion(simbol));
+                    asignarDestinoEnPila(yyout, $3.es_direccion);
+                }
+                fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
+             }
+          |  elemento_vector TOK_ASIGNACION exp
+              {
+                if ($1.tipo != $3.tipo){
+                  errorSemantico("Asignación incompatible");
+                  return -1;
+                }
+                asignarDestinoEnPilaINV(yyout, 0);
+
+                fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+              }
+          ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+elemento_vector:  TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
+                  {
+                    if (ambito == 0){
+                      simbol = UsoGlobal(TGLOBAL, $1.lexema);
+                      if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+                        char err[MAX_ERR_LEN];
+                        sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                        errorSemantico(err);
+                        return -1;
+                      }
+                      else{                                       // Si lo busca en global y lo encuentra
+                        if (getCategoria(simbol) != VECTOR){
+                          errorSemantico("Intento de indexacion de una variable que no es de tipo vector");
+                          return -1;
+                        }
+                        if ($3.tipo != INT){
+                          errorSemantico("El indice en una operacion de indexacion tiene que ser de tipo entero");
+                          return -1;
+                        }
+                        $$.tipo = getTipo(simbol);
+                        $$.es_direccion = 1;
+                      }
+                    }
+
+                    else{                                           // Búsqueda en local
+                      simbol = UsoLocal(TGLOBAL, TLOCAL, $1.lexema);
+                      if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+                        char err[MAX_ERR_LEN];
+                        sprintf(err, "Acceso a variable no declarada (%s)", $1.lexema);
+                        errorSemantico(err);
+                        return -1;
+                      }
+
+                      else{                                       // Si lo busca en global y lo encuentra
+                        if (getCategoria(simbol) != VECTOR){
+                          errorSemantico("Intento de indexacion de una variable que no es de tipo vector");
+                          return -1;
+                        }
+                        if ($3.tipo != INT){
+                          errorSemantico("El indice en una operacion de indexacion tiene que ser de tipo entero");
+                          return -1;
+                        }
+                        $$.tipo = getTipo(simbol);
+                        $$.es_direccion = 1;
+                      }
+                    }
+                    fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
+                    escribir_elemento_vector(yyout, $1.lexema, getLongitud(simbol), $3.es_direccion);
+
+                  }
+               ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               lista_vector:   exp TOK_PUNTOYCOMA lista_vector
+                              {
+                                fprintf(yyout, ";REX1:\t<lista_vector> ::= <exp> ; <lista_vector>\n");
+                              }
+                            |
+                              exp
+                              {
+                                fprintf(yyout, ";REX2:\t<lista_vector> ::= <exp> ;\n");
+                              }
+                            ;
+               init_vector:    TOK_INIT TOK_IDENTIFICADOR TOK_LLAVEIZQUIERDA lista_vector TOK_LLAVEDERECHA
+                              {
+                                 // GLOBAL
+                                 if (ambito == 0){
+                                   simbol = UsoGlobal(TGLOBAL, $1.lexema);
+                                   if (simbol == NULL){                        // Si se busca en global pero no lo encuentra
+                                     char err[MAX_ERR_LEN];
+                                     sprintf(err, "Acceso a variable no declarada (%s)", $2.lexema);
+                                     errorSemantico(err);
+                                     return -1;
+                                   }
+                                   else{                                       // Si lo busca en global y lo encuentra
+                                     if (getCategoria(simbol) != VECTOR){
+                                       errorSemantico("Intento de inicializacion de una variable que no es de tipo vector.");
+                                       return -1;
+                                     }
+                                   }
+                                   $4.tipo = getTipo(simbol);
+                                   fprintf(yyout, ";REX3:\t<init_vector> ::= init <identificador> { <lista_vector> } ;\n");
+                              }
+
+                            ;
+
+
+
+
+
+
+
+
+
+
+
+init v{10;20;30;40}
+
+exp = 10; pila =[10]
+exp = 20; pila =[10, 20]
+exp = 30; pila =[10, 20, 30]
+exp = 40; pila =[10, 20, 30, 40]
+//tenemos q escribir el elemento v[0]
+escribir_elemento_vector

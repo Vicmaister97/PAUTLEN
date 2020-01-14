@@ -1,0 +1,22 @@
+main
+{
+  array boolean[13] v;
+  boolean x, y;
+
+  x = true;
+  y = false;
+  init v{true;false;x;y;true && true;true && false;true or false;x && y;x or y;x or false;false or y;x && true};
+  printf v[0];
+  printf v[1];
+  printf v[2];
+  printf v[3];
+  printf v[4];
+  printf v[5];
+  printf v[6];
+  printf v[7];
+  printf v[8];
+  printf v[9];
+  printf v[10];
+  printf v[11];
+  printf v[12];
+}
