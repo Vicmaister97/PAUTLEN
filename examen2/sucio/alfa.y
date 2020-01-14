@@ -99,8 +99,10 @@ SIMBOLO *simbol;
 %token TOK_BOOLEAN
 %token TOK_ARRAY
 %token TOK_FUNCTION
+
 //EXAMEN TRICK 2
 %token TOK_INIT
+
 %token TOK_IF
 %token TOK_ELSE
 %token TOK_WHILE
@@ -352,7 +354,7 @@ sentencia_simple:  asignacion {fprintf(yyout, ";R34:\t<sentencia_simple> ::= <as
                 |  lectura {fprintf(yyout, ";R35:\t<sentencia_simple> ::= <lectura>\n");}
                 |  escritura {fprintf(yyout, ";R36:\t<sentencia_simple> ::= <escritura>\n");}
                 |  retorno_funcion {fprintf(yyout, ";R38:\t<sentencia_simple> ::= <retorno_funcion>\n");}
-                |  init_vector {fprintf(yyout, ";REX4:\t<sentencia_simple> ::= <init_vector>\n"); //EXAMEN TRICK 7}
+                |  init_vector {fprintf(yyout, ";REX4:\t<sentencia_simple> ::= <init_vector>\n");} //EXAMEN TRICK 7
                 ;
 bloque:  condicional {fprintf(yyout, ";R40:\t<bloque> ::= <condicional>\n");}
       |  bucle {fprintf(yyout, ";R41:\t<bloque> ::= <bucle>\n");}
@@ -481,6 +483,7 @@ val_lista:     exp
                 //if($1.es_direccion == 1)
                 //  printf("\nEs direccion TRICK VALOR EXP == %s con valor", $1.lexema);
                 //else printf("\nTRICK VALOR EXP == %d", $1.valor_entero);
+
                 if(global_init_vector_tipo != $1.tipo){
                   errorSemantico("Lista de inicialización con expresión de tipo incorrecto.");
                   return -1;
@@ -492,10 +495,15 @@ val_lista:     exp
                 //printf("\nTRIKC: %s[%d]\n", global_init_vector_nombre, global_init_vector_pos);
                 char val[MAX_INT_LEN];
                 sprintf(val, "%d", global_init_vector_pos);
+
+                // ACTUALIZAMOS EL NUM DE ELEMENTOS INICIALIZADOS
                 global_init_vector_pos++;
+
+                
                 escribir_operando(yyout, val, CTE);
                 escribir_elemento_vector(yyout, global_init_vector_nombre, global_init_vector_len, 0);
                 asignarDestinoEnPila(yyout, $1.es_direccion);
+
                 fprintf(yyout, ";REX6:\t<lista_vector> ::= <exp> ; <lista_vector>\n");
               }
               ;
