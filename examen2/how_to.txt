@@ -31,7 +31,7 @@ alfa.y:
 generacion.h:
 generacion.c:
 
-
+// EXAMEN TRICK2
 1: Add "%token TOK_INIT" en alfa.y --> encima de TOK_IF
 2: Add esta linea encima de la linea "if" en alfa.l siguiendo el formato de tu alfa.l
     "init"                                       {col += yyleng; fprintf(yyout, ";D:\t%s\n", yytext); return TOK_INIT;}
@@ -74,7 +74,7 @@ principio_init: TOK_INIT TOK_IDENTIFICADOR
 6: idea general (TRICK Vectores)
     para hacer asignacion con vectores:
     a: insertar valor de la EXP en pila --> escribir_operando(FILE* fpasm, char* nombre, int es_variable)
-    b: insertar valor de exp que indexa el elemento del vector en pila --> escribir_operando(FILE* fpasm, char* nombre, int es_variable)
+    b: insertar valor de POS de EXP para indexar el elemento del vector en pila --> escribir_operando(FILE* fpasm, char* nombre, int es_variable)
     c: insertar direccion del elemento del vector al que queremos meterle algo --> void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion)
     d: hacer asignacion --> asignarDestinoEnPila(FILE* fpasm, int es_variable)
 
